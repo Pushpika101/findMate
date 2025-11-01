@@ -8,12 +8,12 @@ const socketIo = require('socket.io');
 const jwt = require('jsonwebtoken');
 
 // Import routes
-const authRoutes = require('./routes/auth');
-const itemRoutes = require('./routes/items');
-const chatRoutes = require('./routes/chat');
-const notificationRoutes = require('./routes/notifications');
-const userRoutes = require('./routes/users');
-const adminRoutes = require('./routes/admin');
+const authRoutes = require('./src/routes/auth');
+const itemRoutes = require('./src/routes/items');
+const chatRoutes = require('./src/routes/chat');
+const notificationRoutes = require('./src/routes/notifications');
+const userRoutes = require('./src/routes/users');
+const adminRoutes = require('./src/routes/admin');
 
 const app = express();
 const server = http.createServer(app);
