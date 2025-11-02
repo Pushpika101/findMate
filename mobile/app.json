@@ -34,18 +34,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/notification-icon.png",
-          "color": "#4F46E5"
-        }
-      ]
-    ],
     "extra": {
-      "apiUrl": "http://localhost:5001/api",
-      "socketUrl": "http://localhost:5001"
+      "apiUrl": "http://192.168.1.111:5001/api",
+      "socketUrl": "http://192.168.1.111:5001"
     }
   }
 }
