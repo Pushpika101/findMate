@@ -67,7 +67,7 @@ const LoginScreen = ({ navigation }) => {
         <View style={styles.header}>
           <Text style={styles.title}>Welcome Back!</Text>
           <Text style={styles.subtitle}>
-            Sign in to continue to Lost & Found
+            Sign in to continue to findMate
           </Text>
         </View>
 
