@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import HomeScreen from '../screens/home/HomeScreen';
@@ -52,20 +51,13 @@ const AddButton = ({ onPress }) => (
 );
 
 const MainTabNavigator = () => {
-  const insets = useSafeAreaInsets();
-  const dynamicTabBarStyle = {
-    ...styles.tabBar,
-    // position the tab bar above the safe-area (home indicator) dynamically
-    bottom: (insets.bottom || 0) + 12
-  };
-
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textSecondary,
-        tabBarStyle: dynamicTabBarStyle,
+        tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
         tabBarShowLabel: true
       }}

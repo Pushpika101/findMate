@@ -129,7 +129,6 @@ const HomeScreen = ({ navigation }) => {
           ]}>
             Lost Items
           </Text>
-          {activeTab === 'lost' && <View style={styles.tabIndicator} />}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -145,7 +144,6 @@ const HomeScreen = ({ navigation }) => {
           ]}>
             Found Items
           </Text>
-          {activeTab === 'found' && <View style={styles.tabIndicator} />}
         </TouchableOpacity>
       </View>
 
