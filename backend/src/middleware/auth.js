@@ -75,14 +75,28 @@ const checkAdmin = (req, res, next) => {
 };
 
 // Validate campus email
+// Validate campus email
 const validateCampusEmail = (req, res, next) => {
   const { email } = req.body;
-  const allowedDomain = process.env.ALLOWED_EMAIL_DOMAIN || 'pdn.ac.lk';
+  
+  // Allow multiple domains
+  const allowedDomains = [
+    'pdn.ac.lk',
+    'eng.pdn.ac.lk',
+    'agri.pdn.ac.lk',
+    'sci.pdn.ac.lk',
+    'med.pdn.ac.lk',
+    'dent.pdn.ac.lk',
+    'vet.pdn.ac.lk',
+    'arts.pdn.ac.lk'
+  ];
 
-  if (!email.endsWith(`@${allowedDomain}`)) {
+  const isValidDomain = allowedDomains.some(domain => email.endsWith(`@${domain}`));
+
+  if (!isValidDomain) {
     return res.status(400).json({
       success: false,
-      message: `Only @${allowedDomain} email addresses are allowed`
+      message: `Only University of Peradeniya email addresses are allowed (e.g., @eng.pdn.ac.lk, @pdn.ac.lk)`
     });
   }
 
