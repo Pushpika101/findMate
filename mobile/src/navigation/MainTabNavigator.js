@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import HomeScreen from '../screens/home/HomeScreen';
@@ -51,13 +52,20 @@ const AddButton = ({ onPress }) => (
 );
 
 const MainTabNavigator = () => {
+  const insets = useSafeAreaInsets();
+  const dynamicTabBarStyle = {
+    ...styles.tabBar,
+    // position the tab bar above the safe-area (home indicator) dynamically
+    bottom: (insets.bottom || 0) + 12
+  };
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textSecondary,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: dynamicTabBarStyle,
         tabBarLabelStyle: styles.tabBarLabel,
         tabBarShowLabel: true
       }}
@@ -126,17 +134,22 @@ const MainTabNavigator = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: 60,
-    paddingBottom: 8,
+    height: 64,
+    paddingBottom: 0,
     paddingTop: 8,
     backgroundColor: COLORS.white,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    elevation: 8,
+    borderTopWidth: 0,
+    // Position the tab bar slightly above the bottom so it doesn't sit flush with device bottom/safe-area
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 16,
+    borderRadius: 16,
+    elevation: 10,
     shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12
   },
   tabBarLabel: {
     fontSize: 11,

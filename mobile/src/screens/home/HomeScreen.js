@@ -111,8 +111,7 @@ const HomeScreen = ({ navigation }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Lost & Found</Text>
-        <Text style={styles.headerSubtitle}>Peradeniya Campus</Text>
+        <Text style={styles.headerTitle}>findMate</Text>
       </View>
 
       {/* Tab Selector */}
@@ -242,7 +241,9 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 20,
-    paddingTop: 16
+    paddingTop: 16,
+    // Extra bottom padding so list items aren't hidden behind bottom tabs
+    paddingBottom: 120
   },
   loadingContainer: {
     flex: 1,
@@ -327,7 +328,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 60
+    paddingVertical: 60,
+    // Ensure empty state content is visible above the bottom tabs
+    paddingBottom: 120
   },
   emptyIcon: {
     fontSize: 64,
