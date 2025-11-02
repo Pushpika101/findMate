@@ -1,168 +1,243 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { authAPI } from '../services/api';
-import { saveToken, getToken, removeToken, saveUser, getUser, clearStorage } from '../services/storage';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
+  ActivityIndicator
+} from 'react-native';
+import { useAuth } from '../../context/AuthContext';
+import COLORS from '../../utils/colors';
 
-export const AuthContext = createContext();
+const LoginScreen = ({ navigation }) => {
+  const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(null);
+  const validateForm = () => {
+    const newErrors = {};
 
-  // Check if user is logged in on app start
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const savedToken = await getToken();
-      const savedUser = await getUser();
-
-      if (savedToken && savedUser) {
-        setToken(savedToken);
-        setUser(savedUser);
-      }
-    } catch (error) {
-      console.error('Error checking auth:', error);
-    } finally {
-      setLoading(false);
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!email.includes('@')) {
+      newErrors.email = 'Invalid email format';
     }
+
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  // Register
-  const register = async (userData) => {
-    try {
-      const response = await authAPI.register(userData);
-      return { success: true, data: response };
-    } catch (error) {
-      return { success: false, error };
-    }
-  };
+  const handleLogin = async () => {
+    if (!validateForm()) return;
 
-  // Login
-  const login = async (email, password) => {
-    try {
-      const response = await authAPI.login({ email, password });
-      
-      if (response.success && response.data) {
-        const { token: newToken, user: newUser } = response.data;
-        
-        // Save to storage
-        await saveToken(newToken);
-        await saveUser(newUser);
-        
-        // Update state
-        setToken(newToken);
-        setUser(newUser);
-        
-        return { success: true, data: response.data };
-      }
-      
-      return { success: false, error: 'Login failed' };
-    } catch (error) {
-      return { success: false, error };
-    }
-  };
+    setLoading(true);
+    const result = await login(email.trim().toLowerCase(), password);
+    setLoading(false);
 
-  // Logout
-  const logout = async () => {
-    try {
-      await clearStorage();
-      setToken(null);
-      setUser(null);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error };
+    if (result.success) {
+      // Navigation handled by AppNavigator
+    } else {
+      Alert.alert('Login Failed', result.error || 'Invalid credentials');
     }
-  };
-
-  // Update user
-  const updateUser = async (userData) => {
-    try {
-      await saveUser(userData);
-      setUser(userData);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error };
-    }
-  };
-
-  // Verify email
-  const verifyEmail = async (verificationToken) => {
-    try {
-      const response = await authAPI.verifyEmail(verificationToken);
-      return { success: true, data: response };
-    } catch (error) {
-      return { success: false, error };
-    }
-  };
-
-  // Forgot password
-  const forgotPassword = async (email) => {
-    try {
-      const response = await authAPI.forgotPassword(email);
-      return { success: true, data: response };
-    } catch (error) {
-      return { success: false, error };
-    }
-  };
-
-  // Reset password
-  const resetPassword = async (resetToken, newPassword) => {
-    try {
-      const response = await authAPI.resetPassword({ 
-        token: resetToken, 
-        password: newPassword 
-      });
-      return { success: true, data: response };
-    } catch (error) {
-      return { success: false, error };
-    }
-  };
-
-  // Refresh user data
-  const refreshUser = async () => {
-    try {
-      const response = await authAPI.getMe();
-      if (response.success && response.data) {
-        await saveUser(response.data.user);
-        setUser(response.data.user);
-        return { success: true, data: response.data.user };
-      }
-      return { success: false, error: 'Failed to refresh user' };
-    } catch (error) {
-      return { success: false, error };
-    }
-  };
-
-  const value = {
-    user,
-    token,
-    loading,
-    isAuthenticated: !!user && !!token,
-    register,
-    login,
-    logout,
-    updateUser,
-    verifyEmail,
-    forgotPassword,
-    resetPassword,
-    refreshUser
   };
 
   return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Welcome Back!</Text>
+          <Text style={styles.subtitle}>
+            Sign in to continue to Lost & Found
+          </Text>
+        </View>
+
+        {/* Form */}
+        <View style={styles.form}>
+          {/* Email Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={[styles.input, errors.email && styles.inputError]}
+              placeholder="your.email@eng.pdn.ac.lk"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                setErrors({ ...errors, email: null });
+              }}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
+          </View>
+
+          {/* Password Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={[styles.input, errors.password && styles.inputError]}
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                setErrors({ ...errors, password: null });
+              }}
+              secureTextEntry
+            />
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
+          </View>
+
+          {/* Forgot Password */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ForgotPassword')}
+            style={styles.forgotButton}
+          >
+            <Text style={styles.forgotText}>Forgot Password?</Text>
+          </TouchableOpacity>
+
+          {/* Login Button */}
+          <TouchableOpacity
+            style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color={COLORS.white} />
+            ) : (
+              <Text style={styles.loginButtonText}>Sign In</Text>
+            )}
+          </TouchableOpacity>
+
+          {/* Sign Up Link */}
+          <View style={styles.signupContainer}>
+            <Text style={styles.signupText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+              <Text style={styles.signupLink}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
-// Custom hook to use auth context
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 24
+  },
+  header: {
+    marginBottom: 40,
+    alignItems: 'center'
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: COLORS.textPrimary,
+    marginBottom: 8
+  },
+  subtitle: {
+    fontSize: 16,
+    color: COLORS.textSecondary,
+    textAlign: 'center'
+  },
+  form: {
+    width: '100%'
+  },
+  inputContainer: {
+    marginBottom: 20
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
+    marginBottom: 8
+  },
+  input: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    backgroundColor: COLORS.white
+  },
+  inputError: {
+    borderColor: COLORS.error
+  },
+  errorText: {
+    color: COLORS.error,
+    fontSize: 12,
+    marginTop: 4
+  },
+  forgotButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 24
+  },
+  forgotText: {
+    color: COLORS.primary,
+    fontSize: 14,
+    fontWeight: '600'
+  },
+  loginButton: {
+    height: 50,
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16
+  },
+  loginButtonDisabled: {
+    opacity: 0.6
+  },
+  loginButtonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: '600'
+  },
+  signupContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  signupText: {
+    color: COLORS.textSecondary,
+    fontSize: 14
+  },
+  signupLink: {
+    color: COLORS.primary,
+    fontSize: 14,
+    fontWeight: '600'
   }
-  return context;
-};
+});
+
+export default LoginScreen;
