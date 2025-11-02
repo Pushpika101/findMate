@@ -26,6 +26,8 @@ const SignupScreen = ({ navigation }) => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -180,13 +182,22 @@ const SignupScreen = ({ navigation }) => {
           {/* Password Input */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password *</Text>
-            <TextInput
-              style={[styles.input, errors.password && styles.inputError]}
-              placeholder="At least 6 characters"
-              value={formData.password}
-              onChangeText={(text) => handleInputChange('password', text)}
-              secureTextEntry
-            />
+            <View style={styles.inputWithToggle}>
+              <TextInput
+                style={[styles.input, errors.password && styles.inputError]}
+                placeholder="At least 6 characters"
+                value={formData.password}
+                onChangeText={(text) => handleInputChange('password', text)}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity
+                style={styles.showButton}
+                onPress={() => setShowPassword((s) => !s)}
+                accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <Text style={styles.showButtonText}>{showPassword ? 'Hide' : 'Show'}</Text>
+              </TouchableOpacity>
+            </View>
             {errors.password && (
               <Text style={styles.errorText}>{errors.password}</Text>
             )}
@@ -195,13 +206,22 @@ const SignupScreen = ({ navigation }) => {
           {/* Confirm Password Input */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Confirm Password *</Text>
-            <TextInput
-              style={[styles.input, errors.confirmPassword && styles.inputError]}
-              placeholder="Re-enter your password"
-              value={formData.confirmPassword}
-              onChangeText={(text) => handleInputChange('confirmPassword', text)}
-              secureTextEntry
-            />
+            <View style={styles.inputWithToggle}>
+              <TextInput
+                style={[styles.input, errors.confirmPassword && styles.inputError]}
+                placeholder="Re-enter your password"
+                value={formData.confirmPassword}
+                onChangeText={(text) => handleInputChange('confirmPassword', text)}
+                secureTextEntry={!showConfirmPassword}
+              />
+              <TouchableOpacity
+                style={styles.showButton}
+                onPress={() => setShowConfirmPassword((s) => !s)}
+                accessibilityLabel={showConfirmPassword ? 'Hide password' : 'Show password'}
+              >
+                <Text style={styles.showButtonText}>{showConfirmPassword ? 'Hide' : 'Show'}</Text>
+              </TouchableOpacity>
+            </View>
             {errors.confirmPassword && (
               <Text style={styles.errorText}>{errors.confirmPassword}</Text>
             )}
@@ -332,5 +352,25 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   }
 });
+
+// Styles for password toggle
+const extraStyles = StyleSheet.create({
+  inputWithToggle: {
+    position: 'relative'
+  },
+  showButton: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8
+  },
+  showButtonText: {
+    color: COLORS.primary,
+    fontWeight: '600'
+  }
+});
+
+Object.assign(styles, extraStyles);
 
 export default SignupScreen;

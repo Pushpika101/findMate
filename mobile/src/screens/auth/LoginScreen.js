@@ -20,6 +20,7 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -96,16 +97,25 @@ const LoginScreen = ({ navigation }) => {
           {/* Password Input */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={[styles.input, errors.password && styles.inputError]}
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                setErrors({ ...errors, password: null });
-              }}
-              secureTextEntry
-            />
+            <View style={styles.inputWithToggle}>
+              <TextInput
+                style={[styles.input, errors.password && styles.inputError]}
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setErrors({ ...errors, password: null });
+                }}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity
+                style={styles.showButton}
+                onPress={() => setShowPassword((s) => !s)}
+                accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <Text style={styles.showButtonText}>{showPassword ? 'Hide' : 'Show'}</Text>
+              </TouchableOpacity>
+            </View>
             {errors.password && (
               <Text style={styles.errorText}>{errors.password}</Text>
             )}
@@ -239,5 +249,26 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   }
 });
+
+// Extra styles for password toggle
+const extraStyles = StyleSheet.create({
+  inputWithToggle: {
+    position: 'relative'
+  },
+  showButton: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8
+  },
+  showButtonText: {
+    color: COLORS.primary,
+    fontWeight: '600'
+  }
+});
+
+// Merge styles for convenience
+Object.assign(styles, extraStyles);
 
 export default LoginScreen;
