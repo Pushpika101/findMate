@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     position: 'relative'
   },
   tabActive: {
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: COLORS.kk,
     borderRadius: 8
   },
   tabText: {

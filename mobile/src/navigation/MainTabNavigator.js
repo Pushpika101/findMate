@@ -126,16 +126,16 @@ const MainTabNavigator = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: 64,
-    paddingBottom: 0,
+    height: 80,
+    paddingBottom: 4,
     paddingTop: 8,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk,
     borderTopWidth: 0,
     // Position the tab bar slightly above the bottom so it doesn't sit flush with device bottom/safe-area
     position: 'absolute',
     left: 16,
     right: 16,
-    bottom: 16,
+    bottom: 0,
     borderRadius: 16,
     elevation: 10,
     shadowColor: COLORS.black,
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12
   },
   tabBarLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '600'
   },
   addButton: {
