@@ -11,7 +11,8 @@ const jwt = require('jsonwebtoken');
 const authRoutes = require('./src/routes/auth');
 const itemRoutes = require('./src/routes/items');
 const chatRoutes = require('./src/routes/chat');
-const notificationRoutes = require('./src/routes/notifications');
+// Note: route file is named `notification.js` (singular).
+const notificationRoutes = require('./src/routes/notification');
 const userRoutes = require('./src/routes/users');
 const adminRoutes = require('./src/routes/admin');
 
