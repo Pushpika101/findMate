@@ -241,9 +241,9 @@ const ItemDetailScreen = ({ route, navigation }) => {
                 />
               ))}
             </ScrollView>
-            {images.length > 1 && (
+            {imageUrls.length > 1 && (
               <View style={styles.imageIndicatorContainer}>
-                {images.map((_, index) => (
+                {imageUrls.map((_, index) => (
                   <View
                     key={index}
                     style={[

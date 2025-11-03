@@ -56,6 +56,9 @@ const uploadToCloudinary = (fieldName) => {
       console.warn('[cloudinary] Cloudinary not configured - saving uploads locally to /uploads');
       const files = Array.isArray(req.files[fieldName]) ? req.files[fieldName] : [req.files[fieldName]];
 
+      // Determine base URL from request when available so mobile clients get reachable URLs
+      const requestBase = (req && req.protocol && req.get) ? `${req.protocol}://${req.get('host')}` : SERVER_BASE;
+
       const saved = files.map((file) => {
         try {
           // Determine extension
@@ -69,7 +72,7 @@ const uploadToCloudinary = (fieldName) => {
 
           return {
             ...file,
-            path: `${SERVER_BASE}/uploads/${filename}`,
+            path: `${requestBase}/uploads/${filename}`,
             cloudinaryId: null
           };
         } catch (err) {
