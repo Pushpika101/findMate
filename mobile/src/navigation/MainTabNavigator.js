@@ -143,7 +143,7 @@ const MainTabNavigator = () => {
           paddingTop: 4,
           backgroundColor: COLORS.kk,
           borderTopWidth: 5,
-          borderTopColor: COLORS.primary,
+          borderTopColor: COLORS.black,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           marginHorizontal: 12,

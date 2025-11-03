@@ -386,7 +386,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.claimButton, { flex: 1 }]}
                     onPress={handleClaimItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.success }]}>
+                    <Text style={[styles.actionButtonText, { color: COLORS.found }]}>
                       {item.type === 'lost' ? 'I Found This' : 'This is Mine'}
                     </Text>
                   </TouchableOpacity>
@@ -395,14 +395,14 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.chatButton, { flex: 1 }]}
                     onPress={handleChatWithOwner}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.black }]}>Chat</Text>
+                    <Text style={[styles.actionButtonText, { color: COLORS.primary }]}>Chat</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
                     onPress={handleShareItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.secondaryDark }]}>Share</Text>
+                    <Text style={[styles.actionButtonText, { color: COLORS.warning }]}>Share</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -658,24 +658,24 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary
   },
   claimButton: {
-    borderColor: COLORS.success,
-    backgroundColor: '#DCFCE7'
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.black
   },
   chatButton: {
     borderColor: COLORS.black,
-    backgroundColor: COLORS.gray400
+    backgroundColor: COLORS.black
   },
   editButton: {
-    borderColor: COLORS.info,
-    backgroundColor: '#DBEAFE'
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.black
   },
   resolveButton: {
-    borderColor: COLORS.secondaryDark,
-    backgroundColor: COLORS.secondaryLight
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.black
   },
   deleteButton: {
-    borderColor: COLORS.error,
-    backgroundColor: '#FEE2E2'
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.black
   }
 });
 
