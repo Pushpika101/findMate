@@ -265,13 +265,13 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary
   },
   itemCard: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
     shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 3
   },
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   itemFooter: {
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border
+    borderTopColor: COLORS.gray400
   },
   postedBy: {
     fontSize: 12,
@@ -342,8 +342,8 @@ const styles = StyleSheet.create({
     paddingRight: 16
   },
   imageThumb: {
-    width: 130,
-    height: 130,
+    width: 120,
+    height: 120,
     borderRadius: 20,
     backgroundColor: COLORS.gray100
   },
