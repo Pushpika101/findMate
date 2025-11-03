@@ -7,26 +7,35 @@ import {
   FlatList,
   RefreshControl,
   ActivityIndicator,
-  Alert,
-  Image
+  Alert
 } from 'react-native';
 import { itemsAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
+import SearchBar from '../../components/common/SearchBar';
+import FilterModal from '../../components/items/FilterModal';
 
 const HomeScreen = ({ navigation }) => {
-  const [activeTab, setActiveTab] = useState('lost'); // 'lost' or 'found'
+  const [activeTab, setActiveTab] = useState('lost');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   useEffect(() => {
     fetchItems();
-  }, [activeTab]);
+  }, [activeTab, searchQuery, filters]);
 
   const fetchItems = async () => {
     try {
       setLoading(true);
-      const response = await itemsAPI.getAll({ type: activeTab });
+      const params = {
+        type: activeTab,
+        search: searchQuery,
+        ...filters
+      };
+      const response = await itemsAPI.getAll(params);
       if (response.success) {
         setItems(response.data.items);
       }
@@ -41,29 +50,57 @@ const HomeScreen = ({ navigation }) => {
     setRefreshing(true);
     await fetchItems();
     setRefreshing(false);
-  }, [activeTab]);
+  }, [activeTab, searchQuery, filters]);
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyIcon}>
-        {activeTab === 'lost' ? '🔍' : '✨'}
-      </Text>
-      <Text style={styles.emptyTitle}>
-        No {activeTab} items yet
-      </Text>
-      <Text style={styles.emptyText}>
-        {activeTab === 'lost' 
-          ? 'Be the first to report a lost item'
-          : 'Be the first to report a found item'
-        }
-      </Text>
-    </View>
-  );
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const getActiveFilterCount = () => {
+    return Object.keys(filters).filter(key => filters[key] && filters[key] !== 'recent').length;
+  };
+
+  const renderEmptyState = () => {
+    const hasFilters = Object.keys(filters).length > 0 || searchQuery;
+    
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyIcon}>
+          {hasFilters ? '🔍' : (activeTab === 'lost' ? '🔍' : '✨')}
+        </Text>
+        <Text style={styles.emptyTitle}>
+          {hasFilters ? 'No items found' : `No ${activeTab} items yet`}
+        </Text>
+        <Text style={styles.emptyText}>
+          {hasFilters 
+            ? 'Try adjusting your search or filters'
+            : activeTab === 'lost' 
+              ? 'Be the first to report a lost item'
+              : 'Be the first to report a found item'
+          }
+        </Text>
+        {hasFilters && (
+          <TouchableOpacity
+            style={styles.clearFiltersButton}
+            onPress={() => {
+              setSearchQuery('');
+              setFilters({});
+            }}
+          >
+            <Text style={styles.clearFiltersText}>Clear All Filters</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
 
   const renderItemCard = ({ item }) => (
     <TouchableOpacity
       style={styles.itemCard}
-      
       onPress={() => navigation.navigate('ItemDetail', { itemId: item.id })}
     >
       <View style={styles.itemHeader}>
@@ -79,38 +116,29 @@ const HomeScreen = ({ navigation }) => {
           {new Date(item.date).toLocaleDateString()}
         </Text>
       </View>
-      <View style={styles.itemRow}>
-        <View style={styles.leftColumn}>
-          <Text style={styles.itemName}>{item.item_name}</Text>
-          
-          <View style={styles.itemDetails}>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailIcon}>📍</Text>
-              <Text style={styles.detailText}>{item.location}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailIcon}>🏷️</Text>
-              <Text style={styles.detailText}>{item.category}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailIcon}>🎨</Text>
-              <Text style={styles.detailText}>{item.color}</Text>
-            </View>
-          </View>
 
-          {item.description && (
-            <Text style={styles.itemDescription} numberOfLines={2}>
-              {item.description}
-            </Text>
-          )}
+      <Text style={styles.itemName}>{item.item_name}</Text>
+      
+      <View style={styles.itemDetails}>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailIcon}>📍</Text>
+          <Text style={styles.detailText}>{item.location}</Text>
         </View>
-
-        <Image
-          source={{ uri: item.photo1_url || item.photo2_url || 'https://via.placeholder.com/150?text=No+Image' }}
-          style={styles.imageThumb}
-          resizeMode="cover"
-        />
+        <View style={styles.detailRow}>
+          <Text style={styles.detailIcon}>🏷️</Text>
+          <Text style={styles.detailText}>{item.category}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailIcon}>🎨</Text>
+          <Text style={styles.detailText}>{item.color}</Text>
+        </View>
       </View>
+
+      {item.description && (
+        <Text style={styles.itemDescription} numberOfLines={2}>
+          {item.description}
+        </Text>
+      )}
 
       <View style={styles.itemFooter}>
         <Text style={styles.postedBy}>Posted by {item.user_name}</Text>
@@ -118,12 +146,36 @@ const HomeScreen = ({ navigation }) => {
     </TouchableOpacity>
   );
 
+  const activeFilterCount = getActiveFilterCount();
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>findMate</Text>
+        <Text style={styles.headerTitle}>Lost & Found</Text>
+        <Text style={styles.headerSubtitle}>Peradeniya Campus</Text>
       </View>
+
+      {/* Search Bar */}
+      <SearchBar
+        onSearch={handleSearch}
+        onFilterPress={() => setShowFilterModal(true)}
+      />
+
+      {/* Active Filters Indicator */}
+      {activeFilterCount > 0 && (
+        <View style={styles.activeFiltersIndicator}>
+          <Text style={styles.activeFiltersText}>
+            {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowFilterModal(true)}
+            style={styles.viewFiltersButton}
+          >
+            <Text style={styles.viewFiltersText}>View</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Tab Selector */}
       <View style={styles.tabContainer}>
@@ -140,6 +192,7 @@ const HomeScreen = ({ navigation }) => {
           ]}>
             Lost Items
           </Text>
+          {activeTab === 'lost' && <View style={styles.tabIndicator} />}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -155,6 +208,7 @@ const HomeScreen = ({ navigation }) => {
           ]}>
             Found Items
           </Text>
+          {activeTab === 'found' && <View style={styles.tabIndicator} />}
         </TouchableOpacity>
       </View>
 
@@ -181,6 +235,14 @@ const HomeScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         />
       )}
+
+      {/* Filter Modal */}
+      <FilterModal
+        visible={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        onApply={handleApplyFilters}
+        currentFilters={filters}
+      />
     </View>
   );
 };
@@ -209,11 +271,37 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     opacity: 0.9
   },
+  activeFiltersIndicator: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    backgroundColor: COLORS.primaryLight + '20',
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border
+  },
+  activeFiltersText: {
+    fontSize: 13,
+    color: COLORS.primary,
+    fontWeight: '600'
+  },
+  viewFiltersButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    backgroundColor: COLORS.primary,
+    borderRadius: 12
+  },
+  viewFiltersText: {
+    fontSize: 12,
+    color: COLORS.white,
+    fontWeight: '600'
+  },
   tabContainer: {
     flexDirection: 'row',
     backgroundColor: COLORS.white,
     marginHorizontal: 20,
-    marginTop: -20,
+    marginTop: 12,
     borderRadius: 12,
     padding: 4,
     shadowColor: COLORS.black,
@@ -229,7 +317,7 @@ const styles = StyleSheet.create({
     position: 'relative'
   },
   tabActive: {
-    backgroundColor: COLORS.kk,
+    backgroundColor: COLORS.primaryLight,
     borderRadius: 8
   },
   tabText: {
@@ -250,9 +338,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 20,
-    paddingTop: 16,
-    // Extra bottom padding so list items aren't hidden behind bottom tabs
-    paddingBottom: 120
+    paddingTop: 16
   },
   loadingContainer: {
     flex: 1,
@@ -265,13 +351,13 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary
   },
   itemCard: {
-    backgroundColor: COLORS.kk2,
+    backgroundColor: COLORS.white,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
     shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3
   },
@@ -287,7 +373,7 @@ const styles = StyleSheet.create({
     borderRadius: 6
   },
   typeBadgeText: {
-    color: COLORS.black,
+    color: COLORS.white,
     fontSize: 11,
     fontWeight: 'bold',
     letterSpacing: 0.5
@@ -327,33 +413,17 @@ const styles = StyleSheet.create({
   itemFooter: {
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: COLORS.gray400
+    borderTopColor: COLORS.border
   },
   postedBy: {
     fontSize: 12,
     color: COLORS.textTertiary
   },
-  itemRow: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  leftColumn: {
-    flex: 1,
-    paddingRight: 16
-  },
-  imageThumb: {
-    width: 120,
-    height: 120,
-    borderRadius: 20,
-    backgroundColor: COLORS.gray100
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 60,
-    // Ensure empty state content is visible above the bottom tabs
-    paddingBottom: 120
+    paddingVertical: 60
   },
   emptyIcon: {
     fontSize: 64,
@@ -368,7 +438,20 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,
     color: COLORS.textSecondary,
-    textAlign: 'center'
+    textAlign: 'center',
+    paddingHorizontal: 40
+  },
+  clearFiltersButton: {
+    marginTop: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    backgroundColor: COLORS.primary,
+    borderRadius: 20
+  },
+  clearFiltersText: {
+    color: COLORS.white,
+    fontSize: 14,
+    fontWeight: '600'
   }
 });
 
