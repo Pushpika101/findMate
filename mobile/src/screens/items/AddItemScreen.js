@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
+import { Modal, Pressable, ScrollView as RNScrollView } from 'react-native';
 import { itemsAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
 import { ITEM_CATEGORIES, ITEM_COLORS, COMMON_LOCATIONS } from '../../utils/constants';
@@ -37,6 +38,8 @@ const AddItemScreen = ({ navigation }) => {
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [colorModalVisible, setColorModalVisible] = useState(false);
 
   // Request permission for image picker
   const requestPermission = async () => {
@@ -264,18 +267,39 @@ const AddItemScreen = ({ navigation }) => {
         {/* Category */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Category *</Text>
-          <View style={[styles.pickerContainer, errors.category && styles.inputError]}>
-            <Picker
-              selectedValue={formData.category}
-              onValueChange={(value) => handleInputChange('category', value)}
-              style={styles.picker}
-            >
-              <Picker.Item label="Select category..." value="" />
-              {ITEM_CATEGORIES.map((cat) => (
-                <Picker.Item key={cat.value} label={cat.label} value={cat.value} />
-              ))}
-            </Picker>
-          </View>
+          <TouchableOpacity
+            style={[styles.dropdown, errors.category && styles.inputError]}
+            onPress={() => setCategoryModalVisible(true)}
+          >
+            <Text style={formData.category ? styles.dropdownText : styles.dropdownPlaceholder}>
+              {formData.category ? (ITEM_CATEGORIES.find(c => c.value === formData.category)?.label) : 'Select category...'}
+            </Text>
+          </TouchableOpacity>
+          <Modal
+            visible={categoryModalVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setCategoryModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <RNScrollView>
+                  {ITEM_CATEGORIES.map((cat) => (
+                    <Pressable
+                      key={cat.value}
+                      style={styles.modalItem}
+                      onPress={() => { handleInputChange('category', cat.value); setCategoryModalVisible(false); }}
+                    >
+                      <Text style={styles.modalItemText}>{cat.label}</Text>
+                    </Pressable>
+                  ))}
+                </RNScrollView>
+                <TouchableOpacity style={styles.modalClose} onPress={() => setCategoryModalVisible(false)}>
+                  <Text style={styles.modalCloseText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
           {errors.category && (
             <Text style={styles.errorText}>{errors.category}</Text>
           )}
@@ -284,18 +308,39 @@ const AddItemScreen = ({ navigation }) => {
         {/* Color */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Color *</Text>
-          <View style={[styles.pickerContainer, errors.color && styles.inputError]}>
-            <Picker
-              selectedValue={formData.color}
-              onValueChange={(value) => handleInputChange('color', value)}
-              style={styles.picker}
-            >
-              <Picker.Item label="Select color..." value="" />
-              {ITEM_COLORS.map((color) => (
-                <Picker.Item key={color.value} label={color.label} value={color.value} />
-              ))}
-            </Picker>
-          </View>
+          <TouchableOpacity
+            style={[styles.dropdown, errors.color && styles.inputError]}
+            onPress={() => setColorModalVisible(true)}
+          >
+            <Text style={formData.color ? styles.dropdownText : styles.dropdownPlaceholder}>
+              {formData.color ? (ITEM_COLORS.find(c => c.value === formData.color)?.label) : 'Select color...'}
+            </Text>
+          </TouchableOpacity>
+          <Modal
+            visible={colorModalVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setColorModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <RNScrollView>
+                  {ITEM_COLORS.map((c) => (
+                    <Pressable
+                      key={c.value}
+                      style={styles.modalItem}
+                      onPress={() => { handleInputChange('color', c.value); setColorModalVisible(false); }}
+                    >
+                      <Text style={styles.modalItemText}>{c.label}</Text>
+                    </Pressable>
+                  ))}
+                </RNScrollView>
+                <TouchableOpacity style={styles.modalClose} onPress={() => setColorModalVisible(false)}>
+                  <Text style={styles.modalCloseText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
           {errors.color && (
             <Text style={styles.errorText}>{errors.color}</Text>
           )}
@@ -645,6 +690,53 @@ const styles = StyleSheet.create({
   },
   bottomPadding: {
     height: 40
+  }
+  ,
+  dropdown: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 12,
+    backgroundColor: COLORS.white,
+    justifyContent: 'center',
+    paddingHorizontal: 12
+  },
+  dropdownPlaceholder: {
+    color: COLORS.textSecondary
+  },
+  dropdownText: {
+    color: COLORS.textPrimary
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end'
+  },
+  modalContent: {
+    backgroundColor: COLORS.white,
+    maxHeight: '50%',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    padding: 12
+  },
+  modalItem: {
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.gray100
+  },
+  modalItemText: {
+    fontSize: 16,
+    color: COLORS.textPrimary
+  },
+  modalClose: {
+    paddingVertical: 12,
+    alignItems: 'center'
+  },
+  modalCloseText: {
+    color: COLORS.primary,
+    fontSize: 16,
+    fontWeight: '600'
   }
 });
 
