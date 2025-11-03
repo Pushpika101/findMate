@@ -56,9 +56,39 @@ const ChatScreen = ({ route, navigation }) => {
     // Listen for new messages
     onNewMessage((newMessage) => {
       if (newMessage.chat_id === chatId) {
-        setMessages((prev) => [...prev, newMessage]);
+        setMessages((prev) => {
+          // Deduplicate: if we have a temp optimistic message (created locally) that matches
+          // the incoming server message (same sender and text within a short time window),
+          // replace the temp message with the server message. Otherwise append.
+          const existsSimilarIndex = prev.findIndex((m) => {
+            // exact id match
+            if (m.id === newMessage.id) return true;
+
+            // match by same sender and identical text and a proximate timestamp (5s)
+            if (m.sender_id === newMessage.sender_id && m.message_text === newMessage.message_text) {
+              try {
+                const a = new Date(m.created_at).getTime();
+                const b = new Date(newMessage.created_at).getTime();
+                return Math.abs(a - b) <= 5000; // 5 seconds
+              } catch (e) {
+                return false;
+              }
+            }
+
+            return false;
+          });
+
+          if (existsSimilarIndex !== -1) {
+            // Replace the temp message with the authoritative server message
+            const next = [...prev];
+            next[existsSimilarIndex] = newMessage;
+            return next;
+          }
+
+          return [...prev, newMessage];
+        });
         scrollToBottom();
-        
+
         // Mark as read if from other user
         if (newMessage.sender_id !== user.id) {
           markAsRead();
