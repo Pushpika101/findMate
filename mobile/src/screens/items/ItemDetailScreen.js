@@ -201,12 +201,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
           <Text style={styles.headerButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Item Details</Text>
-        <TouchableOpacity
-          onPress={handleShareItem}
-          style={styles.headerButton}
-        >
-          <Text style={styles.headerButtonIcon}>🔗</Text>
-        </TouchableOpacity>
+          {/* header share removed as requested */}
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -270,7 +265,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
             { backgroundColor: item.type === 'lost' ? COLORS.lost : COLORS.found }
           ]}>
             <Text style={styles.typeBadgeText}>
-              {item.type === 'lost' ? '🔍 LOST ITEM' : '✨ FOUND ITEM'}
+              {item.type === 'lost' ? 'LOST ITEM' : 'FOUND ITEM'}
             </Text>
           </View>
 
@@ -361,43 +356,37 @@ const ItemDetailScreen = ({ route, navigation }) => {
           {item.status === 'active' && (
             <View style={styles.actionButtons}>
               {isOwner ? (
-                // Owner Actions
+                // Owner Actions (styled with thin border and light background)
                 <>
                   <TouchableOpacity
-                    style={[styles.actionButton, styles.editButton]}
+                    style={[styles.actionButton, styles.editButton, { flex: 1 }]}
                     onPress={handleEditItem}
                   >
-                    <Text style={styles.actionButtonIcon}>✏️</Text>
-                    <Text style={styles.actionButtonText}>Edit</Text>
+                    <Text style={[styles.actionButtonText, { color: COLORS.info }]}>Edit</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.actionButton, styles.resolveButton]}
-                    onPress={handleMarkAsResolved}
+                    style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
+                    onPress={handleShareItem}
                   >
-                    <Text style={styles.actionButtonIcon}>✓</Text>
-                    <Text style={styles.actionButtonText}>Mark Resolved</Text>
+                    <Text style={[styles.actionButtonText, { color: COLORS.primary }]}>Share</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.actionButton, styles.deleteButton]}
+                    style={[styles.actionButton, styles.deleteButton, { flex: 1 }]}
                     onPress={handleDeleteItem}
                   >
-                    <Text style={styles.actionButtonIcon}>🗑️</Text>
-                    <Text style={styles.actionButtonText}>Delete</Text>
+                    <Text style={[styles.actionButtonText, { color: COLORS.error }]}>Delete</Text>
                   </TouchableOpacity>
                 </>
               ) : (
-                // Non-Owner Actions
+                // Non-Owner Actions (styled)
                 <>
                   <TouchableOpacity
                     style={[styles.actionButton, styles.claimButton, { flex: 1 }]}
                     onPress={handleClaimItem}
                   >
-                    <Text style={styles.actionButtonIcon}>
-                      {item.type === 'lost' ? '✓' : '🙋'}
-                    </Text>
-                    <Text style={styles.actionButtonText}>
+                    <Text style={[styles.actionButtonText, { color: COLORS.success }]}>
                       {item.type === 'lost' ? 'I Found This' : 'This is Mine'}
                     </Text>
                   </TouchableOpacity>
@@ -406,8 +395,14 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.chatButton, { flex: 1 }]}
                     onPress={handleChatWithOwner}
                   >
-                    <Text style={styles.actionButtonIcon}>💬</Text>
-                    <Text style={styles.actionButtonText}>Chat</Text>
+                    <Text style={[styles.actionButtonText, { color: COLORS.primary }]}>Chat</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
+                    onPress={handleShareItem}
+                  >
+                    <Text style={[styles.actionButtonText, { color: COLORS.primary }]}>Share</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -649,7 +644,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 12,
-    gap: 8
+    gap: 8,
+    marginHorizontal: 6,
+    borderWidth: 1
   },
   actionButtonIcon: {
     fontSize: 18
@@ -657,25 +654,27 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: COLORS.white
+    color: COLORS.textPrimary
   },
   claimButton: {
-    backgroundColor: COLORS.success
+    borderColor: COLORS.success,
+    backgroundColor: '#DCFCE7'
   },
   chatButton: {
-    backgroundColor: COLORS.primary
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.primaryLight
   },
   editButton: {
-    backgroundColor: COLORS.info,
-    flex: 1
+    borderColor: COLORS.info,
+    backgroundColor: '#DBEAFE'
   },
   resolveButton: {
-    backgroundColor: COLORS.success,
-    flex: 1
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.primaryLight
   },
   deleteButton: {
-    backgroundColor: COLORS.error,
-    flex: 1
+    borderColor: COLORS.error,
+    backgroundColor: '#FEE2E2'
   }
 });
 
