@@ -5,6 +5,11 @@ const {
   markAllAsRead,
   deleteNotification
 } = require('../services/notificationService');
+const {
+  registerDeviceToken,
+  getTokensForUser,
+  sendPushToTokens
+} = require('../services/pushService');
 
 // @desc    Get user notifications
 // @route   GET /api/notifications
@@ -129,5 +134,45 @@ exports.deleteNotification = async (req, res) => {
       success: false,
       message: 'Error deleting notification'
     });
+  }
+};
+
+// @desc    Register device push token for current user
+// @route   POST /api/notifications/register-token
+// @access  Private
+exports.registerToken = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { token, platform } = req.body;
+    if (!token) {
+      return res.status(400).json({ success: false, message: 'Token is required' });
+    }
+
+    await registerDeviceToken(userId, token, platform || null);
+
+    res.json({ success: true, message: 'Token registered' });
+  } catch (error) {
+    console.error('Register token error:', error);
+    res.status(500).json({ success: false, message: 'Error registering token' });
+  }
+};
+
+// @desc    Send push notification to a user (admin/internal)
+// @route   POST /api/notifications/send
+// @access  Private
+exports.sendPush = async (req, res) => {
+  try {
+    const { userId, title, body, data } = req.body;
+    if (!userId || !title || !body) {
+      return res.status(400).json({ success: false, message: 'userId, title and body are required' });
+    }
+
+    const tokens = await getTokensForUser(userId);
+    const result = await sendPushToTokens(tokens, { title, body, data });
+
+    res.json({ success: true, message: 'Push sent', result });
+  } catch (error) {
+    console.error('Send push error:', error);
+    res.status(500).json({ success: false, message: 'Error sending push' });
   }
 };

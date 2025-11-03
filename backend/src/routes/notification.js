@@ -23,6 +23,12 @@ router.get('/', getNotifications);
 // @access  Private
 router.get('/unread-count', getUnreadCount);
 
+// Register device token for push notifications
+router.post('/register-token', require('../controllers/notificationController').registerToken);
+
+// Send push (admin/internal)
+router.post('/send', require('../controllers/notificationController').sendPush);
+
 // @route   PUT /api/notifications/read-all
 // @desc    Mark all notifications as read
 // @access  Private

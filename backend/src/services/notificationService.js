@@ -1,4 +1,5 @@
 const { query } = require('../config/database');
+const { getTokensForUser, sendPushToTokens } = require('./pushService');
 
 // Create a new notification
 const createNotification = async (userId, type, title, message, relatedItemId = null, io = null) => {
@@ -14,6 +15,24 @@ const createNotification = async (userId, type, title, message, relatedItemId = 
     // Send real-time notification via Socket.IO if available
     if (io) {
       io.to(`user_${userId}`).emit('new_notification', notification);
+    }
+
+    // Also send push notification via Expo (if tokens exist). Do not fail overall if push fails.
+    try {
+      const tokens = await getTokensForUser(userId);
+      console.log(`createNotification: found ${tokens?.length || 0} device token(s) for user ${userId}`);
+      if (tokens && tokens.length > 0) {
+        // Send a simple push message: title and body
+        const result = await sendPushToTokens(tokens, {
+          title: title,
+          body: message,
+          data: { relatedItemId, type }
+        });
+        console.log('createNotification: push send result:', result);
+      }
+    } catch (pushErr) {
+      console.error('Error sending push in createNotification:', pushErr);
+      // continue without throwing to keep DB write successful
     }
 
     return notification;

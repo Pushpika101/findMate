@@ -1,14 +1,15 @@
 {
   "expo": {
-  "name": "findMate",
-    "slug": "lost-and-found",
+    "name": "findMate",
+    "slug": "findMate",
+    "owner": "pushpika101",
     "version": "1.0.0",
     "orientation": "portrait",
-  "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "lostandfound",
     "splash": {
-  "image": "./assets/images/splash-icon.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#4F46E5"
     },
@@ -21,18 +22,28 @@
     },
     "android": {
       "adaptiveIcon": {
-  "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundColor": "#4F46E5"
       },
       "package": "com.pdn.lostandfound"
     },
     "web": {
-  "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [],
     "extra": {
       "apiUrl": "http://192.168.1.111:5001/api",
-      "socketUrl": "http://192.168.1.111:5001"
+      "socketUrl": "http://192.168.1.111:5001",
+        "projectId": "2121301c-332d-40aa-b9bf-43abe8cb9f3e",
+      "eas": {
+        "projectId": "2121301c-332d-40aa-b9bf-43abe8cb9f3e"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2121301c-332d-40aa-b9bf-43abe8cb9f3e"
     }
   }
 }

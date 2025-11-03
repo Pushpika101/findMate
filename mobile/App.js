@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import NotificationHandler from './src/components/NotificationHandler';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
 import MainNavigator from './src/navigation/AppNavigator';
@@ -51,6 +52,7 @@ export default function App() {
     <AuthProvider>
       <ErrorBoundary>
         <RootNavigator />
+        <NotificationHandler />
       </ErrorBoundary>
       <StatusBar style="auto" />
     </AuthProvider>

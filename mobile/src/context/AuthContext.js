@@ -10,6 +10,7 @@ import {
   clearStorage
 } from '../services/storage';
 import { initializeSocket, disconnectSocket } from '../services/socket';
+import { registerForPushNotificationsAsync } from '../services/pushNotifications';
 
 const AuthContext = createContext();
 
@@ -30,6 +31,12 @@ export const AuthProvider = ({ children }) => {
           if (storedUser) setUser(storedUser);
           // Try to initialize socket if token exists
           await initializeSocket();
+          // register push token for this device/user
+          try {
+            await registerForPushNotificationsAsync();
+          } catch (err) {
+            console.warn('Push registration failed during init:', err);
+          }
         }
       } catch (err) {
         console.error('Auth init error:', err);
@@ -51,6 +58,12 @@ export const AuthProvider = ({ children }) => {
         setUser(newUser);
         // initialize socket
         await initializeSocket();
+        // register push token after login
+        try {
+          await registerForPushNotificationsAsync();
+        } catch (err) {
+          console.warn('Push registration failed after login:', err);
+        }
         return { success: true, data: response.data };
       }
       return { success: false, error: response?.error || 'Login failed' };

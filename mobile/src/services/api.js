@@ -121,6 +121,7 @@ export const chatAPI = {
 export const notificationsAPI = {
   getAll: (params) => api.get('/notifications', { params }),
   getUnreadCount: () => api.get('/notifications/unread-count'),
+  registerToken: (token) => api.post('/notifications/register-token', { token }),
   markAsRead: (id) => api.put(`/notifications/${id}/read`),
   markAllAsRead: () => api.put('/notifications/read-all'),
   delete: (id) => api.delete(`/notifications/${id}`)
