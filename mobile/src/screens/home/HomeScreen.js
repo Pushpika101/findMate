@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
   imageThumb: {
     width: 130,
     height: 130,
-    borderRadius: 12,
+    borderRadius: 20,
     backgroundColor: COLORS.gray100
   },
   emptyContainer: {
