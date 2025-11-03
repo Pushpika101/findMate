@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
-import { Modal, Pressable, ScrollView as RNScrollView } from 'react-native';
+import { /* Modal, Pressable, ScrollView as RNScrollView */ } from 'react-native';
 import { itemsAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
 import { ITEM_CATEGORIES, ITEM_COLORS, COMMON_LOCATIONS } from '../../utils/constants';
@@ -38,8 +38,7 @@ const AddItemScreen = ({ navigation }) => {
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
-  const [colorModalVisible, setColorModalVisible] = useState(false);
+  // showing categories/colors as inline chips instead of dropdown modals
 
   // Request permission for image picker
   const requestPermission = async () => {
@@ -267,39 +266,17 @@ const AddItemScreen = ({ navigation }) => {
         {/* Category */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Category *</Text>
-          <TouchableOpacity
-            style={[styles.dropdown, errors.category && styles.inputError]}
-            onPress={() => setCategoryModalVisible(true)}
-          >
-            <Text style={formData.category ? styles.dropdownText : styles.dropdownPlaceholder}>
-              {formData.category ? (ITEM_CATEGORIES.find(c => c.value === formData.category)?.label) : 'Select category...'}
-            </Text>
-          </TouchableOpacity>
-          <Modal
-            visible={categoryModalVisible}
-            transparent
-            animationType="slide"
-            onRequestClose={() => setCategoryModalVisible(false)}
-          >
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalContent}>
-                <RNScrollView>
-                  {ITEM_CATEGORIES.map((cat) => (
-                    <Pressable
-                      key={cat.value}
-                      style={styles.modalItem}
-                      onPress={() => { handleInputChange('category', cat.value); setCategoryModalVisible(false); }}
-                    >
-                      <Text style={styles.modalItemText}>{cat.label}</Text>
-                    </Pressable>
-                  ))}
-                </RNScrollView>
-                <TouchableOpacity style={styles.modalClose} onPress={() => setCategoryModalVisible(false)}>
-                  <Text style={styles.modalCloseText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+            {ITEM_CATEGORIES.map((cat) => (
+              <TouchableOpacity
+                key={cat.value}
+                style={[styles.locationChip, formData.category === cat.value && styles.chipSelected]}
+                onPress={() => handleInputChange('category', cat.value)}
+              >
+                <Text style={[styles.locationChipText, formData.category === cat.value && styles.chipSelectedText]}>{cat.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
           {errors.category && (
             <Text style={styles.errorText}>{errors.category}</Text>
           )}
@@ -308,39 +285,17 @@ const AddItemScreen = ({ navigation }) => {
         {/* Color */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Color *</Text>
-          <TouchableOpacity
-            style={[styles.dropdown, errors.color && styles.inputError]}
-            onPress={() => setColorModalVisible(true)}
-          >
-            <Text style={formData.color ? styles.dropdownText : styles.dropdownPlaceholder}>
-              {formData.color ? (ITEM_COLORS.find(c => c.value === formData.color)?.label) : 'Select color...'}
-            </Text>
-          </TouchableOpacity>
-          <Modal
-            visible={colorModalVisible}
-            transparent
-            animationType="slide"
-            onRequestClose={() => setColorModalVisible(false)}
-          >
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalContent}>
-                <RNScrollView>
-                  {ITEM_COLORS.map((c) => (
-                    <Pressable
-                      key={c.value}
-                      style={styles.modalItem}
-                      onPress={() => { handleInputChange('color', c.value); setColorModalVisible(false); }}
-                    >
-                      <Text style={styles.modalItemText}>{c.label}</Text>
-                    </Pressable>
-                  ))}
-                </RNScrollView>
-                <TouchableOpacity style={styles.modalClose} onPress={() => setColorModalVisible(false)}>
-                  <Text style={styles.modalCloseText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+            {ITEM_COLORS.map((c) => (
+              <TouchableOpacity
+                key={c.value}
+                style={[styles.locationChip, formData.color === c.value && styles.chipSelected]}
+                onPress={() => handleInputChange('color', c.value)}
+              >
+                <Text style={[styles.locationChipText, formData.color === c.value && styles.chipSelectedText]}>{c.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
           {errors.color && (
             <Text style={styles.errorText}>{errors.color}</Text>
           )}
@@ -737,6 +692,14 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontSize: 16,
     fontWeight: '600'
+  }
+  ,
+  chipSelected: {
+    backgroundColor: COLORS.primary,
+  },
+  chipSelectedText: {
+    color: COLORS.white,
+    fontWeight: '700'
   }
 });
 

@@ -108,16 +108,17 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
       style={{
         width: 70,
         height: 70,
-        borderRadius: 28,
+        borderRadius: 30,
         backgroundColor: COLORS.primary,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: -3,
+        marginTop: -24,
         shadowColor: COLORS.error,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
         elevation: 8,
+        zIndex: 999,
       }}
       onPress={handlePress}
       activeOpacity={0.9}
@@ -146,7 +147,7 @@ const MainTabNavigator = () => {
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           marginHorizontal: 12,
-          overflow: 'hidden',
+            overflow: 'visible',
           display: route.name === 'AddItem' ? 'none' : 'flex', // Hide on AddItem
           position: 'absolute',
           elevation: 0,
