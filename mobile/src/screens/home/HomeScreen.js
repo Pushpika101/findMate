@@ -7,7 +7,8 @@ import {
   FlatList,
   RefreshControl,
   ActivityIndicator,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import { itemsAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
@@ -78,29 +79,38 @@ const HomeScreen = ({ navigation }) => {
           {new Date(item.date).toLocaleDateString()}
         </Text>
       </View>
+      <View style={styles.itemRow}>
+        <View style={styles.leftColumn}>
+          <Text style={styles.itemName}>{item.item_name}</Text>
+          
+          <View style={styles.itemDetails}>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailIcon}>📍</Text>
+              <Text style={styles.detailText}>{item.location}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailIcon}>🏷️</Text>
+              <Text style={styles.detailText}>{item.category}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailIcon}>🎨</Text>
+              <Text style={styles.detailText}>{item.color}</Text>
+            </View>
+          </View>
 
-      <Text style={styles.itemName}>{item.item_name}</Text>
-      
-      <View style={styles.itemDetails}>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailIcon}>📍</Text>
-          <Text style={styles.detailText}>{item.location}</Text>
+          {item.description && (
+            <Text style={styles.itemDescription} numberOfLines={2}>
+              {item.description}
+            </Text>
+          )}
         </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailIcon}>🏷️</Text>
-          <Text style={styles.detailText}>{item.category}</Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailIcon}>🎨</Text>
-          <Text style={styles.detailText}>{item.color}</Text>
-        </View>
+
+        <Image
+          source={{ uri: item.photo1_url || item.photo2_url || 'https://via.placeholder.com/150?text=No+Image' }}
+          style={styles.imageThumb}
+          resizeMode="cover"
+        />
       </View>
-
-      {item.description && (
-        <Text style={styles.itemDescription} numberOfLines={2}>
-          {item.description}
-        </Text>
-      )}
 
       <View style={styles.itemFooter}>
         <Text style={styles.postedBy}>Posted by {item.user_name}</Text>
@@ -322,6 +332,20 @@ const styles = StyleSheet.create({
   postedBy: {
     fontSize: 12,
     color: COLORS.textTertiary
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  leftColumn: {
+    flex: 1,
+    paddingRight: 16
+  },
+  imageThumb: {
+    width: 130,
+    height: 130,
+    borderRadius: 12,
+    backgroundColor: COLORS.gray100
   },
   emptyContainer: {
     flex: 1,
