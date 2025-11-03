@@ -62,6 +62,7 @@ const HomeScreen = ({ navigation }) => {
   const renderItemCard = ({ item }) => (
     <TouchableOpacity
       style={styles.itemCard}
+      
       onPress={() => navigation.navigate('ItemDetail', { itemId: item.id })}
     >
       <View style={styles.itemHeader}>
