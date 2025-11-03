@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TouchableOpacity, View, Text, Animated, Platform } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import HomeScreen from '../screens/home/HomeScreen';
 import AddItemScreen from '../screens/items/AddItemScreen';
 import COLORS from '../utils/colors';
@@ -41,8 +42,11 @@ const ProfileScreen = () => {
 
 // Animated Add Button
 const AnimatedAddButton = ({ onPress, isFocused }) => {
-  const scaleAnim = React.useRef(new Animated.Value(1)).current;
+  const navigation = useNavigation();
+  // Start hidden and animate in when mounted or when navigation state changes
+  const scaleAnim = React.useRef(new Animated.Value(0)).current;
   const rotateAnim = React.useRef(new Animated.Value(0)).current;
+  const opacityAnim = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
     Animated.spring(rotateAnim, {
@@ -52,12 +56,43 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
     }).start();
   }, [isFocused]);
 
-  const handlePress = () => {
-    Animated.sequence([
-      Animated.spring(scaleAnim, { toValue: 0.85, useNativeDriver: true }),
-      Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }),
+  // Appear animation on mount
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, friction: 7 }),
+      Animated.timing(opacityAnim, { toValue: 1, duration: 220, useNativeDriver: true })
     ]).start();
-    onPress();
+
+    // Re-appear when navigation state changes (e.g., returning from AddItem)
+    const unsubscribe = navigation.addListener('state', () => {
+      // Only animate in if currently hidden
+      opacityAnim.stopAnimation((val) => {
+        if (val === 0) {
+          scaleAnim.setValue(0);
+          opacityAnim.setValue(0);
+          rotateAnim.setValue(0); // reset rotation back to plus
+          Animated.parallel([
+            Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, friction: 7 }),
+            Animated.timing(opacityAnim, { toValue: 1, duration: 220, useNativeDriver: true }),
+            Animated.timing(rotateAnim, { toValue: 0, duration: 220, useNativeDriver: true })
+          ]).start();
+        }
+      });
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handlePress = () => {
+    // vanish animation: scale down + fade out + rotate
+    Animated.parallel([
+      Animated.spring(scaleAnim, { toValue: 0, useNativeDriver: true }),
+      Animated.timing(opacityAnim, { toValue: 0, duration: 180, useNativeDriver: true }),
+      Animated.timing(rotateAnim, { toValue: 1, duration: 200, useNativeDriver: true })
+    ]).start(() => {
+      // navigate after animation completes
+      onPress();
+    });
   };
 
   const rotation = rotateAnim.interpolate({
@@ -84,7 +119,7 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
       onPress={handlePress}
       activeOpacity={0.9}
     >
-      <Animated.View style={{ transform: [{ scale: scaleAnim }, { rotate: rotation }] }}>
+      <Animated.View style={{ transform: [{ scale: scaleAnim }, { rotate: rotation }], opacity: opacityAnim }}>
         <Text style={{ fontSize: 32, color: COLORS.white, fontWeight: '300', marginTop: -4 }}>+</Text>
       </Animated.View>
     </TouchableOpacity>
