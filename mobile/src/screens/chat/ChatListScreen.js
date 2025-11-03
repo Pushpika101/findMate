@@ -87,10 +87,44 @@ const ChatListScreen = ({ navigation }) => {
               <Text style={styles.unreadText}>{item.unread_count}</Text>
             </View>
           )}
+
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => confirmDeleteChat(item.id)}
+          >
+            <Text style={styles.deleteButtonText}>Delete</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>
   );
+
+  const confirmDeleteChat = (id) => {
+    Alert.alert(
+      'Delete chat?',
+      'Are you sure you want to delete this chat? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: () => handleDeleteChat(id) }
+      ]
+    );
+  };
+
+  const handleDeleteChat = async (id) => {
+    try {
+      setLoading(true);
+      const response = await chatAPI.delete(id);
+      if (response && response.success) {
+        setChats((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        Alert.alert('Error', response?.message || 'Failed to delete chat');
+      }
+    } catch (error) {
+      Alert.alert('Error', error || 'Failed to delete chat');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -263,6 +297,21 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textAlign: 'center',
     paddingHorizontal: 40
+  }
+  ,
+  deleteButton: {
+    marginLeft: 8,
+    width: 55,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLORS.lost,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  deleteButtonText: {
+    fontSize: 14,
+    color: COLORS.black,
+    lineHeight: 18
   }
 });
 

@@ -113,6 +113,7 @@ export const chatAPI = {
   create: (data) => api.post('/chats', data),
   sendMessage: (chatId, message) => api.post(`/chats/${chatId}/messages`, { message_text: message }),
   markAsRead: (chatId) => api.put(`/chats/${chatId}/read`),
+  delete: (id) => api.delete(`/chats/${id}`),
   getUnreadCount: () => api.get('/chats/unread-count')
 };
 
