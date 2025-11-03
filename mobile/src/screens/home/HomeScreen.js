@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary
   },
   itemCard: {
-    backgroundColor: COLORS.kk,
+    backgroundColor: COLORS.kk2,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,

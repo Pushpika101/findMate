@@ -172,12 +172,12 @@ const styles = StyleSheet.create({
   chatItem: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk2,
     borderRadius: 12,
     marginBottom: 12,
     shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 2
   },

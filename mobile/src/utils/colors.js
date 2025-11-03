@@ -22,7 +22,8 @@ export const COLORS = {
   // Neutral Colors
   white: '#FFFFFF',
   black: '#000000',
-  kk: '#cdeaf6ff',
+  kk: '#c4e8f8ff',
+  kk2: '#dcecf3ff',
   
   // Gray Scale
   gray50: '#F9FAFB',

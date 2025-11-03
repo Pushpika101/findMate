@@ -158,18 +158,18 @@ const MainTabNavigator = () => {
         component={HomeScreen}
         options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="home" size={size ?? 24} color={color} /> }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Chats"
         component={ChatListScreen}
         options={{
             tabBarIcon: () => <Text style={{ fontSize: 24 }}>💬</Text>
         }}
-        />
-      {/* <Tab.Screen
+        /> */}
+      <Tab.Screen
         name="Chats"
-        component={ChatsScreen}
+        component={ChatListScreen}
         options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="chat" size={size ?? 24} color={color} /> }}
-      /> */}
+      />
       <Tab.Screen
         name="AddItem"
         component={AddItemScreen}
