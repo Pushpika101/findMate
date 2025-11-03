@@ -7,6 +7,8 @@ import AddItemScreen from '../screens/items/AddItemScreen';
 import COLORS from '../utils/colors';
 import { useAuth } from '../context/AuthContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import ChatListScreen from '../screens/chat/ChatListScreen';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -158,9 +160,16 @@ const MainTabNavigator = () => {
       />
       <Tab.Screen
         name="Chats"
+        component={ChatListScreen}
+        options={{
+            tabBarIcon: () => <Text style={{ fontSize: 24 }}>💬</Text>
+        }}
+        />
+      {/* <Tab.Screen
+        name="Chats"
         component={ChatsScreen}
         options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="chat" size={size ?? 24} color={color} /> }}
-      />
+      /> */}
       <Tab.Screen
         name="AddItem"
         component={AddItemScreen}
