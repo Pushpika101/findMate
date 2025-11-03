@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
+import { TouchableOpacity, View, Text, Animated, Platform } from 'react-native';
 import HomeScreen from '../screens/home/HomeScreen';
 import AddItemScreen from '../screens/items/AddItemScreen';
 import COLORS from '../utils/colors';
@@ -10,84 +10,113 @@ const Tab = createBottomTabNavigator();
 
 // Placeholder screens
 const ChatsScreen = () => (
-  <View style={placeholderStyles.container}>
-    <Text style={placeholderStyles.icon}>💬</Text>
-    <Text style={placeholderStyles.title}>Chats</Text>
-    <Text style={placeholderStyles.subtitle}>Coming soon...</Text>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
+    <Text style={{ fontSize: 48 }}>💬</Text>
+    <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 16 }}>Chats</Text>
   </View>
 );
 
 const NotificationsScreen = () => (
-  <View style={placeholderStyles.container}>
-    <Text style={placeholderStyles.icon}>🔔</Text>
-    <Text style={placeholderStyles.title}>Notifications</Text>
-    <Text style={placeholderStyles.subtitle}>Coming soon...</Text>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
+    <Text style={{ fontSize: 48 }}>🔔</Text>
+    <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 16 }}>Notifications</Text>
   </View>
 );
 
 const ProfileScreen = () => {
   const { logout } = useAuth();
-
-  const handleLogout = async () => {
-    await logout();
-  };
-
   return (
-    <View style={placeholderStyles.container}>
-      <Text style={placeholderStyles.icon}>👤</Text>
-      <Text style={placeholderStyles.title}>Profile</Text>
-      <Text style={placeholderStyles.subtitle}>Coming soon...</Text>
-      <TouchableOpacity style={placeholderStyles.logoutButton} onPress={handleLogout}>
-        <Text style={placeholderStyles.logoutButtonText}>Logout</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
+      <Text style={{ fontSize: 48 }}>👤</Text>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 16 }}>Profile</Text>
+      <TouchableOpacity
+        style={{ marginTop: 24, paddingVertical: 12, paddingHorizontal: 32, backgroundColor: COLORS.error, borderRadius: 8 }}
+        onPress={logout}
+      >
+        <Text style={{ color: COLORS.white, fontSize: 16, fontWeight: '600' }}>Logout</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-// Custom Add Button Component
-const AddButton = ({ onPress }) => (
-  <TouchableOpacity
-    style={addButtonStyles.button}
-    onPress={onPress}
-    activeOpacity={0.8}
-  >
-    <Text style={addButtonStyles.text}>+</Text>
-  </TouchableOpacity>
-);
+// Animated Add Button
+const AnimatedAddButton = ({ onPress, isFocused }) => {
+  const scaleAnim = React.useRef(new Animated.Value(1)).current;
+  const rotateAnim = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.spring(rotateAnim, {
+      toValue: isFocused ? 1 : 0,
+      useNativeDriver: true,
+      friction: 5,
+    }).start();
+  }, [isFocused]);
+
+  const handlePress = () => {
+    Animated.sequence([
+      Animated.spring(scaleAnim, { toValue: 0.85, useNativeDriver: true }),
+      Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }),
+    ]).start();
+    onPress();
+  };
+
+  const rotation = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '45deg'],
+  });
+
+  return (
+    <TouchableOpacity
+      style={{
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: COLORS.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: -20,
+        shadowColor: COLORS.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
+      }}
+      onPress={handlePress}
+      activeOpacity={0.9}
+    >
+      <Animated.View style={{ transform: [{ scale: scaleAnim }, { rotate: rotation }] }}>
+        <Text style={{ fontSize: 32, color: COLORS.white, fontWeight: '300', marginTop: -4 }}>+</Text>
+      </Animated.View>
+    </TouchableOpacity>
+  );
+};
 
 const MainTabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textSecondary,
-        tabBarStyle: tabBarStyles.bar,
-        tabBarLabelStyle: tabBarStyles.label,
-        tabBarShowLabel: true
-      }}
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 8,
+          backgroundColor: COLORS.white,
+          borderTopWidth: 1,
+          borderTopColor: COLORS.border,
+          display: route.name === 'AddItem' ? 'none' : 'flex', // Hide on AddItem
+          position: 'absolute',
+          elevation: 0,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600'
+        }
+      })}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size }}>🏠</Text>
-          )
-        }}
-      />
-
-      <Tab.Screen
-        name="Chats"
-        component={ChatsScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size }}>💬</Text>
-          ),
-          tabBarBadge: 3
-        }}
-      />
-
+      <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: () => <Text style={{ fontSize: 24 }}>🏠</Text> }} />
+      <Tab.Screen name="Chats" component={ChatsScreen} options={{ tabBarIcon: () => <Text style={{ fontSize: 24 }}>💬</Text> }} />
       <Tab.Screen
         name="AddItem"
         component={AddItemScreen}
@@ -95,113 +124,17 @@ const MainTabNavigator = () => {
           tabBarIcon: () => null,
           tabBarLabel: () => null,
           tabBarButton: (props) => (
-            <AddButton onPress={() => navigation.navigate('AddItem')} />
-          )
+            <AnimatedAddButton
+              onPress={() => navigation.navigate('AddItem')}
+              isFocused={props.accessibilityState?.selected || false}
+            />
+          ),
         })}
       />
-
-      <Tab.Screen
-        name="Notifications"
-        component={NotificationsScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size }}>🔔</Text>
-          ),
-          tabBarBadge: 5
-        }}
-      />
-
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size }}>👤</Text>
-          )
-        }}
-      />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ tabBarIcon: () => <Text style={{ fontSize: 24 }}>🔔</Text> }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: () => <Text style={{ fontSize: 24 }}>👤</Text> }} />
     </Tab.Navigator>
   );
 };
-
-// Separate style objects defined BEFORE they're used
-const tabBarStyles = StyleSheet.create({
-  bar: {
-    height: 80,
-    paddingBottom: 8,
-    paddingTop: 4,
-    backgroundColor: COLORS.kk,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    elevation: 8,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8
-  },
-  label: {
-    fontSize: 11,
-    fontWeight: '600'
-  }
-});
-
-const addButtonStyles = StyleSheet.create({
-  button: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: -20,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8
-  },
-  text: {
-    fontSize: 32,
-    color: COLORS.white,
-    fontWeight: '300',
-    marginTop: -4
-  }
-});
-
-const placeholderStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.background,
-    padding: 24
-  },
-  icon: {
-    fontSize: 48,
-    marginBottom: 16
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    marginBottom: 8
-  },
-  subtitle: {
-    fontSize: 16,
-    color: COLORS.textSecondary
-  },
-  logoutButton: {
-    marginTop: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    backgroundColor: COLORS.error,
-    borderRadius: 8
-  },
-  logoutButtonText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: '600'
-  }
-});
 
 export default MainTabNavigator;
