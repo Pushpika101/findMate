@@ -369,7 +369,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
                     onPress={handleShareItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.primary }]}>Share</Text>
+                    <Text style={[styles.actionButtonText, { color: COLORS.secondaryDark }]}>Share</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -395,14 +395,14 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.chatButton, { flex: 1 }]}
                     onPress={handleChatWithOwner}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.primary }]}>Chat</Text>
+                    <Text style={[styles.actionButtonText, { color: COLORS.black }]}>Chat</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
                     onPress={handleShareItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.primary }]}>Share</Text>
+                    <Text style={[styles.actionButtonText, { color: COLORS.secondaryDark }]}>Share</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
   },
   headerButtonText: {
     fontSize: 28,
-    color: COLORS.primary
+    color: COLORS.black
   },
   headerButtonIcon: {
     fontSize: 20
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
   typeBadgeText: {
-    color: COLORS.white,
+    color: COLORS.black,
     fontSize: 12,
     fontWeight: 'bold',
     letterSpacing: 0.5
@@ -551,11 +551,11 @@ const styles = StyleSheet.create({
   detailCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk,
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: COLORS.kk,
     alignItems: 'center'
   },
   detailIcon: {
@@ -635,17 +635,18 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12
+    gap: 8,
+    justifyContent: 'space-between'
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
     borderRadius: 12,
-    gap: 8,
-    marginHorizontal: 6,
+    gap: 6,
+    marginHorizontal: 4,
     borderWidth: 1
   },
   actionButtonIcon: {
@@ -661,16 +662,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#DCFCE7'
   },
   chatButton: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primaryLight
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.gray400
   },
   editButton: {
     borderColor: COLORS.info,
     backgroundColor: '#DBEAFE'
   },
   resolveButton: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primaryLight
+    borderColor: COLORS.secondaryDark,
+    backgroundColor: COLORS.secondaryLight
   },
   deleteButton: {
     borderColor: COLORS.error,

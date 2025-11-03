@@ -7,7 +7,7 @@ export const COLORS = {
   // Secondary Colors
   secondary: '#10B981',
   secondaryDark: '#059669',
-  secondaryLight: '#34D399',
+  secondaryLight: '#94eecdff',
   
   // Status Colors
   success: '#10B981',
