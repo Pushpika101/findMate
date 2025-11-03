@@ -6,6 +6,7 @@ import HomeScreen from '../screens/home/HomeScreen';
 import AddItemScreen from '../screens/items/AddItemScreen';
 import COLORS from '../utils/colors';
 import { useAuth } from '../context/AuthContext';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const Tab = createBottomTabNavigator();
 
@@ -103,14 +104,14 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
   return (
     <TouchableOpacity
       style={{
-        width: 56,
-        height: 56,
+        width: 70,
+        height: 70,
         borderRadius: 28,
         backgroundColor: COLORS.primary,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: -20,
-        shadowColor: COLORS.primary,
+        shadowColor: COLORS.error,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -134,12 +135,12 @@ const MainTabNavigator = () => {
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textSecondary,
         tabBarStyle: {
-          height: 60,
+          height: 80,
           paddingBottom: 8,
-          paddingTop: 8,
-          backgroundColor: COLORS.white,
-          borderTopWidth: 1,
-          borderTopColor: COLORS.border,
+          paddingTop: 4,
+          backgroundColor: COLORS.kk,
+          borderTopWidth: 5,
+          borderTopColor: COLORS.primary,
           display: route.name === 'AddItem' ? 'none' : 'flex', // Hide on AddItem
           position: 'absolute',
           elevation: 0,
@@ -150,8 +151,16 @@ const MainTabNavigator = () => {
         }
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: () => <Text style={{ fontSize: 24 }}>🏠</Text> }} />
-      <Tab.Screen name="Chats" component={ChatsScreen} options={{ tabBarIcon: () => <Text style={{ fontSize: 24 }}>💬</Text> }} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="home" size={size ?? 24} color={color} /> }}
+      />
+      <Tab.Screen
+        name="Chats"
+        component={ChatsScreen}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="chat" size={size ?? 24} color={color} /> }}
+      />
       <Tab.Screen
         name="AddItem"
         component={AddItemScreen}
@@ -166,8 +175,16 @@ const MainTabNavigator = () => {
           ),
         })}
       />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ tabBarIcon: () => <Text style={{ fontSize: 24 }}>🔔</Text> }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: () => <Text style={{ fontSize: 24 }}>👤</Text> }} />
+      <Tab.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="notifications" size={size ?? 24} color={color} /> }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="person" size={size ?? 24} color={color} /> }}
+      />
     </Tab.Navigator>
   );
 };
