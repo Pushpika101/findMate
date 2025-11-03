@@ -6,7 +6,7 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
 import MainNavigator from './src/navigation/AppNavigator';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import COLORS from './src/utils/colors';
 
 const Stack = createStackNavigator();
@@ -49,10 +49,47 @@ function RootNavigator() {
 export default function App() {
   return (
     <AuthProvider>
-      <RootNavigator />
+      <ErrorBoundary>
+        <RootNavigator />
+      </ErrorBoundary>
       <StatusBar style="auto" />
     </AuthProvider>
   );
+}
+
+// Simple error boundary to show runtime errors instead of a blank screen
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, info: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, info) {
+    console.error('Uncaught error:', error, info);
+    this.setState({ info });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text style={{ color: COLORS.error, fontSize: 18, marginBottom: 12 }}>Something went wrong.</Text>
+          <Text style={{ color: COLORS.textSecondary, fontSize: 13, marginBottom: 12 }}>{this.state.error?.toString()}</Text>
+          <TouchableOpacity
+            onPress={() => this.setState({ hasError: false, error: null, info: null })}
+            style={{ paddingVertical: 10, paddingHorizontal: 16, backgroundColor: COLORS.primary, borderRadius: 8 }}
+          >
+            <Text style={{ color: COLORS.white }}>Dismiss</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 const styles = StyleSheet.create({

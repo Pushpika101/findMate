@@ -15,6 +15,7 @@ import {
 import { itemsAPI, chatAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import COLORS from '../../utils/colors';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const { width } = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [imageUrls, setImageUrls] = useState([]);
 
   useEffect(() => {
     fetchItemDetails();
@@ -34,7 +36,10 @@ const ItemDetailScreen = ({ route, navigation }) => {
       setLoading(true);
       const response = await itemsAPI.getById(itemId);
       if (response.success) {
-        setItem(response.data.item);
+        const fetchedItem = response.data.item;
+        setItem(fetchedItem);
+        const imgs = [fetchedItem.photo1_url, fetchedItem.photo2_url].filter(Boolean);
+        setImageUrls(imgs);
       }
     } catch (error) {
       Alert.alert('Error', error || 'Failed to fetch item details');
@@ -206,7 +211,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Images */}
-        {images.length > 0 ? (
+          {imageUrls.length > 0 ? (
           <View style={styles.imageContainer}>
             <ScrollView
               horizontal
@@ -218,12 +223,21 @@ const ItemDetailScreen = ({ route, navigation }) => {
               }}
               scrollEventThrottle={16}
             >
-              {images.map((imageUrl, index) => (
+              {imageUrls.map((imageUrl, index) => (
                 <Image
                   key={index}
                   source={{ uri: imageUrl }}
                   style={styles.itemImage}
                   resizeMode="cover"
+                  onError={() => {
+                    // Replace failed image with a safe placeholder
+                    const fallback = 'https://via.placeholder.com/800?text=No+Image+Available';
+                    setImageUrls((prev) => {
+                      const next = [...prev];
+                      next[index] = fallback;
+                      return next;
+                    });
+                  }}
                 />
               ))}
             </ScrollView>

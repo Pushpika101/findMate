@@ -19,6 +19,8 @@ const adminRoutes = require('./src/routes/admin');
 const app = express();
 const server = http.createServer(app);
 
+const path = require('path');
+
 // Socket.IO setup
 const io = socketIo(server, {
   cors: {
@@ -39,6 +41,9 @@ app.use(morgan('dev'));
 
 // Make io accessible in routes
 app.set('io', io);
+
+// Serve uploaded files (local development uploads)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Socket.IO Authentication
 io.use((socket, next) => {
