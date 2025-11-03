@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import MainTabNavigator from './MainTabNavigator';
+import AddItemScreen from '../screens/items/AddItemScreen';
 
 const Stack = createStackNavigator();
 
@@ -12,7 +13,13 @@ const MainNavigator = () => {
       }}
     >
       <Stack.Screen name="MainTabs" component={MainTabNavigator} />
-      {/* Add more screens here later like ItemDetail, EditItem, etc. */}
+      <Stack.Screen 
+        name="AddItem" 
+        component={AddItemScreen}
+        options={{
+          presentation: 'modal'
+        }}
+      />
     </Stack.Navigator>
   );
 };
