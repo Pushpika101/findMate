@@ -9,6 +9,15 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+// Detect whether Cloudinary appears to be configured (avoid placeholder values)
+const CLOUDINARY_CONFIGURED = (
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET &&
+  process.env.CLOUDINARY_API_KEY !== 'your-api-key'
+);
+const DEV_PLACEHOLDER_IMAGE = 'https://via.placeholder.com/800?text=No+Image+Available';
+
 // Multer memory storage (we'll upload to cloudinary manually)
 const storage = multer.memoryStorage();
 
@@ -31,6 +40,19 @@ const multerUpload = multer({
 const uploadToCloudinary = (fieldName) => {
   return async (req, res, next) => {
     if (!req.files || !req.files[fieldName]) {
+      return next();
+    }
+
+    // If Cloudinary isn't configured (e.g., running locally with placeholder env values),
+    // provide a safe fallback so upload endpoints don't fail with a 500 error.
+    if (!CLOUDINARY_CONFIGURED) {
+      console.warn('[cloudinary] Cloudinary not configured - using development fallback for uploads.');
+      const files = Array.isArray(req.files[fieldName]) ? req.files[fieldName] : [req.files[fieldName]];
+      req.files[fieldName] = files.map((file) => ({
+        ...file,
+        path: DEV_PLACEHOLDER_IMAGE,
+        cloudinaryId: null
+      }));
       return next();
     }
 
