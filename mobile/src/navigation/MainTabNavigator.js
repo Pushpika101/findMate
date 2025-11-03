@@ -127,10 +127,10 @@ const MainTabNavigator = () => {
 // Separate style objects defined BEFORE they're used
 const tabBarStyles = StyleSheet.create({
   bar: {
-    height: 60,
+    height: 80,
     paddingBottom: 8,
-    paddingTop: 8,
-    backgroundColor: COLORS.white,
+    paddingTop: 4,
+    backgroundColor: COLORS.kk,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
     elevation: 8,
