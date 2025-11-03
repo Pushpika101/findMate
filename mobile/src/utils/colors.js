@@ -16,8 +16,8 @@ export const COLORS = {
   info: '#3B82F6',
   
   // Lost & Found Specific
-  lost: '#EF4444',
-  found: '#10B981',
+  lost: '#e32525ff',
+  found: '#05c182ff',
   
   // Neutral Colors
   white: '#FFFFFF',
