@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TouchableOpacity, View, Text, Animated, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -8,6 +8,9 @@ import COLORS from '../utils/colors';
 import { useAuth } from '../context/AuthContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import ChatListScreen from '../screens/chat/ChatListScreen';
+import NotificationsScreen from '../screens/notifications/NotificationsScreen';
+import { notificationsAPI } from '../services/api';
+
 
 
 const Tab = createBottomTabNavigator();
@@ -20,12 +23,7 @@ const ChatsScreen = () => (
   </View>
 );
 
-const NotificationsScreen = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
-    <Text style={{ fontSize: 48 }}>🔔</Text>
-    <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 16 }}>Notifications</Text>
-  </View>
-);
+// (use actual NotificationsScreen imported above)
 
 const ProfileScreen = () => {
   const { logout } = useAuth();
@@ -131,6 +129,25 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
 };
 
 const MainTabNavigator = () => {
+  const [notificationBadge, setNotificationBadge] = useState(0);
+
+  useEffect(() => {
+    const fetchNotificationBadge = async () => {
+      try {
+        const response = await notificationsAPI.getUnreadCount();
+        if (response && response.success) {
+          setNotificationBadge(response.data.unreadCount || 0);
+        }
+      } catch (error) {
+        console.error('Error fetching notification badge:', error);
+      }
+    };
+
+    fetchNotificationBadge();
+    const interval = setInterval(fetchNotificationBadge, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -192,7 +209,10 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name="Notifications"
         component={NotificationsScreen}
-        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="notifications" size={size ?? 24} color={color} /> }}
+        options={{
+          tabBarIcon: ({ color, size }) => <MaterialIcons name="notifications" size={size ?? 24} color={color} />,
+          tabBarBadge: notificationBadge > 0 ? notificationBadge : undefined,
+        }}
       />
       <Tab.Screen
         name="Profile"

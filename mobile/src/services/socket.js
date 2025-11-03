@@ -105,6 +105,18 @@ export const removeTypingListener = () => {
   }
 };
 
+export const onNotification = (callback) => {
+  if (socket) {
+    socket.on('new_notification', callback);
+  }
+};
+
+export const removeNotificationListener = () => {
+  if (socket) {
+    socket.off('new_notification');
+  }
+};
+
 export default {
   initializeSocket,
   getSocket,
@@ -117,3 +129,4 @@ export default {
   removeMessageListener,
   removeTypingListener
 };
+
