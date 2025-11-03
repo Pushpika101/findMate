@@ -371,7 +371,7 @@ const AddItemScreen = ({ navigation }) => {
           )}
           <View style={styles.locationSuggestions}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {COMMON_LOCATIONS.slice(0, 5).map((loc) => (
+              {['main Library', '24/7', 'common room', 'near AR', 'faculty canteen', 'Akbar canteen'].map((loc) => (
                 <TouchableOpacity
                   key={loc}
                   style={styles.locationChip}
@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
   locationChip: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: COLORS.black,
     borderRadius: 16,
     marginRight: 8
   },
