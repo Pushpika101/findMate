@@ -54,9 +54,9 @@ const ProfileScreen = ({ navigation }) => {
         try {
           const raw = profileResponse.data.user.profile_photo;
           const normalized = normalizeImageUrl(raw);
-          console.log('[ProfileScreen] fetched profile_photo raw:', raw, 'normalized:', normalized);
+          //console.log('[ProfileScreen] fetched profile_photo raw:', raw, 'normalized:', normalized);
         } catch (e) {
-          console.log('[ProfileScreen] fetchProfileData - no profile photo or normalization failed', e);
+          //console.log('[ProfileScreen] fetchProfileData - no profile photo or normalization failed', e);
         }
       }
 
@@ -330,7 +330,7 @@ const ProfileScreen = ({ navigation }) => {
 
           <TouchableOpacity
             style={styles.actionItem}
-            onPress={() => Alert.alert('About', 'Lost & Found v1.0.0\nPeadeniya Campus')}
+            onPress={() => navigation.navigate('About')}
           >
             <View style={styles.actionIconContainer}>
               <Text style={styles.actionIcon}>ℹ️</Text>
