@@ -10,7 +10,8 @@ import {
   Alert,
   TouchableWithoutFeedback,
   Animated,
-  Dimensions
+  Dimensions,
+  ScrollView
 } from 'react-native';
 import { notificationsAPI } from '../../services/api';
 import { initializeSocket, onNewMessage } from '../../services/socket';
@@ -365,26 +366,38 @@ const NotificationsScreen = ({ navigation }) => {
           <View style={[styles.restOverlay, { top: headerHeight }]} />
         </TouchableWithoutFeedback>
       )}
-      <FlatList
-        data={filteredNotifications}
-        renderItem={renderNotification}
-        ListFooterComponent={<View style={{ height: 100 }} />}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={
-          filteredNotifications.length === 0
-            ? styles.emptyListContent
-            : styles.listContent
-        }
-        ListEmptyComponent={renderEmptyState}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={COLORS.primary}
-          />
-        }
-        showsVerticalScrollIndicator={false}
-      />
+      {filteredNotifications.length === 0 ? (
+        // Render a fixed, non-scrolling empty state so the "No notifications" message doesn't scroll
+        <ScrollView
+          contentContainerStyle={styles.emptyListContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={COLORS.primary}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+        >
+          {renderEmptyState()}
+        </ScrollView>
+      ) : (
+        <FlatList
+          data={filteredNotifications}
+          renderItem={renderNotification}
+          ListFooterComponent={<View style={{ height: 100 }} />}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={COLORS.primary}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   );
 };
