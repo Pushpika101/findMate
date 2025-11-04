@@ -4,6 +4,7 @@ import MainTabNavigator from './MainTabNavigator';
 import AddItemScreen from '../screens/items/AddItemScreen';
 import ItemDetailScreen from '../screens/items/ItemDetailScreen';
 import MyItemsScreen from '../screens/items/MyItemsScreen';
+import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import ChatScreen from '../screens/chat/ChatScreen';
 
 const Stack = createStackNavigator();
@@ -17,6 +18,7 @@ const MainNavigator = () => {
     >
       <Stack.Screen name="MainTabs" component={MainTabNavigator} />
       <Stack.Screen name="MyItems" component={MyItemsScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen 
         name="AddItem" 
         component={AddItemScreen}

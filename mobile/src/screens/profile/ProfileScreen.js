@@ -16,7 +16,7 @@ import { usersAPI, itemsAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
 
 const ProfileScreen = ({ navigation }) => {
-  const { user, logout, updateUser } = useAuth();
+  const { user, logout, setUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [stats, setStats] = useState(null);
@@ -109,7 +109,8 @@ const ProfileScreen = ({ navigation }) => {
       const response = await usersAPI.updateProfilePhoto(photo);
       if (response.success) {
         setProfileData(response.data.user);
-        await updateUser(response.data.user);
+        // Update auth context user
+        if (setUser) setUser(response.data.user);
         Alert.alert('Success', 'Profile photo updated!');
       }
     } catch (error) {
