@@ -49,7 +49,7 @@ const ProfileScreen = ({ navigation }) => {
       if (profileResponse.success) {
         setProfileData(profileResponse.data.user);
         // Debug full profile object to inspect student_id value
-        console.log('[ProfileScreen] profileResponse.data.user =', profileResponse.data.user);
+        //console.log('[ProfileScreen] profileResponse.data.user =', profileResponse.data.user);
         // Debug: log returned and normalized profile photo URL
         try {
           const raw = profileResponse.data.user.profile_photo;

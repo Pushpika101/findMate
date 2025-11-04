@@ -1,0 +1,14 @@
+:root{ --bg: #f6f7fb; --muted:#6b7280; --card:#fff; --accent:#2563eb }
+body{ margin:0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial }
+.app{ display:flex; min-height:100vh; background:var(--bg) }
+.sidebar{ width:220px; background:#111827; color:#fff; padding:20px }
+.sidebar h2{ margin:0 0 16px }
+.sidebar ul{ list-style:none; padding:0 }
+.sidebar a{ color:#9ca3af; text-decoration:none }
+.sidebar a:hover{ color:#fff }
+.main{ flex:1; padding:24px }
+.card{ background:var(--card); padding:12px; border-radius:8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06) }
+.grid{ display:flex; gap:12px }
+.table{ width:100%; border-collapse:collapse }
+.table th, .table td{ border:1px solid #e5e7eb; padding:8px; text-align:left }
+input, select, button{ padding:8px; margin-right:8px }

@@ -435,16 +435,21 @@ const styles = StyleSheet.create({
     color: COLORS.error
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 50,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.white,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border
-  },
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingTop: 60,
+      paddingBottom: 20,
+      paddingHorizontal: 20,
+      backgroundColor: COLORS.primary,
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24,
+      overflow: 'visible',
+      marginBottom: 8,
+      // extend header to screen edges to cancel the container padding
+      //marginHorizontal: -20,
+      //marginTop: -33
+    },
   headerButton: {
     width: 40,
     height: 40,
