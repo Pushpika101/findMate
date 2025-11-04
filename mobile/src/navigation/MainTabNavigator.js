@@ -10,7 +10,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import ChatListScreen from '../screens/chat/ChatListScreen';
 import NotificationsScreen from '../screens/notifications/NotificationsScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
-import { notificationsAPI } from '../services/api';
+import { notificationsAPI, chatAPI } from '../services/api';
 
 
 
@@ -115,6 +115,7 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
 
 const MainTabNavigator = () => {
   const [notificationBadge, setNotificationBadge] = useState(0);
+  const [chatBadge, setChatBadge] = useState(0);
 
   useEffect(() => {
     const fetchNotificationBadge = async () => {
@@ -131,6 +132,23 @@ const MainTabNavigator = () => {
     fetchNotificationBadge();
     const interval = setInterval(fetchNotificationBadge, 10000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const fetchChatBadge = async () => {
+      try {
+        const response = await chatAPI.getUnreadCount?.();
+        if (response && response.success) {
+          setChatBadge(response.data.unreadCount || 0);
+        }
+      } catch (error) {
+        console.error('Error fetching chat badge:', error);
+      }
+    };
+
+    fetchChatBadge();
+    const chatInterval = setInterval(fetchChatBadge, 10000);
+    return () => clearInterval(chatInterval);
   }, []);
 
   return (
@@ -175,7 +193,18 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name="Chats"
         component={ChatListScreen}
-        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="chat" size={size ?? 24} color={color} /> }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <View style={{ width: 36, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+              <MaterialIcons name="chat" size={size ?? 24} color={color} />
+              {chatBadge > 0 && (
+                <View style={{ position: 'absolute', top: -4, right: -6, backgroundColor: COLORS.primary, minWidth: 18, height: 18, borderRadius: 9, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
+                  <Text style={{ color: COLORS.white, fontSize: 10, fontWeight: '700' }}>{chatBadge > 99 ? '99+' : chatBadge}</Text>
+                </View>
+              )}
+            </View>
+          )
+        }}
       />
       <Tab.Screen
         name="AddItem"
