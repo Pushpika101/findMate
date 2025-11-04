@@ -17,14 +17,24 @@ export default function Login(){
       const res = await api.post('/auth/login', { email, password })
       if(res.data && res.data.success){
         const token = res.data.data.token
-        // Ensure this user has admin privileges
-        const user = res.data.data.user
-        if (!user || !user.is_admin) {
-          setError('Account does not have admin privileges')
+        // Store token then verify /auth/me to refresh user and confirm admin status
+        localStorage.setItem('token', token)
+        try {
+          const me = await api.get('/auth/me')
+          const meUser = me?.data?.data?.user
+          if (!meUser || !meUser.is_admin) {
+            // Not an admin — clear token and show error
+            localStorage.removeItem('token')
+            setError('Account does not have admin privileges')
+            return
+          }
+          try { localStorage.setItem('user', JSON.stringify(meUser)) } catch(e){}
+          navigate('/')
+        } catch (err) {
+          localStorage.removeItem('token')
+          setError('Failed to verify user. Please try again.')
           return
         }
-        localStorage.setItem('token', token)
-        navigate('/')
       } else {
         setError(res.data?.message || 'Login failed')
       }
