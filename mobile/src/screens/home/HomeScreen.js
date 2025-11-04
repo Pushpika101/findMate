@@ -152,15 +152,10 @@ const HomeScreen = ({ navigation }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Lost & Found</Text>
-        <Text style={styles.headerSubtitle}>Peradeniya Campus</Text>
+        <Text style={styles.headerTitle}>findMate</Text>
       </View>
 
-      {/* Search Bar */}
-      <SearchBar
-        onSearch={handleSearch}
-        onFilterPress={() => setShowFilterModal(true)}
-      />
+      {/* Search Bar will be rendered below the Lost/Found toggles */}
 
       {/* Active Filters Indicator */}
       {activeFilterCount > 0 && (
@@ -176,8 +171,7 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       )}
-
-      {/* Tab Selector */}
+        
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[
@@ -211,6 +205,12 @@ const HomeScreen = ({ navigation }) => {
           {activeTab === 'found' && <View style={styles.tabIndicator} />}
         </TouchableOpacity>
       </View>
+
+      {/* Search Bar */}
+      <SearchBar
+        onSearch={handleSearch}
+        onFilterPress={() => setShowFilterModal(true)}
+      />
 
       {/* Items List */}
       {loading ? (
@@ -301,12 +301,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: COLORS.white,
     marginHorizontal: 20,
-    marginTop: 12,
+    marginTop: -16,
     borderRadius: 12,
     padding: 4,
     shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 4
   },
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     position: 'relative'
   },
   tabActive: {
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: COLORS.kk,
     borderRadius: 8
   },
   tabText: {
@@ -328,14 +328,7 @@ const styles = StyleSheet.create({
   tabTextActive: {
     color: COLORS.primary
   },
-  tabIndicator: {
-    position: 'absolute',
-    bottom: 0,
-    height: 3,
-    width: '80%',
-    backgroundColor: COLORS.primary,
-    borderRadius: 2
-  },
+  
   listContent: {
     padding: 20,
     paddingTop: 16
@@ -351,7 +344,7 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary
   },
   itemCard: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk2,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
