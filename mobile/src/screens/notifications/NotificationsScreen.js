@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
-  Alert
+  Alert,
+  TouchableWithoutFeedback,
+  Animated,
+  Dimensions
 } from 'react-native';
 import { notificationsAPI } from '../../services/api';
 import { initializeSocket, onNewMessage } from '../../services/socket';
@@ -26,6 +29,36 @@ const NotificationsScreen = ({ navigation }) => {
     fetchNotifications();
     fetchUnreadCount();
   }, []);
+
+  const [showMenu, setShowMenu] = useState(false);
+  const anim = useRef(new Animated.Value(0)).current;
+  const menuButtonRef = useRef(null);
+  const [menuPos, setMenuPos] = useState(null);
+  const [headerHeight, setHeaderHeight] = useState(80);
+  const WINDOW = Dimensions.get('window');
+  const MENU_WIDTH = 200;
+
+  const openMenu = () => {
+    // show and animate (menu is rendered inside header)
+    setMenuPos(null);
+    setShowMenu(true);
+    Animated.timing(anim, {
+      toValue: 1,
+      duration: 180,
+      useNativeDriver: true
+    }).start();
+  };
+
+  const closeMenu = (callback) => {
+    Animated.timing(anim, {
+      toValue: 0,
+      duration: 140,
+      useNativeDriver: true
+    }).start(() => {
+      setShowMenu(false);
+      if (typeof callback === 'function') callback();
+    });
+  };
 
   const setupSocket = async () => {
     await initializeSocket();
@@ -191,7 +224,7 @@ const NotificationsScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { position: 'relative' }]} onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
         <View>
           <Text style={styles.headerTitle}>Notifications</Text>
           {unreadCount > 0 && (
@@ -203,27 +236,53 @@ const NotificationsScreen = ({ navigation }) => {
         {notifications.length > 0 && (
           <TouchableOpacity
             style={styles.menuButton}
-            onPress={() => {
-              Alert.alert(
-                'Options',
-                'Choose an action',
-                [
-                  { text: 'Cancel', style: 'cancel' },
-                  {
-                    text: 'Mark All as Read',
-                    onPress: handleMarkAllAsRead
-                  },
-                  {
-                    text: 'Clear All',
-                    style: 'destructive',
-                    onPress: handleClearAll
-                  }
-                ]
-              );
-            }}
+            onPress={openMenu}
+            accessible
+            accessibilityLabel="Open notification options"
+            ref={menuButtonRef}
           >
             <Text style={styles.menuIcon}>⋮</Text>
           </TouchableOpacity>
+        )}
+        {/* Render menu inside header so it doesn't cover list */}
+        {showMenu && (
+          <Animated.View
+            style={[
+                styles.floatingMenu,
+                {
+                  position: 'absolute',
+                  right: 12,
+                  top: Math.max(12, headerHeight - 8),
+                  width: MENU_WIDTH,
+                  opacity: anim,
+                  transform: [
+                    { scale: anim.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) },
+                    { translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [-6, 0] }) }
+                  ]
+                }
+              ]}
+          >
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => closeMenu(() => handleMarkAllAsRead())}
+            >
+              <Text style={styles.menuItemText}>Mark All as Read</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.menuItem, styles.menuItemDestructive]}
+              onPress={() => closeMenu(() => handleClearAll())}
+            >
+              <Text style={[styles.menuItemText, styles.menuItemDestructiveText]}>Clear All</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => closeMenu()}
+            >
+              <Text style={styles.menuItemText}>Cancel</Text>
+            </TouchableOpacity>
+          </Animated.View>
         )}
       </View>
 
@@ -267,6 +326,12 @@ const NotificationsScreen = ({ navigation }) => {
       )}
 
       {/* Notifications List */}
+      {/* invisible overlay below header to close menu when tapping outside */}
+      {showMenu && (
+        <TouchableWithoutFeedback onPress={() => closeMenu()}>
+          <View style={[styles.restOverlay, { top: headerHeight }]} />
+        </TouchableWithoutFeedback>
+      )}
       <FlatList
         data={filteredNotifications}
         renderItem={renderNotification}
@@ -315,7 +380,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: COLORS.primary,
     borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24
+    borderBottomRightRadius: 24,
+    overflow: 'visible'
   },
   headerTitle: {
     fontSize: 28,
@@ -396,6 +462,39 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textAlign: 'center',
     lineHeight: 20
+  }
+  ,
+  floatingMenu: {
+    backgroundColor: COLORS.white,
+    borderRadius: 10,
+    paddingVertical: 4,
+    // shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 20,
+    zIndex: 9999
+  },
+  menuItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 14
+  },
+  menuItemText: {
+    fontSize: 16,
+    color: COLORS.textPrimary
+  },
+  menuItemDestructive: {},
+  menuItemDestructiveText: {
+    color: COLORS.danger || '#d9534f'
+  },
+  restOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
+    zIndex: 1000
   }
 });
 
