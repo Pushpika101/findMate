@@ -429,10 +429,10 @@ const styles = StyleSheet.create({
     opacity: 0.9
   },
   menuButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.white + '20',
+    width: 45,
+    height: 45,
+    borderRadius: 40,
+    backgroundColor: COLORS.black ,
     justifyContent: 'center',
     alignItems: 'center'
   },

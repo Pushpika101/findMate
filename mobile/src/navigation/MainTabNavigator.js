@@ -11,6 +11,8 @@ import ChatListScreen from '../screens/chat/ChatListScreen';
 import NotificationsScreen from '../screens/notifications/NotificationsScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import { notificationsAPI, chatAPI } from '../services/api';
+import { initializeSocket, onNewMessage, removeMessageListener } from '../services/socket';
+import { DeviceEventEmitter } from 'react-native';
 
 
 
@@ -116,6 +118,7 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
 const MainTabNavigator = () => {
   const [notificationBadge, setNotificationBadge] = useState(0);
   const [chatBadge, setChatBadge] = useState(0);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchNotificationBadge = async () => {
@@ -148,7 +151,37 @@ const MainTabNavigator = () => {
 
     fetchChatBadge();
     const chatInterval = setInterval(fetchChatBadge, 10000);
-    return () => clearInterval(chatInterval);
+
+    // Initialize socket and listen for incoming messages so we can update the badge instantly
+    let mounted = true;
+    (async () => {
+      try {
+        await initializeSocket();
+        onNewMessage((newMessage) => {
+          if (!mounted) return;
+
+          // If the incoming message is from another user, increment badge count immediately
+          if (newMessage && newMessage.sender_id && newMessage.sender_id !== user?.id) {
+            setChatBadge((prev) => (prev || 0) + 1);
+          }
+
+          // Also trigger a background fetch to keep server/client in sync (debounced by interval)
+        });
+      } catch (err) {
+        console.error('Socket init error in MainTabNavigator:', err);
+      }
+    })();
+
+    const subscription = DeviceEventEmitter.addListener('chatBadgeUpdated', (newCount) => {
+      setChatBadge(typeof newCount === 'number' ? newCount : (Number(newCount) || 0));
+    });
+
+    return () => {
+      mounted = false;
+      subscription.remove();
+      removeMessageListener();
+      clearInterval(chatInterval);
+    };
   }, []);
 
   return (

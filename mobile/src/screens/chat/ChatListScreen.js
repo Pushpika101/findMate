@@ -12,7 +12,9 @@ import {
 } from 'react-native';
 import { chatAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
-import { initializeSocket, onNewMessage } from '../../services/socket';
+import { initializeSocket, onNewMessage, removeMessageListener } from '../../services/socket';
+import { DeviceEventEmitter } from 'react-native';
+import { useAuth } from '../../context/AuthContext';
 import { API_URL } from '../../utils/constants';
 
 const ChatListScreen = ({ navigation }) => {
@@ -29,8 +31,48 @@ const ChatListScreen = ({ navigation }) => {
     await initializeSocket();
     
     // Listen for new messages to update chat list
-    onNewMessage(() => {
-      fetchChats();
+    onNewMessage((newMessage) => {
+      handleIncomingMessage(newMessage);
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      removeMessageListener();
+    };
+  }, []);
+
+  const { user } = useAuth();
+
+  const handleIncomingMessage = (newMessage) => {
+    if (!newMessage || !newMessage.chat_id) return;
+
+    setChats((prev) => {
+      // find existing chat
+      const idx = prev.findIndex((c) => c.id === newMessage.chat_id);
+      // build update fields
+      const update = {
+        ... (idx !== -1 ? prev[idx] : {}),
+        last_message: newMessage.message_text || prev[idx]?.last_message,
+        last_message_time: newMessage.created_at || prev[idx]?.last_message_time,
+      };
+
+      // increment unread only if message is from other user
+      if (newMessage.sender_id !== user?.id) {
+        update.unread_count = (prev[idx]?.unread_count || 0) + 1;
+      }
+
+      if (idx === -1) {
+        // unknown chat; trigger a full refresh to get latest chats
+        fetchChats();
+        return prev;
+      }
+
+      // move updated chat to front
+      const next = [...prev];
+      next.splice(idx, 1);
+      next.unshift(update);
+      return next;
     });
   };
 
@@ -76,7 +118,7 @@ const ChatListScreen = ({ navigation }) => {
   const renderChatItem = ({ item }) => (
     <TouchableOpacity
       style={styles.chatItem}
-      onPress={() => navigation.navigate('ChatScreen', { chatId: item.id })}
+      onPress={() => openChat(item)}
     >
       {item.other_user_photo ? (
         <Image
@@ -125,6 +167,29 @@ const ChatListScreen = ({ navigation }) => {
       </View>
     </TouchableOpacity>
   );
+
+  const openChat = async (item) => {
+    const id = item.id;
+    // Optimistically clear unread badge in UI
+    if (item.unread_count > 0) {
+      setChats((prev) => prev.map((c) => (c.id === id ? { ...c, unread_count: 0 } : c)));
+      try {
+        // mark as read on server (chatAPI.markAsRead exists and is used in ChatScreen)
+        await chatAPI.markAsRead(id);
+        // After marking as read, fetch fresh unread count and emit to main navigator so its badge updates immediately
+        const res = await chatAPI.getUnreadCount?.();
+        if (res && res.success) {
+          DeviceEventEmitter.emit('chatBadgeUpdated', res.data.unreadCount || 0);
+        }
+      } catch (err) {
+        console.warn('Failed to mark chat as read', err);
+        // If desired, we could revert the optimistic update here. For now, keep UI consistent
+        // and rely on server sync or pull-to-refresh to correct state if needed.
+      }
+    }
+
+    navigation.navigate('ChatScreen', { chatId: id });
+  };
 
   const confirmDeleteChat = (id) => {
     Alert.alert(
