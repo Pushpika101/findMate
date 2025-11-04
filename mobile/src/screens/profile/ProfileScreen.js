@@ -552,7 +552,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   actionsCard: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk2,
     marginHorizontal: 20,
     marginTop: 16,
     borderRadius: 16,
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
     elevation: 4
   },
   settingsCard: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk2,
     marginHorizontal: 20,
     marginTop: 16,
     borderRadius: 16,

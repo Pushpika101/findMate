@@ -132,7 +132,16 @@ const EditProfileScreen = ({ navigation, route }) => {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Edit Profile</Text>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+          >
+            <Text style={styles.backButtonText}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Edit Profile</Text>
+          <View style={styles.placeholder} />
+        </View>
 
         <View style={styles.photoRow}>
           <TouchableOpacity onPress={pickImage} style={styles.avatarContainer} disabled={uploading}>
@@ -182,11 +191,39 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     flexGrow: 1
   },
-  title: {
-    fontSize: 22,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    backgroundColor: COLORS.primary,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    overflow: 'visible',
+    marginBottom: 8,
+    // extend header to screen edges to cancel the container padding
+    marginHorizontal: -20,
+    marginTop: -33
+  },
+  headerTitle: {
+    fontSize: 18,
     fontWeight: '700',
-    marginBottom: 20,
-    color: COLORS.textPrimary
+    color: COLORS.white
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  backButtonText: {
+    fontSize: 28,
+    color: COLORS.white
+  },
+  placeholder: {
+    width: 40
   },
   field: {
     marginBottom: 16
