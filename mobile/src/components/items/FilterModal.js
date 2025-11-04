@@ -117,7 +117,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Enter location..."
-                placeholderTextColor={COLORS.black}
+                placeholderTextColor={COLORS.gray300}
                 value={filters.location}
                 onChangeText={(text) => updateFilter('location', text)}
               />
@@ -132,7 +132,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
                   <TextInput
                     style={styles.input}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor={COLORS.black}
+                    placeholderTextColor={COLORS.gray300}
                     value={filters.date_from}
                     onChangeText={(text) => updateFilter('date_from', text)}
                   />
@@ -142,7 +142,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
                   <TextInput
                     style={styles.input}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor={COLORS.black}
+                    placeholderTextColor={COLORS.gray300}
                     value={filters.date_to}
                     onChangeText={(text) => updateFilter('date_to', text)}
                   />
