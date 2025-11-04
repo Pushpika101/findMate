@@ -350,13 +350,12 @@ const ProfileScreen = ({ navigation }) => {
           style={styles.logoutButton}
           onPress={handleLogout}
         >
-          <Text style={styles.logoutIcon}>🚪</Text>
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
 
         {/* App Info */}
         <Text style={styles.appInfo}>
-          Lost & Found v1.0.0{'\n'}
+          findMate v1.0.0{'\n'}
           University of Peradeniya
         </Text>
 
@@ -616,7 +615,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.error,
+    backgroundColor: COLORS.lost,
     marginHorizontal: 20,
     marginTop: 16,
     paddingVertical: 14,
@@ -639,7 +638,7 @@ const styles = StyleSheet.create({
     lineHeight: 18
   },
   bottomPadding: {
-    height: 40
+    height: 120
   }
 });
 

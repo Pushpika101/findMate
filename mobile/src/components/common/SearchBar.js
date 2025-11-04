@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Animated
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 import COLORS from '../../utils/colors';
 
 const SearchBar = ({ onSearch, onFilterPress, onFocus, onBlur, placeholder = 'Search items...' }) => {
@@ -66,8 +67,9 @@ const SearchBar = ({ onSearch, onFilterPress, onFocus, onBlur, placeholder = 'Se
       <TouchableOpacity
         style={styles.filterButton}
         onPress={onFilterPress}
+        accessibilityLabel="Open filters"
       >
-            <Text style={styles.filterIcon}>Filter</Text>
+        <Icon name="filter" size={20} color={COLORS.black} />
       </TouchableOpacity>
     </View>
   );
