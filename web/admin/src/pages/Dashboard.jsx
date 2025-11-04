@@ -41,11 +41,11 @@ export default function Dashboard(){
             <div style={{ display: 'flex', justifyContent:'space-between', alignItems:'center', marginTop:8 }}>
               <div>
                 <div className="stat-value">{stats.users.total}</div>
-                <div style={{ color: 'var(--muted)', fontSize:13 }}>Total users</div>
+                <div className="stat-small">Total users</div>
               </div>
               <div style={{ textAlign:'right' }}>
-                <div style={{ color: 'var(--muted)', fontSize:13 }}>Verified</div>
-                <div className="stat-value">{stats.users.verified}</div>
+                <div className="stat-small">Verified</div>
+                <div className="badge badge-green">{stats.users.verified}</div>
               </div>
             </div>
           </div>
@@ -55,15 +55,15 @@ export default function Dashboard(){
             <div style={{ display: 'flex', gap:12, marginTop:8 }}>
               <div style={{ flex:1 }}>
                 <div className="stat-value">{stats.items.total}</div>
-                <div style={{ color: 'var(--muted)', fontSize:13 }}>Total</div>
+                <div className="stat-small">Total</div>
               </div>
               <div style={{ flex:1 }}>
                 <div className="stat-value">{stats.items.active}</div>
-                <div style={{ color: 'var(--muted)', fontSize:13 }}>Active</div>
+                <div className="stat-small">Active</div>
               </div>
               <div style={{ flex:1 }}>
                 <div className="stat-value">{stats.items.resolved}</div>
-                <div style={{ color: 'var(--muted)', fontSize:13 }}>Resolved</div>
+                <div className="stat-small">Resolved</div>
               </div>
             </div>
           </div>
@@ -72,7 +72,7 @@ export default function Dashboard(){
             <h3>Matches</h3>
             <div style={{ marginTop:8 }}>
               <div className="stat-value">{stats.matches.total}</div>
-              <div style={{ color: 'var(--muted)', fontSize:13 }}>Total matches</div>
+              <div className="stat-small">Total matches</div>
             </div>
           </div>
         </div>

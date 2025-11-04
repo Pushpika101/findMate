@@ -1,15 +1,19 @@
 :root{
-	--bg: #ffffff;
-	--muted: #687076;
+	--bg: linear-gradient(180deg,#fff7ed 0%, #ffffff 100%);
+	--muted: #64748b;
 	--card: #ffffff;
-	--accent: #0a7ea4; /* from mobile tint */
-	--sidebar-bg: #0f1724;
-	--text: #11181C;
+	--accent: #0a7ea4; /* mobile tint */
+	--accent-2: #7c3aed; /* purple accent */
+	--accent-3: #f97316; /* orange accent */
+	--sidebar-bg: linear-gradient(180deg,#071226 0%, #0b1624 100%);
+	--text: #0f1724;
 }
 
-body{ margin:0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:var(--text); background:linear-gradient(180deg,#f8fafc 0%, #ffffff 100%)}
-.app{ display:flex; min-height:100vh; background:transparent }
-.sidebar{ width:240px; background:var(--sidebar-bg); color:#fff; padding:24px; box-shadow: 2px 0 10px rgba(2,6,23,0.4) }
+.app{ display:flex; min-height:100vh; background:var(--bg) }
+.brand-badge{ display:inline-flex; align-items:center; gap:8px }
+.brand-dot{ width:10px; height:10px; border-radius:6px; background:var(--accent) }
+.brand-name{ font-weight:700; color:#fff }
+.sidebar{ width:260px; background:var(--sidebar-bg); color:#fff; padding:24px; box-shadow: 2px 0 24px rgba(2,6,23,0.5); border-right:1px solid rgba(255,255,255,0.03) }
 .sidebar h2{ margin:0 0 18px; font-size:18px; letter-spacing:0.4px }
 .sidebar ul{ list-style:none; padding:0 }
 .sidebar a{ color:#c0c7cd; text-decoration:none; display:block; padding:6px 0 }
@@ -22,16 +26,36 @@ body{ margin:0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto
 .page-sub{ color:var(--muted); font-size:13px }
 
 /* Cards */
-.cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-top:12px }
-.card{ background:var(--card); padding:16px 18px; border-radius:12px; box-shadow: 0 8px 20px rgba(10,14,20,0.06); border:1px solid rgba(10,14,20,0.03) }
-.card h3{ margin:0 0 8px; color:var(--accent) }
+.cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:18px; margin-top:16px }
+.card{ background:linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8)); padding:18px 20px; border-radius:14px; box-shadow: 0 12px 30px rgba(12,18,28,0.08); border:1px solid rgba(12,18,28,0.04); position:relative; overflow:hidden }
+.card::after{ content:''; position:absolute; right:-60px; bottom:-60px; width:220px; height:220px; background:radial-gradient(circle at 30% 30%, rgba(10,126,164,0.06), transparent 40%), radial-gradient(circle at 70% 70%, rgba(124,58,237,0.04), transparent 30%); transform:rotate(15deg) }
+.card h3{ margin:0 0 10px; color:var(--accent-2); font-size:16px }
 .card p{ margin:4px 0; color:var(--muted) }
 
-.stat-value{ font-size:20px; font-weight:700; color:#0b3f4c }
+.stat-value{ font-size:22px; font-weight:800; color:var(--accent-2) }
+
+.stat-small{ font-size:13px; color:var(--muted) }
+
+/* colorful badges and buttons */
+.badge{ display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:600; color:#fff }
+.badge-green{ background:linear-gradient(90deg,#10b981,#059669) }
+.badge-blue{ background:linear-gradient(90deg,#06b6d4,#0ea5a3) }
+.badge-orange{ background:linear-gradient(90deg,#fb923c,#f97316) }
+
+.btn{ padding:8px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:600 }
+.btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#fff }
+.btn-outline{ background:transparent; border:1px solid rgba(15,23,42,0.06); color:var(--text) }
+.btn-danger{ background:linear-gradient(90deg,#ef4444,#dc2626); color:#fff }
 
 /* table tweaks */
-.table{ width:100%; border-collapse:collapse }
-.table th, .table td{ border-bottom:1px solid #eef2f5; padding:10px; text-align:left }
+.table{ width:100%; border-collapse:collapse; background:transparent }
+.table th, .table td{ border-bottom:1px solid rgba(15,23,42,0.04); padding:12px; text-align:left }
+
+.status-dot{ width:10px; height:10px; border-radius:10px; display:inline-block; margin-right:8px }
+
+/* inputs */
+input, select, button{ padding:8px 10px; margin-right:8px; border-radius:10px; border:1px solid rgba(15,23,42,0.06); background:#fff }
+input:focus, select:focus, button:focus{ outline:2px solid rgba(10,126,164,0.12) }
 
 input, select, button{ padding:8px 10px; margin-right:8px; border-radius:8px }
 

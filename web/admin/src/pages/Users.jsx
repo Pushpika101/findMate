@@ -53,7 +53,16 @@ export default function Users(){
       {loading ? <div>Loading...</div> : (
         <table className="table">
           <thead>
-            <tr><th>ID</th><th>Name</th><th>Email</th><th>Verified</th><th>Admin</th><th>Items</th><th>Actions</th></tr>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Verified</th>
+              <th>Admin</th>
+              <th>Items</th>
+              <th>Actions</th>
+            </tr>
           </thead>
           <tbody>
             {users.map(u => (
@@ -61,12 +70,19 @@ export default function Users(){
                 <td>{u.id}</td>
                 <td>{u.name}</td>
                 <td>{u.email}</td>
+                <td>
+                  {u.is_online ? (
+                    <span className="badge badge-green">Online</span>
+                  ) : (
+                    <span className="badge" style={{ background:'#94a3b8' }}>Offline</span>
+                  )}
+                </td>
                 <td>{String(u.is_verified)}</td>
                 <td>{String(u.is_admin)}</td>
                 <td>{u.total_items}</td>
                 <td>
-                  <button onClick={()=>handleBan(u.id)} style={{ marginRight:8 }}>Ban</button>
-                  <button onClick={()=>handleForceLogout(u.id)}>Force logout</button>
+                  <button className="btn btn-outline" onClick={()=>handleBan(u.id)} style={{ marginRight:8 }}>Ban</button>
+                  <button className="btn btn-primary" onClick={()=>handleForceLogout(u.id)}>Force logout</button>
                 </td>
               </tr>
             ))}

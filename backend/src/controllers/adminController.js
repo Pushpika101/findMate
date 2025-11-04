@@ -39,16 +39,30 @@ exports.getAllUsers = async (req, res) => {
 
     const result = await query(queryText, queryParams);
 
+    // Determine online status using Socket.IO rooms (if io is available)
+    const io = req.app && req.app.get && req.app.get('io');
+    const usersWithStatus = result.rows.map((u) => {
+      let isOnline = false;
+      try {
+        if (io) {
+          const room = io.sockets.adapter.rooms.get(`user_${u.id}`);
+          isOnline = !!(room && room.size > 0);
+        }
+      } catch (err) {
+        // ignore room lookup errors and default to false
+      }
+      return { ...u, is_online: isOnline };
+    });
     // Get total count
     const countResult = await query('SELECT COUNT(*) FROM users');
     const total = parseInt(countResult.rows[0].count);
 
     res.json({
       success: true,
-      count: result.rows.length,
+      count: usersWithStatus.length,
       total,
       data: {
-        users: result.rows
+        users: usersWithStatus
       }
     });
   } catch (error) {
