@@ -72,15 +72,18 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
   }, []);
 
   const handlePress = () => {
-    // vanish animation: scale down + fade out + rotate
-    Animated.parallel([
-      Animated.spring(scaleAnim, { toValue: 0, useNativeDriver: true }),
-      Animated.timing(opacityAnim, { toValue: 0, duration: 180, useNativeDriver: true }),
-      Animated.timing(rotateAnim, { toValue: 1, duration: 200, useNativeDriver: true })
-    ]).start(() => {
-      // navigate after animation completes
+    // Navigate immediately for snappy UX, then run a short vanish animation for polish
+    try {
       onPress();
-    });
+    } catch (e) {
+      // ignore navigation errors
+    }
+
+    Animated.parallel([
+      Animated.spring(scaleAnim, { toValue: 0, useNativeDriver: true, friction: 8 }),
+      Animated.timing(opacityAnim, { toValue: 0, duration: 140, useNativeDriver: true }),
+      Animated.timing(rotateAnim, { toValue: 1, duration: 160, useNativeDriver: true })
+    ]).start();
   };
 
   const rotation = rotateAnim.interpolate({

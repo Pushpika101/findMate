@@ -434,12 +434,15 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     backgroundColor: COLORS.black ,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    alignSelf: 'center'
   },
   menuIcon: {
     fontSize: 24,
     color: COLORS.white,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    lineHeight: 45,
+    textAlign: 'center'
   },
   filterContainer: {
     flexDirection: 'row',
