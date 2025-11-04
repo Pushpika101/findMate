@@ -14,6 +14,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
 import { usersAPI, itemsAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
+import { API_URL } from '../../utils/constants';
 
 const ProfileScreen = ({ navigation }) => {
   const { user, logout, setUser } = useAuth();
@@ -22,9 +23,23 @@ const ProfileScreen = ({ navigation }) => {
   const [stats, setStats] = useState(null);
   const [profileData, setProfileData] = useState(null);
 
+  // Initialize from auth user if available to avoid empty UI before fetch
+  useEffect(() => {
+    if (user) {
+      setProfileData(user);
+    }
+  }, [user]);
+
   useEffect(() => {
     fetchProfileData();
-  }, []);
+
+    // Re-fetch when screen is focused so edits (from EditProfile) show immediately
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchProfileData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const fetchProfileData = async () => {
     try {
@@ -34,6 +49,14 @@ const ProfileScreen = ({ navigation }) => {
       const profileResponse = await usersAPI.getProfile();
       if (profileResponse.success) {
         setProfileData(profileResponse.data.user);
+        // Debug: log returned and normalized profile photo URL
+        try {
+          const raw = profileResponse.data.user.profile_photo;
+          const normalized = normalizeImageUrl(raw);
+          console.log('[ProfileScreen] fetched profile_photo raw:', raw, 'normalized:', normalized);
+        } catch (e) {
+          console.log('[ProfileScreen] fetchProfileData - no profile photo or normalization failed', e);
+        }
       }
 
       // Fetch user statistics
@@ -45,6 +68,25 @@ const ProfileScreen = ({ navigation }) => {
       console.error('Error fetching profile:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const normalizeImageUrl = (uri) => {
+    if (!uri) return null;
+    try {
+      const parsed = new URL(uri);
+      const host = parsed.hostname;
+      if (host === 'localhost' || host === '127.0.0.1') {
+        // Replace origin with API base origin
+        const apiOrigin = API_URL.replace(/\/api\/?$/, '');
+        return apiOrigin + parsed.pathname + parsed.search + parsed.hash;
+      }
+      return uri;
+    } catch (err) {
+      // uri might be a relative path like /uploads/xxx
+      const apiOrigin = API_URL.replace(/\/api\/?$/, '');
+      if (uri.startsWith('/')) return apiOrigin + uri;
+      return uri;
     }
   };
 
@@ -188,7 +230,7 @@ const ProfileScreen = ({ navigation }) => {
           >
             {profileData?.profile_photo ? (
               <Image
-                source={{ uri: profileData.profile_photo }}
+                source={{ uri: normalizeImageUrl(profileData.profile_photo) }}
                 style={styles.avatar}
               />
             ) : (

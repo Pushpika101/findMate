@@ -47,19 +47,25 @@ const multerUpload = multer({
 // Custom middleware to upload to Cloudinary
 const uploadToCloudinary = (fieldName) => {
   return async (req, res, next) => {
-    if (!req.files || !req.files[fieldName]) {
+    // support both single (req.file) and multiple (req.files[fieldName]) upload flows
+    const hasFilesField = req.files && req.files[fieldName];
+    const hasSingleFile = req.file;
+    if (!hasFilesField && !hasSingleFile) {
       return next();
     }
+
+    // Normalize to an array for processing, but remember if it was single
+    const singleMode = !!hasSingleFile && !hasFilesField;
+    const filesArray = singleMode ? [req.file] : (Array.isArray(req.files[fieldName]) ? req.files[fieldName] : [req.files[fieldName]]);
 
     // If Cloudinary isn't configured, save files locally into /uploads and return absolute URLs
     if (!CLOUDINARY_CONFIGURED) {
       console.warn('[cloudinary] Cloudinary not configured - saving uploads locally to /uploads');
-      const files = Array.isArray(req.files[fieldName]) ? req.files[fieldName] : [req.files[fieldName]];
 
       // Determine base URL from request when available so mobile clients get reachable URLs
       const requestBase = (req && req.protocol && req.get) ? `${req.protocol}://${req.get('host')}` : SERVER_BASE;
 
-      const saved = files.map((file) => {
+      const saved = filesArray.map((file) => {
         try {
           // Determine extension
           const originalName = file.originalname || `${Date.now()}.jpg`;
@@ -85,16 +91,18 @@ const uploadToCloudinary = (fieldName) => {
         }
       });
 
-      req.files[fieldName] = saved;
+      if (singleMode) {
+        // set req.file to the saved file object
+        req.file = saved[0];
+      } else {
+        req.files[fieldName] = saved;
+      }
+
       return next();
     }
 
     try {
-      const files = Array.isArray(req.files[fieldName]) 
-        ? req.files[fieldName] 
-        : [req.files[fieldName]];
-
-      const uploadPromises = files.map(file => {
+      const uploadPromises = filesArray.map(file => {
         return new Promise((resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(
             {
@@ -114,13 +122,21 @@ const uploadToCloudinary = (fieldName) => {
       });
 
       const results = await Promise.all(uploadPromises);
-      
-      // Add Cloudinary URLs to files
-      req.files[fieldName] = req.files[fieldName].map((file, index) => ({
-        ...file,
-        path: results[index].secure_url,
-        cloudinaryId: results[index].public_id
-      }));
+
+      // Attach results back to req.file or req.files[fieldName]
+      if (singleMode) {
+        req.file = {
+          ...req.file,
+          path: results[0].secure_url,
+          cloudinaryId: results[0].public_id
+        };
+      } else {
+        req.files[fieldName] = filesArray.map((file, index) => ({
+          ...file,
+          path: results[index].secure_url,
+          cloudinaryId: results[index].public_id
+        }));
+      }
 
       next();
     } catch (error) {
