@@ -48,6 +48,8 @@ const ProfileScreen = ({ navigation }) => {
       const profileResponse = await usersAPI.getProfile();
       if (profileResponse.success) {
         setProfileData(profileResponse.data.user);
+        // Debug full profile object to inspect student_id value
+        console.log('[ProfileScreen] profileResponse.data.user =', profileResponse.data.user);
         // Debug: log returned and normalized profile photo URL
         try {
           const raw = profileResponse.data.user.profile_photo;
@@ -198,12 +200,6 @@ const ProfileScreen = ({ navigation }) => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity
-          style={styles.settingsButton}
-          onPress={() => Alert.alert('Settings', 'Settings coming soon!')}
-        >
-          <Text style={styles.settingsIcon}>⚙️</Text>
-        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -237,7 +233,7 @@ const ProfileScreen = ({ navigation }) => {
           <Text style={styles.userName}>{profileData?.name}</Text>
           <Text style={styles.userEmail}>{profileData?.email}</Text>
           <Text style={styles.userStudentId}>
-            ID: {profileData?.student_id ?? '—'}
+            ID: {profileData?.student_id || '—'}
           </Text>
 
           <View style={styles.verifiedBadge}>
