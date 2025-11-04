@@ -8,7 +8,7 @@ import {
   ScrollView,
   TextInput
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+// Picker replaced by chip-style selectors in this modal
 import COLORS from '../../utils/colors';
 import { ITEM_CATEGORIES, ITEM_COLORS, SORT_OPTIONS } from '../../utils/constants';
 
@@ -70,35 +70,45 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
             {/* Category Filter */}
             <View style={styles.filterSection}>
               <Text style={styles.filterLabel}>Category</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={filters.category}
-                  onValueChange={(value) => updateFilter('category', value)}
-                  style={styles.picker}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+                <TouchableOpacity
+                  style={[styles.locationChip, filters.category === '' && styles.chipSelected]}
+                  onPress={() => updateFilter('category', '')}
                 >
-                  <Picker.Item label="All Categories" value="" />
-                  {ITEM_CATEGORIES.map((cat) => (
-                    <Picker.Item key={cat.value} label={cat.label} value={cat.value} />
-                  ))}
-                </Picker>
-              </View>
+                  <Text style={[styles.locationChipText, filters.category === '' && styles.chipSelectedText]}>All Categories</Text>
+                </TouchableOpacity>
+                {ITEM_CATEGORIES.map((cat) => (
+                  <TouchableOpacity
+                    key={cat.value}
+                    style={[styles.locationChip, filters.category === cat.value && styles.chipSelected]}
+                    onPress={() => updateFilter('category', cat.value)}
+                  >
+                    <Text style={[styles.locationChipText, filters.category === cat.value && styles.chipSelectedText]}>{cat.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             </View>
 
             {/* Color Filter */}
             <View style={styles.filterSection}>
               <Text style={styles.filterLabel}>Color</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={filters.color}
-                  onValueChange={(value) => updateFilter('color', value)}
-                  style={styles.picker}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+                <TouchableOpacity
+                  style={[styles.locationChip, filters.color === '' && styles.chipSelected]}
+                  onPress={() => updateFilter('color', '')}
                 >
-                  <Picker.Item label="All Colors" value="" />
-                  {ITEM_COLORS.map((color) => (
-                    <Picker.Item key={color.value} label={color.label} value={color.value} />
-                  ))}
-                </Picker>
-              </View>
+                  <Text style={[styles.locationChipText, filters.color === '' && styles.chipSelectedText]}>All Colors</Text>
+                </TouchableOpacity>
+                {ITEM_COLORS.map((color) => (
+                  <TouchableOpacity
+                    key={color.value}
+                    style={[styles.locationChip, filters.color === color.value && styles.chipSelected]}
+                    onPress={() => updateFilter('color', color.value)}
+                  >
+                    <Text style={[styles.locationChipText, filters.color === color.value && styles.chipSelectedText]}>{color.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             </View>
 
             {/* Location Filter */}
@@ -313,8 +323,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.black
   },
   sortOptionActive: {
     backgroundColor: COLORS.primary,
@@ -322,7 +332,7 @@ const styles = StyleSheet.create({
   },
   sortOptionText: {
     fontSize: 14,
-    color: COLORS.textPrimary,
+    color: COLORS.primary,
     fontWeight: '500'
   },
   sortOptionTextActive: {
@@ -357,6 +367,25 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontWeight: '500'
   },
+  locationChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: COLORS.black,
+    borderRadius: 16,
+    marginRight: 8
+  },
+  locationChipText: {
+    fontSize: 12,
+    color: COLORS.primary,
+    fontWeight: '600'
+  },
+  chipSelected: {
+    backgroundColor: COLORS.primary,
+  },
+  chipSelectedText: {
+    color: COLORS.white,
+    fontWeight: '700'
+  },
   buttonContainer: {
     flexDirection: 'row',
     gap: 12,
@@ -371,14 +400,14 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   resetButton: {
-    backgroundColor: COLORS.gray100,
+    backgroundColor: COLORS.black,
     borderWidth: 1,
-    borderColor: COLORS.border
+    borderColor: COLORS.black
   },
   resetButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.textPrimary
+    color: COLORS.primary
   },
   applyButton: {
     backgroundColor: COLORS.primary

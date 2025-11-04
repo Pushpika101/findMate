@@ -130,7 +130,7 @@ const MainTabNavigator = () => {
     };
 
     fetchNotificationBadge();
-    const interval = setInterval(fetchNotificationBadge, 10000);
+    const interval = setInterval(fetchNotificationBadge, 20000);
     return () => clearInterval(interval);
   }, []);
 
