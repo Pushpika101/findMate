@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import MainTabNavigator from './MainTabNavigator';
 import AddItemScreen from '../screens/items/AddItemScreen';
 import ItemDetailScreen from '../screens/items/ItemDetailScreen';
+import MyItemsScreen from '../screens/items/MyItemsScreen';
 import ChatScreen from '../screens/chat/ChatScreen';
 
 const Stack = createStackNavigator();
@@ -15,6 +16,7 @@ const MainNavigator = () => {
       }}
     >
       <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+      <Stack.Screen name="MyItems" component={MyItemsScreen} />
       <Stack.Screen 
         name="AddItem" 
         component={AddItemScreen}
