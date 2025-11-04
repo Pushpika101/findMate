@@ -337,4 +337,25 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justify
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  emptyIcon: {
+    fontSize: 48,
+    marginBottom: 12
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: 6
+  },
+  emptyText: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: 'center'
+  }
+});
+
+export default MyItemsScreen;
