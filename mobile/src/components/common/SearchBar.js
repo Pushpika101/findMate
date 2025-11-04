@@ -118,13 +118,13 @@ const styles = StyleSheet.create({
     width: 68,
     height: 48,
     borderRadius: 12,
-    backgroundColor: COLORS.black,
+    backgroundColor: COLORS.kk,
     justifyContent: 'center',
     alignItems: 'center'
   },
   filterIcon: {
     fontSize: 20,
-    color: COLORS.primary
+    color: COLORS.black
   }
 });
 

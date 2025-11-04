@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   sortOptions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8
+    gap: 5
   },
   sortOption: {
     paddingHorizontal: 16,

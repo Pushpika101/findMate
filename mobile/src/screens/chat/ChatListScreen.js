@@ -173,6 +173,7 @@ const ChatListScreen = ({ navigation }) => {
       <FlatList
         data={chats}
         renderItem={renderChatItem}
+        ListFooterComponent={<View style={{ height: 100 }} />}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={chats.length === 0 ? styles.emptyListContent : styles.listContent}
         refreshControl={

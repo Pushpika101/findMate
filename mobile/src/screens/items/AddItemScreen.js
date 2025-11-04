@@ -228,7 +228,7 @@ const AddItemScreen = ({ navigation }) => {
               styles.typeButtonText,
               formData.type === 'lost' && styles.typeButtonTextActive
             ]}>
-              🔍 Lost Item
+              Lost Item
             </Text>
           </TouchableOpacity>
 
@@ -244,7 +244,7 @@ const AddItemScreen = ({ navigation }) => {
               styles.typeButtonText,
               formData.type === 'found' && styles.typeButtonTextActive
             ]}>
-              ✨ Found Item
+              Found Item
             </Text>
           </TouchableOpacity>
         </View>
@@ -255,6 +255,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={[styles.input, errors.item_name && styles.inputError]}
             placeholder="e.g., Blue Backpack, iPhone 13, Calculator"
+            placeholderTextColor={COLORS.gray400}
             value={formData.item_name}
             onChangeText={(text) => handleInputChange('item_name', text)}
           />
@@ -307,6 +308,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="e.g., Nike, Apple, Casio"
+            placeholderTextColor={COLORS.gray400}
             value={formData.brand}
             onChangeText={(text) => handleInputChange('brand', text)}
           />
@@ -318,6 +320,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={[styles.input, errors.location && styles.inputError]}
             placeholder="e.g., Main Library, Engineering Faculty"
+            placeholderTextColor={COLORS.gray400}
             value={formData.location}
             onChangeText={(text) => handleInputChange('location', text)}
           />
@@ -345,6 +348,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={[styles.input, errors.date && styles.inputError]}
             placeholder="YYYY-MM-DD"
+            placeholderTextColor={COLORS.gray400}
             value={formData.date}
             onChangeText={(text) => handleInputChange('date', text)}
           />
@@ -359,6 +363,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="HH:MM (e.g., 14:30)"
+            placeholderTextColor={COLORS.gray400}
             value={formData.time}
             onChangeText={(text) => handleInputChange('time', text)}
           />
@@ -370,6 +375,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={[styles.input, styles.textArea]}
             placeholder="Add any additional details that might help..."
+            placeholderTextColor={COLORS.gray400}
             value={formData.description}
             onChangeText={(text) => handleInputChange('description', text)}
             multiline
@@ -458,7 +464,7 @@ const AddItemScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background
+    backgroundColor: COLORS.kk2
   },
   header: {
     flexDirection: 'row',
@@ -467,9 +473,9 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 16,
     paddingHorizontal: 20,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk2,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border
+    borderBottomColor: COLORS.kk2
   },
   backButton: {
     width: 40,

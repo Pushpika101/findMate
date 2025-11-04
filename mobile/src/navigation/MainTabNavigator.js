@@ -183,13 +183,7 @@ const MainTabNavigator = () => {
         component={HomeScreen}
         options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="home" size={size ?? 24} color={color} /> }}
       />
-      {/* <Tab.Screen
-        name="Chats"
-        component={ChatListScreen}
-        options={{
-            tabBarIcon: () => <Text style={{ fontSize: 24 }}>💬</Text>
-        }}
-        /> */}
+      
       <Tab.Screen
         name="Chats"
         component={ChatListScreen}

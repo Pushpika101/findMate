@@ -61,9 +61,8 @@ export const COMMON_LOCATIONS = [
 // Sort Options
 export const SORT_OPTIONS = [
   { label: 'Most Recent', value: 'recent' },
-  { label: 'Oldest First', value: 'oldest' },
-  { label: 'Date (Newest)', value: 'date_desc' },
-  { label: 'Date (Oldest)', value: 'date_asc' }
+  { label: 'Date (Oldest)', value: 'date_asc' },
+  { label: 'Date (Newest)', value: 'date_desc' }
 ];
 
 // Date Filter Options
