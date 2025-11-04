@@ -32,7 +32,7 @@ const AboutScreen = ({ navigation }) => {
 
       <Text style={styles.sectionTitle}>Credits & contact</Text>
       <Text style={styles.paragraph}>
-        Built by me. For feedback, bug reports, or partnership inquiries: e21442@eng.pd.ac.lk
+        Built by Pushpika Anuradha. For feedback, bug reports, or partnership inquiries: pushpikaanuradhagmail.com
       </Text>
 
       <Text style={styles.sectionTitle}>Version & tech</Text>

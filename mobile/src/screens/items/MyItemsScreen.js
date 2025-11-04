@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   itemCard: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk2,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
