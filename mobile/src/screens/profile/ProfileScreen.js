@@ -224,10 +224,7 @@ const ProfileScreen = ({ navigation }) => {
       >
         {/* Profile Info Card */}
         <View style={styles.profileCard}>
-          <TouchableOpacity
-            style={styles.avatarContainer}
-            onPress={handleChangeProfilePhoto}
-          >
+          <View style={styles.avatarContainer}>
             {profileData?.profile_photo ? (
               <Image
                 source={{ uri: normalizeImageUrl(profileData.profile_photo) }}
@@ -240,10 +237,7 @@ const ProfileScreen = ({ navigation }) => {
                 </Text>
               </View>
             )}
-            <View style={styles.cameraIcon}>
-              <Text style={styles.cameraIconText}>📷</Text>
-            </View>
-          </TouchableOpacity>
+          </View>
 
           <Text style={styles.userName}>{profileData?.name}</Text>
           <Text style={styles.userEmail}>{profileData?.email}</Text>
