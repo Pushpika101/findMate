@@ -248,38 +248,49 @@ const NotificationsScreen = ({ navigation }) => {
         {showMenu && (
           <Animated.View
             style={[
-                styles.floatingMenu,
-                {
-                  position: 'absolute',
-                  right: 12,
-                  top: Math.max(12, headerHeight - 8),
-                  width: MENU_WIDTH,
-                  opacity: anim,
-                  transform: [
-                    { scale: anim.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) },
-                    { translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [-6, 0] }) }
-                  ]
-                }
-              ]}
+              styles.floatingMenu,
+              {
+                position: 'absolute',
+                right: 12,
+                top: Math.max(12, headerHeight - 8),
+                width: MENU_WIDTH,
+                opacity: anim,
+                transform: [
+                  { scale: anim.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) },
+                  { translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [-6, 0] }) }
+                ]
+              }
+            ]}
           >
+            {/* caret */}
+            <View style={styles.menuCaretContainer} pointerEvents="none">
+              <View style={styles.menuCaret} />
+            </View>
+
             <TouchableOpacity
-              style={styles.menuItem}
+              style={[styles.menuItemRow, styles.menuItemRead]}
               onPress={() => closeMenu(() => handleMarkAllAsRead())}
+              activeOpacity={0.7}
             >
+              <Text style={styles.menuItemIcon}>✅</Text>
               <Text style={styles.menuItemText}>Mark All as Read</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.menuItem, styles.menuItemDestructive]}
+              style={[styles.menuItemRow, styles.menuItemDestructiveRow]}
               onPress={() => closeMenu(() => handleClearAll())}
+              activeOpacity={0.7}
             >
+              <Text style={styles.menuItemIcon}>🗑️</Text>
               <Text style={[styles.menuItemText, styles.menuItemDestructiveText]}>Clear All</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.menuItem}
+              style={[styles.menuItemRow, styles.menuItemCancelRow]}
               onPress={() => closeMenu()}
+              activeOpacity={0.7}
             >
+              <Text style={styles.menuItemIcon}>✖️</Text>
               <Text style={styles.menuItemText}>Cancel</Text>
             </TouchableOpacity>
           </Animated.View>
@@ -480,6 +491,16 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 14
   },
+  menuItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12
+  },
+  menuItemIcon: {
+    fontSize: 16,
+    marginRight: 12
+  },
   menuItemText: {
     fontSize: 16,
     color: COLORS.textPrimary
@@ -488,6 +509,56 @@ const styles = StyleSheet.create({
   menuItemDestructiveText: {
     color: COLORS.danger || '#d9534f'
   },
+  menuDivider: {
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginHorizontal: 8
+  },
+  menuCaretContainer: {
+    position: 'absolute',
+    right: 28,
+    top: -6,
+    width: 16,
+    height: 8,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  menuCaret: {
+    width: 0,
+    height: 0,
+    borderLeftWidth: 8,
+    borderRightWidth: 8,
+    borderBottomWidth: 8,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: COLORS.white
+  },
+  menuItemRead: {
+    backgroundColor: COLORS.successLight || '#eaf6ec',
+    borderWidth: 1,
+    borderColor: COLORS.success || '#2e7d32',
+    borderRadius: 8,
+    marginHorizontal: 8,
+    marginTop: 8
+  },
+  menuItemDestructiveRow: {
+    backgroundColor: COLORS.dangerLight || '#fff0f0',
+    borderWidth: 1,
+    borderColor: COLORS.danger || '#c62828',
+    borderRadius: 8,
+    marginHorizontal: 8,
+    marginTop: 8
+  },
+  menuItemCancelRow: {
+    backgroundColor: COLORS.gray50 || '#f7f7f7',
+    borderWidth: 1,
+    borderColor: COLORS.border || '#e0e0e0',
+    borderRadius: 8,
+    marginHorizontal: 8,
+    marginTop: 8,
+    marginBottom: 8
+  }
+  ,
   restOverlay: {
     position: 'absolute',
     left: 0,
