@@ -112,7 +112,7 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
       activeOpacity={0.9}
     >
       <Animated.View style={{ transform: [{ scale: scaleAnim }, { rotate: rotation }], opacity: opacityAnim }}>
-        <Text style={{ fontSize: 32, color: COLORS.white, fontWeight: '300', marginTop: -4 }}>+</Text>
+        <Text style={{ fontSize: 32, color: COLORS.black, fontWeight: '300', marginTop: -4 }}>+</Text>
       </Animated.View>
     </TouchableOpacity>
   );
