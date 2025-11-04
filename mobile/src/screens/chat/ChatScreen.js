@@ -25,6 +25,7 @@ import {
   removeMessageListener,
   removeTypingListener
 } from '../../services/socket';
+import { DeviceEventEmitter } from 'react-native';
 
 const ChatScreen = ({ route, navigation }) => {
   const { chatId } = route.params;
@@ -124,6 +125,20 @@ const ChatScreen = ({ route, navigation }) => {
   const markAsRead = async () => {
     try {
       await chatAPI.markAsRead(chatId);
+      // notify other screens (chat list / main tab) that this chat was marked read
+      try {
+        // emit chat marked read so chat list can clear its unread badge immediately
+        DeviceEventEmitter.emit('chatMarkedRead', chatId);
+
+        // fetch authoritative unread count and emit to main tab so its badge updates
+        const res = await chatAPI.getUnreadCount?.();
+        if (res && res.success) {
+          DeviceEventEmitter.emit('chatBadgeUpdated', res.data.unreadCount || 0);
+        }
+      } catch (e) {
+        // non-fatal — log and continue
+        console.warn('Failed to emit chat read events', e);
+      }
     } catch (error) {
       console.error('Error marking as read:', error);
     }

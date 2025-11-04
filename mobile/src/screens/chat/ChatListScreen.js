@@ -42,6 +42,16 @@ const ChatListScreen = ({ navigation }) => {
     };
   }, []);
 
+  // Listen for chat read events emitted from ChatScreen so we can clear the unread badge
+  useEffect(() => {
+    const sub = DeviceEventEmitter.addListener('chatMarkedRead', (readChatId) => {
+      if (!readChatId) return;
+      setChats((prev) => prev.map((c) => (c.id === readChatId ? { ...c, unread_count: 0 } : c)));
+    });
+
+    return () => sub.remove();
+  }, []);
+
   const { user } = useAuth();
 
   const handleIncomingMessage = (newMessage) => {
@@ -355,7 +365,7 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary
   },
   unreadBadge: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.lost,
     borderRadius: 10,
     minWidth: 20,
     height: 20,

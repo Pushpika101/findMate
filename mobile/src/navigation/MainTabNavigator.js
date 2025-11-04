@@ -225,8 +225,8 @@ const MainTabNavigator = () => {
             <View style={{ width: 36, height: 36, justifyContent: 'center', alignItems: 'center' }}>
               <MaterialIcons name="chat" size={size ?? 24} color={color} />
               {chatBadge > 0 && (
-                <View style={{ position: 'absolute', top: -4, right: -6, backgroundColor: COLORS.primary, minWidth: 18, height: 18, borderRadius: 9, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
-                  <Text style={{ color: COLORS.white, fontSize: 10, fontWeight: '700' }}>{chatBadge > 99 ? '99+' : chatBadge}</Text>
+                <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: COLORS.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
+                  <Text style={{ color: COLORS.white, fontSize: 15, fontWeight: '600' }}>{chatBadge > 99 ? '99+' : chatBadge}</Text>
                 </View>
               )}
             </View>
@@ -251,8 +251,16 @@ const MainTabNavigator = () => {
         name="Notifications"
         component={NotificationsScreen}
         options={{
-          tabBarIcon: ({ color, size }) => <MaterialIcons name="notifications" size={size ?? 24} color={color} />,
-          tabBarBadge: notificationBadge > 0 ? notificationBadge : undefined,
+          tabBarIcon: ({ color, size }) => (
+            <View style={{ width: 36, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+              <MaterialIcons name="notifications" size={size ?? 24} color={color} />
+              {notificationBadge > 0 && (
+                <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: COLORS.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
+                  <Text style={{ color: COLORS.white, fontSize: 15, fontWeight: '600' }}>{notificationBadge > 99 ? '99+' : notificationBadge}</Text>
+                </View>
+              )}
+            </View>
+          )
         }}
       />
       <Tab.Screen
