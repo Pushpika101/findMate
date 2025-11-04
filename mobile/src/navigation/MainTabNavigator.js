@@ -88,7 +88,7 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
 
   const rotation = rotateAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '45deg'],
+    outputRange: ['0deg', '0deg'],
   });
 
   return (
