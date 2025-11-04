@@ -67,7 +67,19 @@ const NotificationsScreen = ({ navigation }) => {
     const socket = require('../../services/socket').getSocket();
     if (socket) {
       socket.on('new_notification', (notification) => {
-        setNotifications((prev) => [notification, ...prev]);
+        // avoid adding duplicate notifications with same id
+        setNotifications((prev) => {
+          try {
+            const nid = String(notification?.id ?? notification?._id ?? JSON.stringify(notification));
+            const exists = prev.some((n) => String(n?.id ?? n?._id) === nid);
+            if (exists) return prev;
+            return [notification, ...prev];
+          } catch (err) {
+            // fallback: if anything goes wrong, prepend but guard by shallow equality
+            if (prev.length && JSON.stringify(prev[0]) === JSON.stringify(notification)) return prev;
+            return [notification, ...prev];
+          }
+        });
         setUnreadCount((prev) => prev + 1);
       });
     }
@@ -78,7 +90,17 @@ const NotificationsScreen = ({ navigation }) => {
       setLoading(true);
       const response = await notificationsAPI.getAll({ limit: 100 });
       if (response.success) {
-        setNotifications(response.data.notifications);
+        // dedupe notifications by id when setting initial list
+        const seen = new Set();
+        const deduped = [];
+        (response.data.notifications || []).forEach((n) => {
+          const id = String(n?.id ?? n?._id ?? JSON.stringify(n));
+          if (!seen.has(id)) {
+            seen.add(id);
+            deduped.push(n);
+          }
+        });
+        setNotifications(deduped);
       }
     } catch (error) {
       Alert.alert('Error', error || 'Failed to fetch notifications');
@@ -346,6 +368,7 @@ const NotificationsScreen = ({ navigation }) => {
       <FlatList
         data={filteredNotifications}
         renderItem={renderNotification}
+        ListFooterComponent={<View style={{ height: 100 }} />}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={
           filteredNotifications.length === 0
@@ -425,7 +448,7 @@ const styles = StyleSheet.create({
     gap: 12,
     backgroundColor: COLORS.white,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border
+    borderBottomColor: COLORS.white
   },
   filterTab: {
     paddingHorizontal: 16,
@@ -434,7 +457,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.gray100
   },
   filterTabActive: {
-    backgroundColor: COLORS.primary
+    backgroundColor: COLORS.black
   },
   filterTabText: {
     fontSize: 14,
