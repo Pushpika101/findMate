@@ -96,12 +96,15 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
       style={{
         width: 70,
         height: 70,
-        borderRadius: 30,
+        borderRadius: 28,
         backgroundColor: COLORS.primary,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: -24,
-        shadowColor: COLORS.error,
+        position: 'absolute',
+        left: '50%',
+        marginLeft: -35, // half width to center
+        top: -24,
+        shadowColor: COLORS.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -217,7 +220,7 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="home" size={size ?? 24} color={color} /> }}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="home" size={size ?? 24} color={COLORS.black} /> }}
       />
       
       <Tab.Screen
@@ -226,7 +229,7 @@ const MainTabNavigator = () => {
         options={{
           tabBarIcon: ({ color, size }) => (
             <View style={{ width: 36, height: 36, justifyContent: 'center', alignItems: 'center' }}>
-              <MaterialIcons name="chat" size={size ?? 24} color={color} />
+              <MaterialIcons name="chat" size={size ?? 24} color={COLORS.black} />
               {chatBadge > 0 && (
                 <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: COLORS.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
                   <Text style={{ color: COLORS.white, fontSize: 15, fontWeight: '600' }}>{chatBadge > 99 ? '99+' : chatBadge}</Text>
@@ -256,7 +259,7 @@ const MainTabNavigator = () => {
         options={{
           tabBarIcon: ({ color, size }) => (
             <View style={{ width: 36, height: 36, justifyContent: 'center', alignItems: 'center' }}>
-              <MaterialIcons name="notifications" size={size ?? 24} color={color} />
+              <MaterialIcons name="notifications" size={size ?? 24} color={COLORS.black} />
               {notificationBadge > 0 && (
                 <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: COLORS.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
                   <Text style={{ color: COLORS.white, fontSize: 15, fontWeight: '600' }}>{notificationBadge > 99 ? '99+' : notificationBadge}</Text>
@@ -269,7 +272,7 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="person" size={size ?? 24} color={color} /> }}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="person" size={size ?? 24} color={COLORS.black} /> }}
       />
     </Tab.Navigator>
   );
