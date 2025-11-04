@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
-import { usersAPI, itemsAPI } from '../../services/api';
+import { usersAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
 import { API_URL } from '../../utils/constants';
 
@@ -20,7 +20,6 @@ const ProfileScreen = ({ navigation }) => {
   const { user, logout, setUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [stats, setStats] = useState(null);
   const [profileData, setProfileData] = useState(null);
 
   // Initialize from auth user if available to avoid empty UI before fetch
@@ -59,11 +58,7 @@ const ProfileScreen = ({ navigation }) => {
         }
       }
 
-      // Fetch user statistics
-      const statsResponse = await usersAPI.getStatistics();
-      if (statsResponse.success) {
-        setStats(statsResponse.data);
-      }
+      // no-op: statistics removed from profile screen
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
@@ -262,57 +257,7 @@ const ProfileScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Statistics */}
-        {stats && (
-          <View style={styles.statsCard}>
-            <Text style={styles.sectionTitle}>Statistics</Text>
-            <View style={styles.statsGrid}>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>
-                  {stats.items?.total_items || 0}
-                </Text>
-                <Text style={styles.statLabel}>Total Items</Text>
-              </View>
-
-              <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: COLORS.lost }]}>
-                  {stats.items?.active_lost || 0}
-                </Text>
-                <Text style={styles.statLabel}>Lost Items</Text>
-              </View>
-
-              <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: COLORS.found }]}>
-                  {stats.items?.active_found || 0}
-                </Text>
-                <Text style={styles.statLabel}>Found Items</Text>
-              </View>
-
-              <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: COLORS.success }]}>
-                  {stats.items?.resolved || 0}
-                </Text>
-                <Text style={styles.statLabel}>Resolved</Text>
-              </View>
-
-              <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: COLORS.primary }]}>
-                  {stats.matches?.total_matches || 0}
-                </Text>
-                <Text style={styles.statLabel}>Matches</Text>
-              </View>
-
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>
-                  {stats.items?.resolved && stats.items?.total_items
-                    ? Math.round((stats.items.resolved / stats.items.total_items) * 100)
-                    : 0}%
-                </Text>
-                <Text style={styles.statLabel}>Success Rate</Text>
-              </View>
-            </View>
-          </View>
-        )}
+        
 
         {/* Quick Actions */}
         <View style={styles.actionsCard}>

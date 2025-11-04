@@ -26,8 +26,23 @@ export default function NotificationHandler() {
     });
 
     return () => {
-      if (receivedListener.current) Notifications.removeNotificationSubscription(receivedListener.current);
-      if (responseListener.current) Notifications.removeNotificationSubscription(responseListener.current);
+      // Newer expo-notifications returns subscription objects with a .remove() method
+      try {
+        if (receivedListener.current && typeof receivedListener.current.remove === 'function') {
+          receivedListener.current.remove();
+        }
+        if (responseListener.current && typeof responseListener.current.remove === 'function') {
+          responseListener.current.remove();
+        }
+      } catch (e) {
+        // Fallback: try the older removal API if available
+        if (receivedListener.current) {
+          try { Notifications.removeNotificationSubscription(receivedListener.current); } catch (_) {}
+        }
+        if (responseListener.current) {
+          try { Notifications.removeNotificationSubscription(responseListener.current); } catch (_) {}
+        }
+      }
     };
   }, []);
 
