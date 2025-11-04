@@ -56,7 +56,7 @@ export default function Items(){
                 <td>{i.id}</td>
                 <td>{i.item_name}</td>
                 <td>{i.type === 'lost' ? <span className="badge badge-orange">Lost</span> : <span className="badge badge-blue">Found</span>}</td>
-                <td>{i.status === 'active' ? <span className="badge badge-green">Active</span> : <span className="badge" style={{ background:'#94a3b8' }}>Resolved</span>}</td>
+                <td>{i.status === 'active' ? <span className="badge badge-green">Active</span> : <span className="badge" style={{ background:'var(--muted)' }}>Resolved</span>}</td>
                 <td>{i.user_name} ({i.user_email})</td>
                 <td><button className="btn btn-danger" onClick={()=>handleDelete(i.id)}>Delete</button></td>
               </tr>

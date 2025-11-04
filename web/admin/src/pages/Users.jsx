@@ -73,8 +73,8 @@ export default function Users(){
                 <td>
                   {u.is_online ? (
                     <span className="badge badge-green">Online</span>
-                  ) : (
-                    <span className="badge" style={{ background:'#94a3b8' }}>Offline</span>
+                    ) : (
+                    <span className="badge" style={{ background:'var(--muted)' }}>Offline</span>
                   )}
                 </td>
                 <td>{String(u.is_verified)}</td>

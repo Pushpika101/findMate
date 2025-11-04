@@ -1,11 +1,12 @@
 :root{
-	--bg: linear-gradient(180deg,#fff7ed 0%, #ffffff 100%);
-	--muted: #64748b;
+	/* Blue-first palette based on mobile tint */
+	--bg: #f8fbff; /* light blue-ish background */
+	--muted: #6b7a89;
 	--card: #ffffff;
-	--accent: #0a7ea4; /* mobile tint */
-	--accent-2: #7c3aed; /* purple accent */
-	--accent-3: #f97316; /* orange accent */
-	--sidebar-bg: linear-gradient(180deg,#071226 0%, #0b1624 100%);
+	--accent: #0a7ea4; /* primary mobile tint */
+	--accent-dark: #08627f; /* darker variant */
+	--accent-light: #47a7c0; /* lighter variant */
+	--sidebar-bg: #071826; /* deep navy */
 	--text: #0f1724;
 }
 
@@ -27,25 +28,24 @@
 
 /* Cards */
 .cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:18px; margin-top:16px }
-.card{ background:linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8)); padding:18px 20px; border-radius:14px; box-shadow: 0 12px 30px rgba(12,18,28,0.08); border:1px solid rgba(12,18,28,0.04); position:relative; overflow:hidden }
-.card::after{ content:''; position:absolute; right:-60px; bottom:-60px; width:220px; height:220px; background:radial-gradient(circle at 30% 30%, rgba(10,126,164,0.06), transparent 40%), radial-gradient(circle at 70% 70%, rgba(124,58,237,0.04), transparent 30%); transform:rotate(15deg) }
-.card h3{ margin:0 0 10px; color:var(--accent-2); font-size:16px }
+.card{ background:var(--card); padding:18px 20px; border-radius:14px; box-shadow: 0 8px 20px rgba(12,18,28,0.06); border:1px solid rgba(12,18,28,0.04); position:relative; overflow:hidden }
+.card h3{ margin:0 0 10px; color:var(--accent); font-size:16px }
 .card p{ margin:4px 0; color:var(--muted) }
 
-.stat-value{ font-size:22px; font-weight:800; color:var(--accent-2) }
+.stat-value{ font-size:22px; font-weight:800; color:var(--accent-dark) }
 
 .stat-small{ font-size:13px; color:var(--muted) }
 
 /* colorful badges and buttons */
 .badge{ display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:600; color:#fff }
-.badge-green{ background:linear-gradient(90deg,#10b981,#059669) }
-.badge-blue{ background:linear-gradient(90deg,#06b6d4,#0ea5a3) }
-.badge-orange{ background:linear-gradient(90deg,#fb923c,#f97316) }
+.badge-green{ background:var(--accent); }
+.badge-blue{ background:var(--accent-dark); }
+.badge-orange{ background:var(--accent-light); }
 
 .btn{ padding:8px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:600 }
-.btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#fff }
+.btn-primary{ background:var(--accent); color:#fff }
 .btn-outline{ background:transparent; border:1px solid rgba(15,23,42,0.06); color:var(--text) }
-.btn-danger{ background:linear-gradient(90deg,#ef4444,#dc2626); color:#fff }
+.btn-danger{ background:#ef4444; color:#fff }
 
 /* table tweaks */
 .table{ width:100%; border-collapse:collapse; background:transparent }
