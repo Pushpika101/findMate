@@ -13,6 +13,7 @@ import {
 import { chatAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
 import { initializeSocket, onNewMessage } from '../../services/socket';
+import { API_URL } from '../../utils/constants';
 
 const ChatListScreen = ({ navigation }) => {
   const [chats, setChats] = useState([]);
@@ -31,6 +32,25 @@ const ChatListScreen = ({ navigation }) => {
     onNewMessage(() => {
       fetchChats();
     });
+  };
+
+  const normalizeImageUrl = (uri) => {
+    if (!uri) return null;
+    try {
+      const parsed = new URL(uri);
+      const host = parsed.hostname;
+      if (host === 'localhost' || host === '127.0.0.1') {
+        // Replace origin with API base origin
+        const apiOrigin = API_URL.replace(/\/api\/?$/, '');
+        return apiOrigin + parsed.pathname + parsed.search + parsed.hash;
+      }
+      return uri;
+    } catch (err) {
+      // uri might be a relative path like /uploads/xxx
+      const apiOrigin = API_URL.replace(/\/api\/?$/, '');
+      if (uri.startsWith('/')) return apiOrigin + uri;
+      return uri;
+    }
   };
 
   const fetchChats = async () => {
@@ -58,11 +78,18 @@ const ChatListScreen = ({ navigation }) => {
       style={styles.chatItem}
       onPress={() => navigation.navigate('ChatScreen', { chatId: item.id })}
     >
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>
-          {item.other_user_name?.charAt(0).toUpperCase()}
-        </Text>
-      </View>
+      {item.other_user_photo ? (
+        <Image
+          source={{ uri: normalizeImageUrl(item.other_user_photo) }}
+          style={styles.avatar}
+        />
+      ) : (
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>
+            {item.other_user_name?.charAt(0).toUpperCase()}
+          </Text>
+        </View>
+      )}
 
       <View style={styles.chatInfo}>
         <View style={styles.chatHeader}>

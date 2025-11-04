@@ -247,11 +247,9 @@ const ProfileScreen = ({ navigation }) => {
 
           <Text style={styles.userName}>{profileData?.name}</Text>
           <Text style={styles.userEmail}>{profileData?.email}</Text>
-          {profileData?.student_id && (
-            <Text style={styles.userStudentId}>
-              ID: {profileData.student_id}
-            </Text>
-          )}
+          <Text style={styles.userStudentId}>
+            ID: {profileData?.student_id ?? '—'}
+          </Text>
 
           <View style={styles.verifiedBadge}>
             <Text style={styles.verifiedIcon}>
