@@ -117,6 +117,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Enter location..."
+                placeholderTextColor={COLORS.black}
                 value={filters.location}
                 onChangeText={(text) => updateFilter('location', text)}
               />
@@ -131,6 +132,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
                   <TextInput
                     style={styles.input}
                     placeholder="YYYY-MM-DD"
+                    placeholderTextColor={COLORS.black}
                     value={filters.date_from}
                     onChangeText={(text) => updateFilter('date_from', text)}
                   />
@@ -140,6 +142,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
                   <TextInput
                     style={styles.input}
                     placeholder="YYYY-MM-DD"
+                    placeholderTextColor={COLORS.black}
                     value={filters.date_to}
                     onChangeText={(text) => updateFilter('date_to', text)}
                   />
@@ -239,7 +242,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   modalContent: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.kk2,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: '90%',
@@ -262,13 +265,13 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: COLORS.gray100,
+    backgroundColor: COLORS.lost,
     justifyContent: 'center',
     alignItems: 'center'
   },
   closeButtonText: {
     fontSize: 20,
-    color: COLORS.textSecondary
+    color: COLORS.black
   },
   scrollView: {
     paddingHorizontal: 20
@@ -295,10 +298,11 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: COLORS.black,
     borderRadius: 12,
     paddingHorizontal: 16,
     fontSize: 15,
+    color: COLORS.black,
     backgroundColor: COLORS.white
   },
   dateRow: {

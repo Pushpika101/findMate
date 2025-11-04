@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,9 @@ import {
   RefreshControl,
   ActivityIndicator,
   Alert,
-  Image
+  Image,
+  Keyboard,
+  TouchableWithoutFeedback
 } from 'react-native';
 import { itemsAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
@@ -23,10 +25,23 @@ const HomeScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({});
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [searchBarLayout, setSearchBarLayout] = useState({ y: 0, height: 0 });
+  const searchBarRef = useRef(null);
 
   useEffect(() => {
     fetchItems();
   }, [activeTab, searchQuery, filters]);
+
+  // listen to keyboard to detect when search is focused
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', () => setIsSearchFocused(true));
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => setIsSearchFocused(false));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const fetchItems = async () => {
     try {
@@ -99,6 +114,7 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+      
   const renderItemCard = ({ item }) => (
     <TouchableOpacity
       style={styles.itemCard}
@@ -228,10 +244,25 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       {/* Search Bar */}
-      <SearchBar
-        onSearch={handleSearch}
-        onFilterPress={() => setShowFilterModal(true)}
-      />
+      <View
+        ref={searchBarRef}
+        onLayout={(e) => setSearchBarLayout(e.nativeEvent.layout)}
+        style={styles.searchBarWrapper}
+      >
+        <SearchBar
+          onSearch={handleSearch}
+          onFilterPress={() => setShowFilterModal(true)}
+          onFocus={() => setIsSearchFocused(true)}
+          onBlur={() => setIsSearchFocused(false)}
+        />
+      </View>
+
+      {/* Dim overlay when search is focused - tapping it will dismiss keyboard */}
+      {isSearchFocused && (
+        <TouchableWithoutFeedback onPress={() => { setIsSearchFocused(false); Keyboard.dismiss(); }}>
+          <View style={[styles.blurOverlay, { top: searchBarLayout.y + searchBarLayout.height }]} />
+        </TouchableWithoutFeedback>
+      )}
 
       {/* Items List */}
       {loading ? (
@@ -245,6 +276,8 @@ const HomeScreen = ({ navigation }) => {
           renderItem={renderItemCard}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContent}
+          ListFooterComponent={<View style={{ height: 100 }} />}
+          keyboardShouldPersistTaps="handled"
           ListEmptyComponent={renderEmptyState}
           refreshControl={
             <RefreshControl
@@ -372,7 +405,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 3
   },
@@ -418,9 +451,23 @@ const styles = StyleSheet.create({
   itemDateAbsolute: {
     position: 'absolute',
     top: 12,
-    right: -135,
+    right: 0,
     fontSize: 13,
     color: COLORS.textSecondary
+  },
+  searchBarWrapper: {
+    zIndex: 20,
+    elevation: 20,
+    backgroundColor: 'transparent'
+  },
+  blurOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.12)',
+    zIndex: 10,
+    elevation: 10
   },
   itemName: {
     fontSize: 18,

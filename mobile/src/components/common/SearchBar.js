@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import COLORS from '../../utils/colors';
 
-const SearchBar = ({ onSearch, onFilterPress, placeholder = 'Search items...' }) => {
+const SearchBar = ({ onSearch, onFilterPress, onFocus, onBlur, placeholder = 'Search items...' }) => {
   const [searchText, setSearchText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const animatedWidth = useState(new Animated.Value(0))[0];
@@ -46,8 +46,14 @@ const SearchBar = ({ onSearch, onFilterPress, placeholder = 'Search items...' })
           placeholderTextColor={COLORS.textSecondary}
           value={searchText}
           onChangeText={handleSearch}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={() => {
+            setIsFocused(true);
+            if (onFocus) onFocus();
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+            if (onBlur) onBlur();
+          }}
           returnKeyType="search"
         />
         {searchText.length > 0 && (
@@ -61,7 +67,7 @@ const SearchBar = ({ onSearch, onFilterPress, placeholder = 'Search items...' })
         style={styles.filterButton}
         onPress={onFilterPress}
       >
-        <Text style={styles.filterIcon}>⚙️</Text>
+            <Text style={styles.filterIcon}>Filter</Text>
       </TouchableOpacity>
     </View>
   );
@@ -109,15 +115,16 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary
   },
   filterButton: {
-    width: 48,
+    width: 68,
     height: 48,
     borderRadius: 12,
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.black,
     justifyContent: 'center',
     alignItems: 'center'
   },
   filterIcon: {
-    fontSize: 20
+    fontSize: 20,
+    color: COLORS.primary
   }
 });
 
