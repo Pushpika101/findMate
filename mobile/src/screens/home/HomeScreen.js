@@ -7,7 +7,8 @@ import {
   FlatList,
   RefreshControl,
   ActivityIndicator,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import { itemsAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
@@ -103,7 +104,9 @@ const HomeScreen = ({ navigation }) => {
       style={styles.itemCard}
       onPress={() => navigation.navigate('ItemDetail', { itemId: item.id })}
     >
-      <View style={styles.itemHeader}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flex: 1 }}>
+          <View style={styles.itemHeader}>
         <View style={[
           styles.typeBadge,
           { backgroundColor: item.type === 'lost' ? COLORS.lost : COLORS.found }
@@ -112,14 +115,16 @@ const HomeScreen = ({ navigation }) => {
             {item.type === 'lost' ? 'LOST' : 'FOUND'}
           </Text>
         </View>
-        <Text style={styles.itemDate}>
-          {new Date(item.date).toLocaleDateString()}
-        </Text>
-      </View>
+          </View>
 
-      <Text style={styles.itemName}>{item.item_name}</Text>
-      
-      <View style={styles.itemDetails}>
+          {/* absolute date in top-right of card */}
+          <Text style={styles.itemDateAbsolute}>
+            {new Date(item.date).toLocaleDateString()}
+          </Text>
+
+          <Text style={styles.itemName}>{item.item_name}</Text>
+          
+          <View style={styles.itemDetails}>
         <View style={styles.detailRow}>
           <Text style={styles.detailIcon}>📍</Text>
           <Text style={styles.detailText}>{item.location}</Text>
@@ -133,15 +138,31 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.detailText}>{item.color}</Text>
         </View>
       </View>
+          {item.description && (
+            <Text style={styles.itemDescription} numberOfLines={2}>
+              {item.description}
+            </Text>
+          )}
 
-      {item.description && (
-        <Text style={styles.itemDescription} numberOfLines={2}>
-          {item.description}
-        </Text>
-      )}
+          <View style={styles.itemFooter}>
+            <Text style={styles.postedBy}>Posted by {item.user_name}</Text>
+          </View>
+        </View>
 
-      <View style={styles.itemFooter}>
-        <Text style={styles.postedBy}>Posted by {item.user_name}</Text>
+        {/* Thumbnail */}
+        <View style={styles.thumbnailContainer}>
+          { (item.photo1_url || item.photo2_url) ? (
+            <Image
+              source={{ uri: item.photo1_url || item.photo2_url }}
+              style={styles.thumbnailImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={[styles.thumbnailImage, styles.thumbnailPlaceholder]}>
+              <Text style={{ color: COLORS.textSecondary }}>No Image</Text>
+            </View>
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -326,7 +347,7 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary
   },
   tabTextActive: {
-    color: COLORS.primary
+    color: COLORS.primaryDark
   },
   
   listContent: {
@@ -347,6 +368,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.kk2,
     borderRadius: 16,
     padding: 16,
+    position: 'relative',
     marginBottom: 16,
     shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
@@ -354,9 +376,27 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3
   },
+  thumbnailContainer: {
+    width: 125,
+    height: 125,
+    marginLeft: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: COLORS.gray100,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  thumbnailImage: {
+    width: '100%',
+    height: '100%'
+  },
+  thumbnailPlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   itemHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     marginBottom: 12
   },
@@ -366,12 +406,19 @@ const styles = StyleSheet.create({
     borderRadius: 6
   },
   typeBadgeText: {
-    color: COLORS.white,
+    color: COLORS.black,
     fontSize: 11,
     fontWeight: 'bold',
     letterSpacing: 0.5
   },
   itemDate: {
+    fontSize: 13,
+    color: COLORS.textSecondary
+  },
+  itemDateAbsolute: {
+    position: 'absolute',
+    top: 12,
+    right: -135,
     fontSize: 13,
     color: COLORS.textSecondary
   },
@@ -406,7 +453,7 @@ const styles = StyleSheet.create({
   itemFooter: {
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border
+    borderTopColor: COLORS.gray400
   },
   postedBy: {
     fontSize: 12,
