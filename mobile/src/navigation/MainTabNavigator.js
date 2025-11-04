@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import ChatListScreen from '../screens/chat/ChatListScreen';
 import NotificationsScreen from '../screens/notifications/NotificationsScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
 import { notificationsAPI } from '../services/api';
 
 
@@ -23,23 +24,7 @@ const ChatsScreen = () => (
   </View>
 );
 
-// (use actual NotificationsScreen imported above)
-
-const ProfileScreen = () => {
-  const { logout } = useAuth();
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
-      <Text style={{ fontSize: 48 }}>👤</Text>
-      <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 16 }}>Profile</Text>
-      <TouchableOpacity
-        style={{ marginTop: 24, paddingVertical: 12, paddingHorizontal: 32, backgroundColor: COLORS.error, borderRadius: 8 }}
-        onPress={logout}
-      >
-        <Text style={{ color: COLORS.white, fontSize: 16, fontWeight: '600' }}>Logout</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+// (use actual NotificationsScreen & ProfileScreen imported above)
 
 // Animated Add Button
 const AnimatedAddButton = ({ onPress, isFocused }) => {
