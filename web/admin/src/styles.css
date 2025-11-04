@@ -1,14 +1,41 @@
-:root{ --bg: #f6f7fb; --muted:#6b7280; --card:#fff; --accent:#2563eb }
-body{ margin:0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial }
-.app{ display:flex; min-height:100vh; background:var(--bg) }
-.sidebar{ width:220px; background:#111827; color:#fff; padding:20px }
-.sidebar h2{ margin:0 0 16px }
+:root{
+	--bg: #ffffff;
+	--muted: #687076;
+	--card: #ffffff;
+	--accent: #0a7ea4; /* from mobile tint */
+	--sidebar-bg: #0f1724;
+	--text: #11181C;
+}
+
+body{ margin:0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:var(--text); background:linear-gradient(180deg,#f8fafc 0%, #ffffff 100%)}
+.app{ display:flex; min-height:100vh; background:transparent }
+.sidebar{ width:240px; background:var(--sidebar-bg); color:#fff; padding:24px; box-shadow: 2px 0 10px rgba(2,6,23,0.4) }
+.sidebar h2{ margin:0 0 18px; font-size:18px; letter-spacing:0.4px }
 .sidebar ul{ list-style:none; padding:0 }
-.sidebar a{ color:#9ca3af; text-decoration:none }
-.sidebar a:hover{ color:#fff }
-.main{ flex:1; padding:24px }
-.card{ background:var(--card); padding:12px; border-radius:8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06) }
-.grid{ display:flex; gap:12px }
+.sidebar a{ color:#c0c7cd; text-decoration:none; display:block; padding:6px 0 }
+.sidebar a:hover{ color:var(--accent) }
+.main{ flex:1; padding:28px; max-width:1200px; margin:0 auto }
+
+/* Header */
+.page-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px }
+.page-title{ font-size:22px; margin:0 }
+.page-sub{ color:var(--muted); font-size:13px }
+
+/* Cards */
+.cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-top:12px }
+.card{ background:var(--card); padding:16px 18px; border-radius:12px; box-shadow: 0 8px 20px rgba(10,14,20,0.06); border:1px solid rgba(10,14,20,0.03) }
+.card h3{ margin:0 0 8px; color:var(--accent) }
+.card p{ margin:4px 0; color:var(--muted) }
+
+.stat-value{ font-size:20px; font-weight:700; color:#0b3f4c }
+
+/* table tweaks */
 .table{ width:100%; border-collapse:collapse }
-.table th, .table td{ border:1px solid #e5e7eb; padding:8px; text-align:left }
-input, select, button{ padding:8px; margin-right:8px }
+.table th, .table td{ border-bottom:1px solid #eef2f5; padding:10px; text-align:left }
+
+input, select, button{ padding:8px 10px; margin-right:8px; border-radius:8px }
+
+@media (max-width:800px){
+	.sidebar{ display:none }
+	.main{ padding:16px }
+}

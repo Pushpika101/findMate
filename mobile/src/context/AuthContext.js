@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { authAPI } from '../services/api';
 import {
   saveToken,
@@ -9,7 +9,7 @@ import {
   removeUser,
   clearStorage
 } from '../services/storage';
-import { initializeSocket, disconnectSocket } from '../services/socket';
+import { initializeSocket, disconnectSocket, getSocket } from '../services/socket';
 import { registerForPushNotificationsAsync } from '../services/pushNotifications';
 
 const AuthContext = createContext();
@@ -18,6 +18,33 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
+
+  const forceLogoutHandlerRef = useRef(null);
+
+  const attachForceLogoutListener = (s) => {
+    try {
+      // remove previous handler if present
+      if (forceLogoutHandlerRef.current && s) {
+        s.off('force_logout', forceLogoutHandlerRef.current);
+      }
+
+      const handler = async () => {
+        console.log('Received force_logout from server, performing client logout');
+        try { disconnectSocket(); } catch (err) { console.warn('Error disconnecting socket during forced logout:', err); }
+        try { await clearStorage(); } catch (err) { console.warn('Error clearing storage during forced logout:', err); }
+        setToken(null);
+        setUser(null);
+      };
+
+      forceLogoutHandlerRef.current = handler;
+
+      if (s && typeof s.on === 'function') {
+        s.on('force_logout', handler);
+      }
+    } catch (err) {
+      console.warn('Failed to attach force_logout listener:', err);
+    }
+  };
 
   useEffect(() => {
     // Load token and user from storage on mount
@@ -31,6 +58,8 @@ export const AuthProvider = ({ children }) => {
           if (storedUser) setUser(storedUser);
           // Try to initialize socket if token exists
           await initializeSocket();
+          // Attach listener on the active socket
+          attachForceLogoutListener(getSocket());
           // register push token for this device/user
           try {
             await registerForPushNotificationsAsync();
@@ -45,6 +74,17 @@ export const AuthProvider = ({ children }) => {
       }
     };
     init();
+    // cleanup: remove force_logout listener if it was attached
+    return () => {
+      try {
+        const s = getSocket();
+        if (s && forceLogoutHandlerRef.current) {
+          s.off('force_logout', forceLogoutHandlerRef.current);
+        }
+      } catch (err) {
+        // ignore cleanup errors
+      }
+    };
   }, []);
 
   const login = async (email, password) => {
@@ -58,6 +98,8 @@ export const AuthProvider = ({ children }) => {
         setUser(newUser);
         // initialize socket
         await initializeSocket();
+        // attach force logout listener on newly created socket
+        attachForceLogoutListener(getSocket());
         // register push token after login
         try {
           await registerForPushNotificationsAsync();

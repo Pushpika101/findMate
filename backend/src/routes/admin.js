@@ -31,6 +31,11 @@ router.get('/users/:id', getUserDetails);
 // @access  Private/Admin
 router.delete('/users/:id', banUser);
 
+// @route   POST /api/admin/users/:id/logout
+// @desc    Force logout user (remove device tokens and disconnect sockets)
+// @access  Private/Admin
+router.post('/users/:id/logout', require('../controllers/adminController').forceLogoutUser);
+
 // Item Management
 // @route   GET /api/admin/items
 // @desc    Get all items

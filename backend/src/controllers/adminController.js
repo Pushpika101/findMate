@@ -135,6 +135,38 @@ exports.banUser = async (req, res) => {
   }
 };
 
+// @desc    Force logout user (remove device tokens and disconnect sockets)
+// @route   POST /api/admin/users/:id/logout
+// @access  Private/Admin
+exports.forceLogoutUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Remove any device tokens associated with the user
+    await query('DELETE FROM device_tokens WHERE user_id = $1', [id]);
+
+    // If Socket.IO instance is available on app, emit a kick event to the user's room
+    const io = req.app && req.app.get && req.app.get('io');
+    if (io) {
+      // send a 'force_logout' event to the user's personal room
+      io.to(`user_${id}`).emit('force_logout', { message: 'You have been logged out by an administrator' });
+      // Optionally, disconnect sockets in that room
+      const room = io.sockets.adapter.rooms.get(`user_${id}`);
+      if (room) {
+        for (const socketId of room) {
+          const socket = io.sockets.sockets.get(socketId);
+          try { socket.disconnect(true); } catch(e){}
+        }
+      }
+    }
+
+    res.json({ success: true, message: 'User force-logged out' });
+  } catch (error) {
+    console.error('Force logout error:', error);
+    res.status(500).json({ success: false, message: 'Error forcing logout' });
+  }
+};
+
 // @desc    Get all items (admin view)
 // @route   GET /api/admin/items
 // @access  Private/Admin

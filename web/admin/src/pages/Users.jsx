@@ -28,6 +28,21 @@ export default function Users(){
     }catch(e){ alert('Failed to ban user') }
   }
 
+  const handleForceLogout = async (id) => {
+    if(!confirm('Force logout this user? This will disconnect their active sessions.')) return
+    try{
+      const res = await api.post(`/admin/users/${id}/logout`)
+      if(res.data && res.data.success){
+        alert('User has been force-logged out')
+      } else {
+        alert('Failed to force logout user')
+      }
+    }catch(e){
+      console.error(e)
+      alert('Failed to force logout user')
+    }
+  }
+
   return (
     <div>
       <h1>Users</h1>
@@ -49,7 +64,10 @@ export default function Users(){
                 <td>{String(u.is_verified)}</td>
                 <td>{String(u.is_admin)}</td>
                 <td>{u.total_items}</td>
-                <td><button onClick={()=>handleBan(u.id)}>Ban</button></td>
+                <td>
+                  <button onClick={()=>handleBan(u.id)} style={{ marginRight:8 }}>Ban</button>
+                  <button onClick={()=>handleForceLogout(u.id)}>Force logout</button>
+                </td>
               </tr>
             ))}
           </tbody>
