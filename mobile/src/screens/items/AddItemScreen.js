@@ -19,7 +19,7 @@ import COLORS from '../../utils/colors';
 import { ITEM_CATEGORIES, ITEM_COLORS, COMMON_LOCATIONS } from '../../utils/constants';
 
 const AddItemScreen = ({ navigation }) => {
-  const [formData, setFormData] = useState({
+  const initialForm = {
     type: 'lost', // 'lost' or 'found'
     item_name: '',
     category: '',
@@ -29,7 +29,9 @@ const AddItemScreen = ({ navigation }) => {
     date: new Date().toISOString().split('T')[0], // Today's date
     time: new Date().toTimeString().split(' ')[0].substring(0, 5), // Current time
     description: ''
-  });
+  };
+
+  const [formData, setFormData] = useState(initialForm);
 
   const [photos, setPhotos] = useState({
     photo1: null,
@@ -173,6 +175,12 @@ const AddItemScreen = ({ navigation }) => {
       const response = await itemsAPI.create(data);
 
       if (response.success) {
+        // Clear the form and photos so if the user stays on this screen
+        // they don't see the previous submission data.
+        setFormData(initialForm);
+        setPhotos({ photo1: null, photo2: null });
+        setErrors({});
+
         Alert.alert(
           'Success!',
           `Item ${formData.type === 'lost' ? 'lost' : 'found'} report created successfully!${
