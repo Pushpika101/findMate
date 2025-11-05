@@ -27,7 +27,8 @@ const EditProfileScreen = ({ navigation, route }) => {
 
   const [name, setName] = useState(initialProfile?.name || '');
   const [email] = useState(initialProfile?.email || '');
-  const [studentId] = useState(initialProfile?.student_id || '');
+  // derive studentId from route param or auth context so it stays up-to-date
+  const studentId = profile?.student_id || authUser?.student_id || '';
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [photoUri, setPhotoUri] = useState(profile?.profile_photo || null);

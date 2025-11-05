@@ -47,7 +47,11 @@ const ProfileScreen = ({ navigation }) => {
       // Fetch user profile
       const profileResponse = await usersAPI.getProfile();
       if (profileResponse.success) {
-        setProfileData(profileResponse.data.user);
+        // Merge returned profile with any existing profile/user data so
+        // we don't accidentally drop fields that may be present in the
+        // auth context (e.g. student_id) — this helps keep ID visible
+        // after edits that only return a subset of fields.
+        setProfileData(prev => ({ ...(prev || {}), ...(profileResponse.data.user || {}) }));
         // Debug full profile object to inspect student_id value
         //console.log('[ProfileScreen] profileResponse.data.user =', profileResponse.data.user);
         // Debug: log returned and normalized profile photo URL
@@ -218,30 +222,34 @@ const ProfileScreen = ({ navigation }) => {
           <View style={styles.avatarContainer}>
             {profileData?.profile_photo ? (
               <Image
-                source={{ uri: normalizeImageUrl(profileData.profile_photo) }}
+                  // Prefer the profileData photo but fall back to the auth user
+                  // (some updates write back to auth user but not to the fetched
+                  // profile immediately). This prevents the avatar becoming empty
+                  // after an upload.
+                  source={{ uri: normalizeImageUrl(profileData?.profile_photo || user?.profile_photo) }}
                 style={styles.avatar}
               />
             ) : (
               <View style={styles.avatarPlaceholder}>
                 <Text style={styles.avatarText}>
-                  {profileData?.name?.charAt(0).toUpperCase()}
+                    {(profileData?.name || user?.name || '?')?.charAt(0).toUpperCase()}
                 </Text>
               </View>
             )}
           </View>
 
-          <Text style={styles.userName}>{profileData?.name}</Text>
-          <Text style={styles.userEmail}>{profileData?.email}</Text>
-          <Text style={styles.userStudentId}>
-            ID: {profileData?.student_id || '—'}
-          </Text>
+            <Text style={styles.userName}>{profileData?.name || user?.name}</Text>
+            <Text style={styles.userEmail}>{profileData?.email || user?.email}</Text>
+            <Text style={styles.userStudentId}>
+              ID: {profileData?.student_id || user?.student_id || '—'}
+            </Text>
 
           <View style={styles.verifiedBadge}>
             <Text style={styles.verifiedIcon}>
-              {profileData?.is_verified ? '✓' : '⏳'}
+              {(profileData?.is_verified ?? user?.is_verified) ? '✓' : '⏳'}
             </Text>
             <Text style={styles.verifiedText}>
-              {profileData?.is_verified ? 'Verified' : 'Pending Verification'}
+              {(profileData?.is_verified ?? user?.is_verified) ? 'Verified' : 'Pending Verification'}
             </Text>
           </View>
 
