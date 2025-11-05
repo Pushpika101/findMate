@@ -26,6 +26,19 @@ exports.register = async (req, res) => {
       });
     }
 
+    // Enforce allowed email domain if configured (e.g., pdn.ac.lk)
+    const allowedDomain = process.env.ALLOWED_EMAIL_DOMAIN;
+    if (allowedDomain) {
+      const e = String(email).toLowerCase();
+      const domainLower = allowedDomain.toLowerCase();
+      if (!(e.endsWith(`@${domainLower}`) || e.endsWith(`.${domainLower}`))) {
+        return res.status(400).json({
+          success: false,
+          message: `Registration is restricted to ${allowedDomain} email addresses`
+        });
+      }
+    }
+
     // Check if user exists
     const userExists = await query('SELECT id FROM users WHERE email = $1', [email]);
     
@@ -40,15 +53,16 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Generate verification token
+    // Generate verification token and expiry (24 hours)
     const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
 
-    // Create user
+    // Create user (store token and expiry)
     const result = await query(`
-      INSERT INTO users (email, password, name, student_id, verification_token)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO users (email, password, name, student_id, verification_token, verification_expires)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING id, email, name, student_id, is_verified, created_at
-    `, [email, hashedPassword, name, student_id, verificationToken]);
+    `, [email, hashedPassword, name, student_id, verificationToken, verificationExpires]);
 
     const user = result.rows[0];
 
@@ -91,9 +105,9 @@ exports.verifyEmail = async (req, res) => {
       });
     }
 
-    // Find user with token
+    // Find user with token and valid expiry
     const result = await query(
-      'SELECT id FROM users WHERE verification_token = $1',
+      'SELECT id, verification_expires FROM users WHERE verification_token = $1',
       [token]
     );
 
@@ -104,12 +118,17 @@ exports.verifyEmail = async (req, res) => {
       });
     }
 
+    const user = result.rows[0];
+    if (user.verification_expires && new Date(user.verification_expires) < new Date()) {
+      return res.status(400).json({ success: false, message: 'Verification token expired' });
+    }
+
     // Update user as verified
     await query(`
       UPDATE users 
-      SET is_verified = true, verification_token = NULL 
+      SET is_verified = true, verification_token = NULL, verification_expires = NULL 
       WHERE id = $1
-    `, [result.rows[0].id]);
+    `, [user.id]);
 
     res.json({
       success: true,
