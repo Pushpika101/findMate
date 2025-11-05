@@ -97,7 +97,7 @@ const SignupScreen = ({ navigation }) => {
     if (result.success) {
       Alert.alert(
         'Registration Successful!',
-        'Please check your email to verify your account. For testing, ask admin to verify your account manually.',
+        'Please check your email to verify your account.',
         [
           {
             text: 'OK',
@@ -124,7 +124,7 @@ const SignupScreen = ({ navigation }) => {
         <View style={styles.header}>
           <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>
-            Join Lost & Found - Peradeniya Campus
+            Join findMate - Peradeniya Campus
           </Text>
         </View>
 

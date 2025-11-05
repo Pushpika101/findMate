@@ -203,6 +203,14 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Prevent login if email not verified
+    if (!user.is_verified) {
+      return res.status(403).json({
+        success: false,
+        message: 'Please verify your email before logging in'
+      });
+    }
+
     // Generate token
     const token = generateToken(user.id);
 
