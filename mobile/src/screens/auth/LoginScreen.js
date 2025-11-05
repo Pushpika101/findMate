@@ -12,6 +12,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
+import { authAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
 
 const LoginScreen = ({ navigation }) => {
@@ -19,6 +20,9 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState(null);
+  const [showResend, setShowResend] = useState(false);
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -51,7 +55,37 @@ const LoginScreen = ({ navigation }) => {
     if (result.success) {
       // Navigation handled by AppNavigator
     } else {
-      Alert.alert('Login Failed', result.error || 'Invalid credentials');
+      const errorMsg = result.error || 'Invalid credentials';
+      Alert.alert('Login Failed', errorMsg);
+
+      // If backend blocked login because email not verified, show resend UI
+      // We check for substrings to keep it robust to small message changes.
+      const lower = (errorMsg || '').toLowerCase();
+      if (lower.includes('verify') || lower.includes('not verified') || lower.includes('unverified')) {
+        setShowResend(true);
+        setResendMessage('Your email is not verified. You can resend the verification email.');
+      }
+    }
+  };
+
+  const handleResend = async () => {
+    // small guard
+    if (!email || !email.includes('@')) {
+      Alert.alert('Invalid Email', 'Please enter your email to resend verification.');
+      return;
+    }
+
+    setResendLoading(true);
+    setResendMessage(null);
+    try {
+      await authAPI.resendVerification({ email: email.trim().toLowerCase() });
+      setResendMessage('Verification email sent. Check your inbox.');
+    } catch (err) {
+      // api returns string errors via interceptor
+      const msg = err?.toString() || 'Failed to resend verification email';
+      setResendMessage(msg);
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -149,6 +183,29 @@ const LoginScreen = ({ navigation }) => {
               <Text style={styles.signupLink}>Sign Up</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Resend verification area shown when login fails due to unverified email */}
+          {showResend && (
+            <View style={styles.resendContainer}>
+              {resendMessage ? (
+                <Text style={styles.resendMessage}>{resendMessage}</Text>
+              ) : (
+                <Text style={styles.resendMessage}>Your account is not verified.</Text>
+              )}
+
+              <TouchableOpacity
+                style={[styles.resendButton, resendLoading && styles.loginButtonDisabled]}
+                onPress={handleResend}
+                disabled={resendLoading}
+              >
+                {resendLoading ? (
+                  <ActivityIndicator color={COLORS.white} />
+                ) : (
+                  <Text style={styles.resendButtonText}>Resend verification email</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -245,6 +302,30 @@ const styles = StyleSheet.create({
   },
   signupLink: {
     color: COLORS.primary,
+    fontSize: 14,
+    fontWeight: '600'
+  }
+  ,
+  resendContainer: {
+    marginTop: 18,
+    alignItems: 'center'
+  },
+  resendMessage: {
+    color: COLORS.textSecondary,
+    fontSize: 13,
+    marginBottom: 8,
+    textAlign: 'center'
+  },
+  resendButton: {
+    height: 44,
+    backgroundColor: COLORS.primary,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16
+  },
+  resendButtonText: {
+    color: COLORS.white,
     fontSize: 14,
     fontWeight: '600'
   }

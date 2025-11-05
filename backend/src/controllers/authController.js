@@ -363,3 +363,42 @@ exports.resetPassword = async (req, res) => {
     });
   }
 };
+
+// @desc    Resend verification email
+// @route   POST /api/auth/resend-verification
+// @access  Public
+exports.resendVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Please provide email' });
+    }
+
+    // Find user by email
+    const result = await query('SELECT id, name, is_verified FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
+      // Don't reveal whether the email exists — return generic success
+      return res.json({ success: true, message: 'If an account exists and is not verified, a verification email has been sent.' });
+    }
+
+    const user = result.rows[0];
+    if (user.is_verified) {
+      return res.status(400).json({ success: false, message: 'Account is already verified' });
+    }
+
+    // Generate new token and expiry
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+
+    await query('UPDATE users SET verification_token = $1, verification_expires = $2 WHERE id = $3', [verificationToken, verificationExpires, user.id]);
+
+    // Send verification email
+    await sendVerificationEmail(email, user.name || '', verificationToken);
+
+    return res.json({ success: true, message: 'Verification email sent' });
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    res.status(500).json({ success: false, message: 'Error resending verification email' });
+  }
+};

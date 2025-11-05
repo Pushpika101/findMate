@@ -4,6 +4,7 @@ const { body } = require('express-validator');
 const {
   register,
   verifyEmail,
+  resendVerification,
   login,
   getMe,
   forgotPassword,
@@ -34,6 +35,11 @@ router.post('/register', validateCampusEmail, registerValidation, register);
 router.post('/verify-email', verifyEmail);
 // Also support GET so verification links in emails can call the endpoint directly
 router.get('/verify-email', verifyEmail);
+
+// @route   POST /api/auth/resend-verification
+// @desc    Resend verification email
+// @access  Public
+router.post('/resend-verification', resendVerification);
 
 // @route   POST /api/auth/login
 // @desc    Login user
