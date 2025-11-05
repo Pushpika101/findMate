@@ -95,16 +95,8 @@ const SignupScreen = ({ navigation }) => {
     setLoading(false);
 
     if (result.success) {
-      Alert.alert(
-        'Registration Successful!',
-        'Please check your email to verify your account.',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('Login')
-          }
-        ]
-      );
+      // navigate to OTP verification screen with email prefilled
+      navigation.navigate('VerifyOtp', { email: userData.email });
     } else {
       Alert.alert('Registration Failed', result.error || 'Something went wrong');
     }

@@ -5,6 +5,8 @@ const {
   register,
   verifyEmail,
   resendVerification,
+  sendOtp,
+  verifyOtp,
   login,
   getMe,
   forgotPassword,
@@ -40,6 +42,10 @@ router.get('/verify-email', verifyEmail);
 // @desc    Resend verification email
 // @access  Public
 router.post('/resend-verification', resendVerification);
+
+// New OTP endpoints
+router.post('/send-otp', sendOtp);
+router.post('/verify-otp', verifyOtp);
 
 // @route   POST /api/auth/login
 // @desc    Login user

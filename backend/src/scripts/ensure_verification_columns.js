@@ -11,6 +11,10 @@ const { query, pool } = require('../config/database');
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT false;`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_token VARCHAR(128);`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_expires TIMESTAMP;`,
+  `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_otp_hash VARCHAR(255);`,
+  `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_otp_expires TIMESTAMP;`,
+  `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_otp_attempts INTEGER DEFAULT 0;`,
+  `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_otp_locked_until TIMESTAMP;`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_password_token VARCHAR(128);`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_password_expires TIMESTAMP;`
     ];

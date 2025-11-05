@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { query } = require('../config/database');
-const { sendVerificationEmail, sendPasswordResetEmail } = require('../config/email');
+const { sendVerificationEmail, sendPasswordResetEmail, sendVerificationOtpEmail } = require('../config/email');
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -53,25 +53,31 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Generate verification token and expiry (24 hours)
-    const verificationToken = crypto.randomBytes(32).toString('hex');
-    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+    // Generate 6-digit OTP and expiry (15 minutes)
+    const otp = String(Math.floor(100000 + Math.random() * 900000)); // 6-digit
+    const otpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    const otpSalt = await bcrypt.genSalt(10);
+    const otpHash = await bcrypt.hash(otp, otpSalt);
 
-    // Create user (store token and expiry)
+    // Create user and store otp hash & expiry
     const result = await query(`
-      INSERT INTO users (email, password, name, student_id, verification_token, verification_expires)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO users (email, password, name, student_id, verification_otp_hash, verification_otp_expires, verification_otp_attempts)
+      VALUES ($1, $2, $3, $4, $5, $6, 0)
       RETURNING id, email, name, student_id, is_verified, created_at
-    `, [email, hashedPassword, name, student_id, verificationToken, verificationExpires]);
+    `, [email, hashedPassword, name, student_id, otpHash, otpExpires]);
 
     const user = result.rows[0];
 
-    // Send verification email
-    await sendVerificationEmail(email, name, verificationToken);
+    // Send OTP email
+    try {
+      await sendVerificationOtpEmail(email, name, otp);
+    } catch (e) {
+      console.warn('Failed to send OTP email:', e.message || e);
+    }
 
     res.status(201).json({
       success: true,
-      message: 'Registration successful! Please check your email to verify your account.',
+      message: 'Registration successful! Please check your email for the verification code.',
       data: {
         user: {
           id: user.id,
@@ -309,6 +315,84 @@ exports.forgotPassword = async (req, res) => {
       success: false,
       message: 'Error sending reset email'
     });
+  }
+};
+
+// @desc    Send verification OTP (resend)
+// @route   POST /api/auth/send-otp
+// @access  Public
+exports.sendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Please provide email' });
+
+    const result = await query('SELECT id, name, is_verified FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
+      // Generic success
+      return res.json({ success: true, message: 'If an account exists and is not verified, a verification code has been sent.' });
+    }
+
+    const user = result.rows[0];
+    if (user.is_verified) return res.status(400).json({ success: false, message: 'Account is already verified' });
+
+    // Generate new OTP
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
+    const otpHash = await bcrypt.hash(otp, await bcrypt.genSalt(10));
+
+    await query('UPDATE users SET verification_otp_hash=$1, verification_otp_expires=$2, verification_otp_attempts=0 WHERE email=$3', [otpHash, otpExpires, email]);
+
+    try {
+      await sendVerificationOtpEmail(email, user.name || '', otp);
+    } catch (e) {
+      console.warn('Failed to send OTP email:', e.message || e);
+    }
+
+    return res.json({ success: true, message: 'Verification code sent' });
+  } catch (error) {
+    console.error('Send OTP error:', error);
+    res.status(500).json({ success: false, message: 'Error sending verification code' });
+  }
+};
+
+// @desc    Verify OTP
+// @route   POST /api/auth/verify-otp
+// @access  Public
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ success: false, message: 'Please provide email and code' });
+
+    const result = await query('SELECT id, verification_otp_hash, verification_otp_expires, verification_otp_attempts, verification_otp_locked_until FROM users WHERE email=$1', [email]);
+    if (result.rows.length === 0) return res.status(400).json({ success: false, message: 'Invalid code or email' });
+
+    const user = result.rows[0];
+    if (!user.verification_otp_hash) return res.status(400).json({ success: false, message: 'No active verification code. Please request a new one.' });
+
+    if (user.verification_otp_locked_until && new Date(user.verification_otp_locked_until) > new Date()) {
+      return res.status(429).json({ success: false, message: 'Too many attempts. Try again later.' });
+    }
+
+    if (!user.verification_otp_expires || new Date(user.verification_otp_expires) < new Date()) {
+      return res.status(400).json({ success: false, message: 'Verification code expired. Please request a new one.' });
+    }
+
+    const ok = await bcrypt.compare(String(otp), user.verification_otp_hash);
+    if (!ok) {
+      // increment attempts
+      const attempts = (user.verification_otp_attempts || 0) + 1;
+      const lockUntil = attempts >= 5 ? new Date(Date.now() + 30 * 60 * 1000) : null; // lock 30m after 5 attempts
+      await query('UPDATE users SET verification_otp_attempts=$1, verification_otp_locked_until=$2 WHERE email=$3', [attempts, lockUntil, email]);
+      return res.status(400).json({ success: false, message: 'Invalid verification code' });
+    }
+
+    // mark verified
+    await query('UPDATE users SET is_verified=true, verification_otp_hash=NULL, verification_otp_expires=NULL, verification_otp_attempts=0, verification_otp_locked_until=NULL WHERE email=$1', [email]);
+
+    return res.json({ success: true, message: 'Account verified' });
+  } catch (error) {
+    console.error('Verify OTP error:', error);
+    res.status(500).json({ success: false, message: 'Error verifying code' });
   }
 };
 

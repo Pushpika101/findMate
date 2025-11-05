@@ -1,0 +1,206 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
+  ActivityIndicator
+} from 'react-native';
+import { authAPI } from '../../services/api';
+import COLORS from '../../utils/colors';
+
+const ForgotPassword = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const validate = () => {
+    if (!email.trim()) {
+      setError('Email is required');
+      return false;
+    }
+    if (!email.includes('@')) {
+      setError('Invalid email format');
+      return false;
+    }
+    setError(null);
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      // API returns a message on success; many backends intentionally respond
+      // with a generic success even if email is not known to avoid enumeration.
+      const res = await authAPI.forgotPassword(email.trim().toLowerCase());
+      setLoading(false);
+      Alert.alert(
+        'Email Sent',
+        res?.message || 'If an account with that email exists, a reset link has been sent.',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Login')
+          }
+        ]
+      );
+    } catch (err) {
+      setLoading(false);
+      const msg = err?.toString() || 'Failed to send reset email';
+      setError(msg);
+      Alert.alert('Error', msg);
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Forgot Password</Text>
+          <Text style={styles.subtitle}>Enter your email to receive reset instructions.</Text>
+        </View>
+
+        <View style={styles.form}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={[styles.input, error && styles.inputError]}
+              placeholder="your.email@eng.pdn.ac.lk"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                setError(null);
+              }}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            {error && <Text style={styles.errorText}>{error}</Text>}
+          </View>
+
+          <TouchableOpacity
+            style={[styles.sendButton, loading && styles.sendButtonDisabled]}
+            onPress={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color={COLORS.white} />
+            ) : (
+              <Text style={styles.sendButtonText}>Send reset email</Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginText}>Remembered your password? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <Text style={styles.loginLink}>Sign In</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 24,
+    paddingTop: 60
+  },
+  header: {
+    marginBottom: 32,
+    alignItems: 'center'
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: COLORS.textPrimary,
+    marginBottom: 8
+  },
+  subtitle: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: 'center'
+  },
+  form: {
+    width: '100%'
+  },
+  inputContainer: {
+    marginBottom: 20
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
+    marginBottom: 8
+  },
+  input: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    backgroundColor: COLORS.white
+  },
+  inputError: {
+    borderColor: COLORS.error
+  },
+  errorText: {
+    color: COLORS.error,
+    fontSize: 12,
+    marginTop: 4
+  },
+  sendButton: {
+    height: 50,
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 16
+  },
+  sendButtonDisabled: {
+    opacity: 0.6
+  },
+  sendButtonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: '600'
+  },
+  loginContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 24
+  },
+  loginText: {
+    color: COLORS.textSecondary,
+    fontSize: 14
+  },
+  loginLink: {
+    color: COLORS.primary,
+    fontSize: 14,
+    fontWeight: '600'
+  }
+});
+
+export default ForgotPassword;

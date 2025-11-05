@@ -6,6 +6,9 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 import NotificationHandler from './src/components/NotificationHandler';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
+import ForgotPassword from './src/screens/auth/ForgotPassword';
+import ResetPassword from './src/screens/auth/ResetPassword';
+import VerifyOtp from './src/screens/auth/VerifyOtp';
 import MainNavigator from './src/navigation/AppNavigator';
 import { View, ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import COLORS from './src/utils/colors';
@@ -23,6 +26,9 @@ function AuthNavigator() {
     >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+      <Stack.Screen name="ResetPassword" component={ResetPassword} />
+  <Stack.Screen name="VerifyOtp" component={VerifyOtp} />
     </Stack.Navigator>
   );
 }
@@ -39,8 +45,23 @@ function RootNavigator() {
     );
   }
 
+  const linking = {
+    prefixes: ['findmate://', 'https://findmate.example.com'],
+    config: {
+      screens: {
+        // Map the reset-password path to the ResetPassword screen
+        ResetPassword: {
+          path: 'reset-password',
+          parse: {
+            token: (token) => token
+          }
+        }
+      }
+    }
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       {isAuthenticated ? <MainNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );

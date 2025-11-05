@@ -20,9 +20,7 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [resendLoading, setResendLoading] = useState(false);
-  const [resendMessage, setResendMessage] = useState(null);
-  const [showResend, setShowResend] = useState(false);
+  // No inline resend UI; navigate to VerifyOtp when needed
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -58,12 +56,11 @@ const LoginScreen = ({ navigation }) => {
       const errorMsg = result.error || 'Invalid credentials';
       Alert.alert('Login Failed', errorMsg);
 
-      // If backend blocked login because email not verified, show resend UI
-      // We check for substrings to keep it robust to small message changes.
+      // If backend blocked login because email not verified, navigate to OTP verify flow
       const lower = (errorMsg || '').toLowerCase();
       if (lower.includes('verify') || lower.includes('not verified') || lower.includes('unverified')) {
-        setShowResend(true);
-        setResendMessage('Your email is not verified. You can resend the verification email.');
+        // navigate to VerifyOtp screen with email prefilled
+        navigation.navigate('VerifyOtp', { email: email.trim().toLowerCase() });
       }
     }
   };
@@ -184,28 +181,7 @@ const LoginScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* Resend verification area shown when login fails due to unverified email */}
-          {showResend && (
-            <View style={styles.resendContainer}>
-              {resendMessage ? (
-                <Text style={styles.resendMessage}>{resendMessage}</Text>
-              ) : (
-                <Text style={styles.resendMessage}>Your account is not verified.</Text>
-              )}
-
-              <TouchableOpacity
-                style={[styles.resendButton, resendLoading && styles.loginButtonDisabled]}
-                onPress={handleResend}
-                disabled={resendLoading}
-              >
-                {resendLoading ? (
-                  <ActivityIndicator color={COLORS.white} />
-                ) : (
-                  <Text style={styles.resendButtonText}>Resend verification email</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          )}
+          {/* Verify via OTP screen will be opened when login indicates unverified account */}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -318,7 +294,7 @@ const styles = StyleSheet.create({
   },
   resendButton: {
     height: 44,
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.lost,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',

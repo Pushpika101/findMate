@@ -4,6 +4,7 @@ require('dotenv').config();
 
 let sendVerificationEmail;
 let sendPasswordResetEmail;
+let sendVerificationOtpEmail;
 let sendNotificationEmail;
 
 // If SENDGRID_API_KEY is set, prefer SendGrid
@@ -16,29 +17,68 @@ if (process.env.SENDGRID_API_KEY) {
       // Point verification link to backend so clicking the email performs verification
       const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
       const verifyUrl = `${backendUrl}/api/auth/verify-email?token=${token}`;
+      // Also include an app deep-link so mobile clients may open directly if configured
+      const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+      const appVerifyUrl = `${appScheme}verify-email?token=${token}`;
       const msg = {
         to: email,
         from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
         subject: 'Verify your findMate account',
         html: `<p>Hi ${name},</p>
-               <p>Please verify your account by clicking <a href="${verifyUrl}">this link</a>. The link expires in 24 hours.</p>`
+               <p>Please verify your account by clicking <a href="${verifyUrl}">this link</a>. The link expires in 24 hours.</p>
+               <p>If you're on mobile you can open the app directly: <a href="${appVerifyUrl}">Open in app</a></p>`
       };
-      await sgMail.send(msg);
-      return true;
+      try {
+        await sgMail.send(msg);
+        return true;
+      } catch (err) {
+        console.error('SendGrid sendVerificationEmail error:', err?.response?.body || err.message || err);
+        throw err;
+      }
+    };
+
+    // Send OTP (numeric code) for verification
+    sendVerificationOtpEmail = async (email, name, otp) => {
+      const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
+      const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+      const appResetUrl = `${appScheme}verify-email?otp=${otp}&email=${encodeURIComponent(email)}`;
+      const msg = {
+        to: email,
+        from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
+        subject: 'Your findMate verification code',
+        html: `<p>Hi ${name},</p>
+               <p>Your verification code is <strong>${otp}</strong>. It expires in 15 minutes.</p>
+               <p>If you're on mobile you can open the app directly: <a href="${appResetUrl}">Open in app</a></p>`
+      };
+      try {
+        await sgMail.send(msg);
+        return true;
+      } catch (err) {
+        console.error('SendGrid sendVerificationOtpEmail error:', err?.response?.body || err.message || err);
+        throw err;
+      }
     };
 
     sendPasswordResetEmail = async (email, name, token) => {
       const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
       const resetUrl = `${backendUrl}/api/auth/reset-password?token=${token}`;
+      const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+      const appResetUrl = `${appScheme}reset-password?token=${token}`;
       const msg = {
         to: email,
         from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
         subject: 'Reset your findMate password',
         html: `<p>Hi ${name},</p>
-               <p>Reset your password by clicking <a href="${resetUrl}">this link</a>. The link expires in 1 hour.</p>`
+               <p>Reset your password by clicking <a href="${resetUrl}">this link</a>. The link expires in 1 hour.</p>
+               <p>If you're on mobile you can open the app directly: <a href="${appResetUrl}">Open in app</a></p>`
       };
-      await sgMail.send(msg);
-      return true;
+      try {
+        await sgMail.send(msg);
+        return true;
+      } catch (err) {
+        console.error('SendGrid sendPasswordResetEmail error:', err?.response?.body || err.message || err);
+        throw err;
+      }
     };
 
     sendNotificationEmail = async (email, subject, message) => {
@@ -48,8 +88,13 @@ if (process.env.SENDGRID_API_KEY) {
         subject,
         html: `<p>${message}</p>`
       };
-      await sgMail.send(msg);
-      return true;
+      try {
+        await sgMail.send(msg);
+        return true;
+      } catch (err) {
+        console.error('SendGrid sendNotificationEmail error:', err?.response?.body || err.message || err);
+        throw err;
+      }
     };
 
     console.log('✅ Email: configured with SendGrid');
@@ -80,11 +125,29 @@ if (!sendVerificationEmail && process.env.SMTP_HOST) {
     sendVerificationEmail = async (email, name, token) => {
       const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
       const verifyUrl = `${backendUrl}/api/auth/verify-email?token=${token}`;
+      const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+      const appVerifyUrl = `${appScheme}verify-email?token=${token}`;
       const mailOptions = {
         from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
         to: email,
         subject: 'Verify your findMate account',
-        html: `<p>Hi ${name},</p><p>Please verify your account by clicking <a href="${verifyUrl}">this link</a>. The link expires in 24 hours.</p>`
+        html: `<p>Hi ${name},</p><p>Please verify your account by clicking <a href="${verifyUrl}">this link</a>. The link expires in 24 hours.</p>
+               <p>If you're on mobile you can open the app directly: <a href="${appVerifyUrl}">Open in app</a></p>`
+      };
+      await transporter.sendMail(mailOptions);
+      return true;
+    };
+
+    sendVerificationOtpEmail = async (email, name, otp) => {
+      const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
+      const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+      const appResetUrl = `${appScheme}verify-email?otp=${otp}&email=${encodeURIComponent(email)}`;
+      const mailOptions = {
+        from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
+        to: email,
+        subject: 'Your findMate verification code',
+        html: `<p>Hi ${name},</p><p>Your verification code is <strong>${otp}</strong>. It expires in 15 minutes.</p>
+               <p>If you're on mobile you can open the app directly: <a href="${appResetUrl}">Open in app</a></p>`
       };
       await transporter.sendMail(mailOptions);
       return true;
@@ -93,11 +156,14 @@ if (!sendVerificationEmail && process.env.SMTP_HOST) {
     sendPasswordResetEmail = async (email, name, token) => {
       const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
       const resetUrl = `${backendUrl}/api/auth/reset-password?token=${token}`;
+      const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+      const appResetUrl = `${appScheme}reset-password?token=${token}`;
       const mailOptions = {
         from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
         to: email,
         subject: 'Reset your findMate password',
-        html: `<p>Hi ${name},</p><p>Reset your password by clicking <a href="${resetUrl}">this link</a>. The link expires in 1 hour.</p>`
+        html: `<p>Hi ${name},</p><p>Reset your password by clicking <a href="${resetUrl}">this link</a>. The link expires in 1 hour.</p>
+               <p>If you're on mobile you can open the app directly: <a href="${appResetUrl}">Open in app</a></p>`
       };
       await transporter.sendMail(mailOptions);
       return true;
@@ -127,14 +193,27 @@ if (!sendVerificationEmail) {
   sendVerificationEmail = async (email, name, token) => {
     const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
     const verifyUrl = `${backendUrl}/api/auth/verify-email?token=${token}`;
-    console.log(`\n📧 VERIFICATION EMAIL (Mock)\nTo: ${email}\nName: ${name}\nToken: ${token}\nLink: ${verifyUrl}\n`);
+    const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+    const appVerifyUrl = `${appScheme}verify-email?token=${token}`;
+    console.log(`\n📧 VERIFICATION EMAIL (Mock)\nTo: ${email}\nName: ${name}\nToken: ${token}\nLink: ${verifyUrl}\nOpen in app: ${appVerifyUrl}\n`);
     return true;
   };
 
   sendPasswordResetEmail = async (email, name, token) => {
     const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
     const resetUrl = `${backendUrl}/api/auth/reset-password?token=${token}`;
-    console.log(`\n📧 PASSWORD RESET EMAIL (Mock)\nTo: ${email}\nName: ${name}\nToken: ${token}\nLink: ${resetUrl}\n`);
+    const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+    const appResetUrl = `${appScheme}reset-password?token=${token}`;
+    console.log(`\n📧 PASSWORD RESET EMAIL (Mock)\nTo: ${email}\nName: ${name}\nToken: ${token}\nLink: ${resetUrl}\nOpen in app: ${appResetUrl}\n`);
+    return true;
+  };
+
+  // Mock OTP email
+  sendVerificationOtpEmail = async (email, name, otp) => {
+    const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
+    const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+    const appResetUrl = `${appScheme}verify-email?otp=${otp}&email=${encodeURIComponent(email)}`;
+    console.log(`\n📧 VERIFICATION OTP EMAIL (Mock)\nTo: ${email}\nName: ${name}\nOTP: ${otp}\nOpen in app: ${appResetUrl}\n`);
     return true;
   };
 
@@ -146,6 +225,7 @@ if (!sendVerificationEmail) {
 
 module.exports = {
   sendVerificationEmail,
+  sendVerificationOtpEmail,
   sendPasswordResetEmail,
   sendNotificationEmail
 };
