@@ -209,7 +209,13 @@ const HomeScreen = ({ navigation }) => {
         </View>
       )}
         
-      <View style={styles.tabContainer}>
+      <View style={[
+        styles.tabContainer,
+        // When there's an active filters indicator present we shouldn't
+        // pull the tabs upward (negative margin). Override the default
+        // margin to provide clear separation and avoid overlap.
+        activeFilterCount > 0 ? { marginTop: 8 } : { marginTop: -16 }
+      ]}>
         <TouchableOpacity
           style={[
             styles.tab,
