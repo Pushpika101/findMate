@@ -13,7 +13,9 @@ if (process.env.SENDGRID_API_KEY) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     sendVerificationEmail = async (email, name, token) => {
-      const verifyUrl = `${process.env.CLIENT_URL || process.env.CLIENT_URL_WEB || 'http://localhost:3000'}/verify?token=${token}`;
+      // Point verification link to backend so clicking the email performs verification
+      const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
+      const verifyUrl = `${backendUrl}/api/auth/verify-email?token=${token}`;
       const msg = {
         to: email,
         from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
@@ -26,7 +28,8 @@ if (process.env.SENDGRID_API_KEY) {
     };
 
     sendPasswordResetEmail = async (email, name, token) => {
-      const resetUrl = `${process.env.CLIENT_URL || process.env.CLIENT_URL_WEB || 'http://localhost:3000'}/reset-password?token=${token}`;
+      const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
+      const resetUrl = `${backendUrl}/api/auth/reset-password?token=${token}`;
       const msg = {
         to: email,
         from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
@@ -75,7 +78,8 @@ if (!sendVerificationEmail && process.env.SMTP_HOST) {
     });
 
     sendVerificationEmail = async (email, name, token) => {
-      const verifyUrl = `${process.env.CLIENT_URL || process.env.CLIENT_URL_WEB || 'http://localhost:3000'}/verify?token=${token}`;
+      const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
+      const verifyUrl = `${backendUrl}/api/auth/verify-email?token=${token}`;
       const mailOptions = {
         from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
         to: email,
@@ -87,7 +91,8 @@ if (!sendVerificationEmail && process.env.SMTP_HOST) {
     };
 
     sendPasswordResetEmail = async (email, name, token) => {
-      const resetUrl = `${process.env.CLIENT_URL || process.env.CLIENT_URL_WEB || 'http://localhost:3000'}/reset-password?token=${token}`;
+      const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
+      const resetUrl = `${backendUrl}/api/auth/reset-password?token=${token}`;
       const mailOptions = {
         from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
         to: email,
@@ -120,12 +125,16 @@ if (!sendVerificationEmail) {
   console.log('⚠️  Email service not configured - Using mock transporter for testing');
 
   sendVerificationEmail = async (email, name, token) => {
-    console.log(`\n📧 VERIFICATION EMAIL (Mock)\nTo: ${email}\nName: ${name}\nToken: ${token}\n`);
+    const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
+    const verifyUrl = `${backendUrl}/api/auth/verify-email?token=${token}`;
+    console.log(`\n📧 VERIFICATION EMAIL (Mock)\nTo: ${email}\nName: ${name}\nToken: ${token}\nLink: ${verifyUrl}\n`);
     return true;
   };
 
   sendPasswordResetEmail = async (email, name, token) => {
-    console.log(`\n📧 PASSWORD RESET EMAIL (Mock)\nTo: ${email}\nName: ${name}\nToken: ${token}\n`);
+    const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`;
+    const resetUrl = `${backendUrl}/api/auth/reset-password?token=${token}`;
+    console.log(`\n📧 PASSWORD RESET EMAIL (Mock)\nTo: ${email}\nName: ${name}\nToken: ${token}\nLink: ${resetUrl}\n`);
     return true;
   };
 

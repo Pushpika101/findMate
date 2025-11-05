@@ -96,9 +96,16 @@ exports.register = async (req, res) => {
 // @access  Public
 exports.verifyEmail = async (req, res) => {
   try {
-    const { token } = req.body;
+    // Accept token from POST body or GET query so the same controller can be
+    // used for API calls and for a simple web verification link.
+    const token = req.body?.token || req.query?.token;
+    const isWebFlow = !!req.query?.token; // if token present in query, we'll redirect to frontend
 
     if (!token) {
+      if (isWebFlow) {
+        const redirectTo = `${process.env.CLIENT_URL_WEB || process.env.CLIENT_URL || 'http://localhost:5173'}/verified?status=error&message=missing_token`;
+        return res.redirect(302, redirectTo);
+      }
       return res.status(400).json({
         success: false,
         message: 'Verification token is required'
@@ -112,6 +119,10 @@ exports.verifyEmail = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
+      if (isWebFlow) {
+        const redirectTo = `${process.env.CLIENT_URL_WEB || process.env.CLIENT_URL || 'http://localhost:5173'}/verified?status=error&message=invalid_token`;
+        return res.redirect(302, redirectTo);
+      }
       return res.status(400).json({
         success: false,
         message: 'Invalid or expired verification token'
@@ -120,6 +131,10 @@ exports.verifyEmail = async (req, res) => {
 
     const user = result.rows[0];
     if (user.verification_expires && new Date(user.verification_expires) < new Date()) {
+      if (isWebFlow) {
+        const redirectTo = `${process.env.CLIENT_URL_WEB || process.env.CLIENT_URL || 'http://localhost:5173'}/verified?status=error&message=token_expired`;
+        return res.redirect(302, redirectTo);
+      }
       return res.status(400).json({ success: false, message: 'Verification token expired' });
     }
 
@@ -129,6 +144,11 @@ exports.verifyEmail = async (req, res) => {
       SET is_verified = true, verification_token = NULL, verification_expires = NULL 
       WHERE id = $1
     `, [user.id]);
+
+    if (isWebFlow) {
+      const redirectTo = `${process.env.CLIENT_URL_WEB || process.env.CLIENT_URL || 'http://localhost:5173'}/verified?status=success`;
+      return res.redirect(302, redirectTo);
+    }
 
     res.json({
       success: true,

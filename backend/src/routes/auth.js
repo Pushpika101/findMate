@@ -32,6 +32,8 @@ router.post('/register', validateCampusEmail, registerValidation, register);
 // @desc    Verify email with token
 // @access  Public
 router.post('/verify-email', verifyEmail);
+// Also support GET so verification links in emails can call the endpoint directly
+router.get('/verify-email', verifyEmail);
 
 // @route   POST /api/auth/login
 // @desc    Login user
