@@ -32,9 +32,8 @@ const VerifyOtp = ({ navigation, route }) => {
   }, [cooldown]);
 
   useEffect(() => {
-    if (emailFromParams) {
-      handleResend();
-    }
+    // Do NOT auto-send OTP on mount. The backend already sends an OTP during registration.
+    // Auto-sending here caused duplicate OTPs (one sent on register, another sent by the app).
   }, []);
 
   const handleVerify = async () => {
