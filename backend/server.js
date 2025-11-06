@@ -17,6 +17,27 @@ const userRoutes = require('./src/routes/users');
 const adminRoutes = require('./src/routes/admin');
 
 const app = express();
+
+// Sentry (optional) - initialize if @sentry/node is installed and SENTRY_DSN is set
+let SENTRY = null;
+try {
+  // require here so package is optional during development
+  // eslint-disable-next-line global-require
+  const SentryLib = require('@sentry/node');
+  const sentryDsn = process.env.SENTRY_DSN;
+  if (sentryDsn) {
+    SentryLib.init({
+      dsn: sentryDsn,
+      environment: process.env.NODE_ENV || 'development',
+    });
+    SENTRY = SentryLib;
+    console.log('Sentry initialized');
+  } else {
+    console.log('Sentry DSN not provided - skipping Sentry initialization');
+  }
+} catch (err) {
+  console.log('Optional dependency @sentry/node not installed. To enable Sentry run: npm install @sentry/node');
+}
 const server = http.createServer(app);
 
 const path = require('path');
@@ -41,6 +62,11 @@ app.use(morgan('dev'));
 
 // Make io accessible in routes
 app.set('io', io);
+
+// Attach Sentry request handler early if we have it
+if (SENTRY) {
+  app.use(SENTRY.Handlers.requestHandler());
+}
 
 // Serve uploaded files (local development uploads)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -120,12 +146,20 @@ app.use((req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  if (SENTRY) {
+    try { SENTRY.captureException(err); } catch (e) { console.warn('Sentry capture failed', e); }
+  }
   
   res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal server error'
   });
 });
+
+// Attach Sentry error handler middleware (after our handlers) so Sentry can process errors
+if (SENTRY) {
+  app.use(SENTRY.Handlers.errorHandler());
+}
 
 // Start server
 const PORT = process.env.PORT || 5000;
@@ -146,4 +180,21 @@ process.on('SIGTERM', () => {
     console.log('Server closed');
     process.exit(0);
   });
+});
+
+// Capture uncaught errors and rejections
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+  if (SENTRY) {
+    try { SENTRY.captureException(reason); } catch (e) { console.warn('Sentry capture failed', e); }
+  }
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  if (SENTRY) {
+    try { SENTRY.captureException(err); } catch (e) { console.warn('Sentry capture failed', e); }
+  }
+  // It's recommended to exit after uncaughtException in Node apps
+  process.exit(1);
 });

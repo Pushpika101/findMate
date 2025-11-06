@@ -13,6 +13,37 @@ import MainNavigator from './src/navigation/AppNavigator';
 import { View, ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import COLORS from './src/utils/colors';
 
+// Optional Sentry for React Native. We attempt to require it so the package is
+// optional during development. To enable Sentry in production, install
+// @sentry/react-native and provide SENTRY_DSN via app config or environment.
+let SENTRY = null;
+try {
+  // eslint-disable-next-line global-require
+  const SentryLib = require('@sentry/react-native');
+  // Try common places for a DSN: process.env (CI), or Expo config extras
+  let dsn = process.env.SENTRY_DSN;
+  try {
+    // eslint-disable-next-line global-require
+    const Constants = require('expo-constants').default;
+    dsn = dsn || (Constants?.manifest?.extra && Constants.manifest.extra.SENTRY_DSN) || dsn;
+  } catch (e) {
+    // ignore expo-constants absence
+  }
+
+  if (dsn) {
+    SentryLib.init({
+      dsn,
+      environment: process.env.NODE_ENV || 'development',
+    });
+    SENTRY = SentryLib;
+    console.log('Sentry (RN) initialized');
+  } else {
+    console.log('Sentry DSN not provided - skipping Sentry (RN) initialization');
+  }
+} catch (err) {
+  console.log('Optional dependency @sentry/react-native not installed. To enable Sentry run: npm install @sentry/react-native');
+}
+
 const Stack = createStackNavigator();
 
 // Auth Navigator
@@ -93,6 +124,9 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, info) {
     console.error('Uncaught error:', error, info);
+    if (SENTRY && typeof SENTRY.captureException === 'function') {
+      try { SENTRY.captureException(error, { extra: info }); } catch (e) { console.warn('Sentry capture failed', e); }
+    }
     this.setState({ info });
   }
 
