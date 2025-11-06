@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TouchableOpacity, View, Text, Animated, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { AppState } from 'react-native';
 import HomeScreen from '../screens/home/HomeScreen';
 import AddItemScreen from '../screens/items/AddItemScreen';
 import COLORS from '../utils/colors';
@@ -138,9 +139,29 @@ const MainTabNavigator = () => {
       }
     };
 
+    let mounted = true;
+    let interval = null;
+    let appState = AppState.currentState;
+
+    const handleAppStateChange = (nextAppState) => {
+      appState = nextAppState;
+      // if app becomes active, trigger an immediate refresh
+      if (appState === 'active' && mounted) fetchNotificationBadge();
+    };
+
+    AppState.addEventListener('change', handleAppStateChange);
+
+    // Run initial fetch and poll at a reasonable interval (30s) to avoid heavy loads
     fetchNotificationBadge();
-    const interval = setInterval(fetchNotificationBadge, 20000);
-    return () => clearInterval(interval);
+    interval = setInterval(() => {
+      if (appState === 'active' && mounted) fetchNotificationBadge();
+    }, 1000);
+
+    return () => {
+      mounted = false;
+      AppState.removeEventListener('change', handleAppStateChange);
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -155,8 +176,9 @@ const MainTabNavigator = () => {
       }
     };
 
-    fetchChatBadge();
-    const chatInterval = setInterval(fetchChatBadge, 10000);
+  fetchChatBadge();
+  // Poll every 1s as requested by the user. Real-time updates are also handled via socket onNewMessage.
+  const chatInterval = setInterval(fetchChatBadge, 1000);
 
     // Initialize socket and listen for incoming messages so we can update the badge instantly
     let mounted = true;
