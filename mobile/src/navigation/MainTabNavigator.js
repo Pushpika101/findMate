@@ -149,7 +149,7 @@ const MainTabNavigator = () => {
       if (appState === 'active' && mounted) fetchNotificationBadge();
     };
 
-    AppState.addEventListener('change', handleAppStateChange);
+  const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
 
     // Run initial fetch and poll at a reasonable interval (30s) to avoid heavy loads
     fetchNotificationBadge();
@@ -159,7 +159,10 @@ const MainTabNavigator = () => {
 
     return () => {
       mounted = false;
-      AppState.removeEventListener('change', handleAppStateChange);
+      // remove the AppState listener via the subscription returned by addEventListener
+      if (appStateSubscription && typeof appStateSubscription.remove === 'function') {
+        appStateSubscription.remove();
+      }
       if (interval) clearInterval(interval);
     };
   }, []);

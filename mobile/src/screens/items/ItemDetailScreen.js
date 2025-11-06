@@ -10,9 +10,11 @@ import {
   ActivityIndicator,
   Share,
   Linking,
-  Dimensions
+  Dimensions,
+  Modal
 } from 'react-native';
 import { itemsAPI, chatAPI } from '../../services/api';
+import { API_URL } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
 import COLORS from '../../utils/colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -27,6 +29,10 @@ const ItemDetailScreen = ({ route, navigation }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [imageUrls, setImageUrls] = useState([]);
 
+  // Modal state for full-screen image viewer (hooks must be declared unconditionally)
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalIndex, setModalIndex] = useState(0);
+
   useEffect(() => {
     fetchItemDetails();
   }, [itemId]);
@@ -38,8 +44,11 @@ const ItemDetailScreen = ({ route, navigation }) => {
       if (response.success) {
         const fetchedItem = response.data.item;
         setItem(fetchedItem);
-        const imgs = [fetchedItem.photo1_url, fetchedItem.photo2_url].filter(Boolean);
+        const raw = [fetchedItem.photo1_url, fetchedItem.photo2_url].filter(Boolean);
+        const imgs = raw.map((uri) => normalizeImageUrl(uri)).filter(Boolean);
         setImageUrls(imgs);
+        // Debug: log normalized image URLs so we can inspect what RN receives
+        console.log('ItemDetailScreen: normalized imageUrls ->', imgs);
       }
     } catch (error) {
       Alert.alert('Error', error || 'Failed to fetch item details');
@@ -47,6 +56,29 @@ const ItemDetailScreen = ({ route, navigation }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const normalizeImageUrl = (uri) => {
+    if (!uri) return null;
+    const trimmed = String(uri).trim();
+
+    // If already absolute with protocol, return as-is
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+
+    // Protocol-relative URL (//example.com/path) -> assume https
+    if (/^\/\//.test(trimmed)) return `https:${trimmed}`;
+
+    // If it starts with a slash it's a root-relative path on the API host
+    const apiOrigin = API_URL.replace(/\/api\/?$/, '');
+    if (trimmed.startsWith('/')) return apiOrigin + trimmed;
+
+    // If contains localhost or 127.0.0.1, prefix with API origin
+    if (/localhost|127\.0\.0\.1/.test(trimmed)) {
+      return apiOrigin + (trimmed.startsWith('/') ? trimmed : `/${trimmed}`);
+    }
+
+    // Otherwise treat as a relative path and prefix with API origin
+    return apiOrigin + (trimmed.startsWith('/') ? trimmed : `/${trimmed}`);
   };
 
   const handleClaimItem = async () => {
@@ -188,7 +220,9 @@ const ItemDetailScreen = ({ route, navigation }) => {
   }
 
   const isOwner = user && user.id === item.user_id;
-  const images = [item.photo1_url, item.photo2_url].filter(Boolean);
+  const images = item ? [item.photo1_url, item.photo2_url].filter(Boolean) : [];
+
+  
 
   return (
     <View style={styles.container}>
@@ -219,21 +253,30 @@ const ItemDetailScreen = ({ route, navigation }) => {
               scrollEventThrottle={16}
             >
               {imageUrls.map((imageUrl, index) => (
-                <Image
+                <TouchableOpacity
                   key={index}
-                  source={{ uri: imageUrl }}
-                  style={styles.itemImage}
-                  resizeMode="cover"
-                  onError={() => {
-                    // Replace failed image with a safe placeholder
-                    const fallback = 'https://via.placeholder.com/800?text=No+Image+Available';
-                    setImageUrls((prev) => {
-                      const next = [...prev];
-                      next[index] = fallback;
-                      return next;
-                    });
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    setModalIndex(index);
+                    setIsModalVisible(true);
                   }}
-                />
+                >
+                  <Image
+                    source={{ uri: imageUrl }}
+                    style={styles.itemImage}
+                    resizeMode="cover"
+                        onError={(e) => {
+                          console.warn('ItemDetailScreen: image load error', { uri: imageUrl, error: e.nativeEvent });
+                          // Replace failed image with a safe placeholder
+                          const fallback = 'https://via.placeholder.com/800?text=No+Image+Available';
+                          setImageUrls((prev) => {
+                            const next = [...prev];
+                            next[index] = fallback;
+                            return next;
+                          });
+                        }}
+                  />
+                </TouchableOpacity>
               ))}
             </ScrollView>
             {imageUrls.length > 1 && (
@@ -410,6 +453,64 @@ const ItemDetailScreen = ({ route, navigation }) => {
           )}
         </View>
       </ScrollView>
+
+      {/* Full-screen image modal */}
+      <Modal
+        visible={isModalVisible}
+        transparent={false}
+        animationType="fade"
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          {/* Top-right close for quick exit (visible even if image fails) */}
+          <TouchableOpacity
+            onPress={() => setIsModalVisible(false)}
+            style={styles.modalTopClose}
+            accessibilityLabel="Close image viewer"
+          >
+            <Text style={styles.modalTopCloseText}>✕</Text>
+          </TouchableOpacity>
+
+          {imageUrls[modalIndex] ? (
+            <Image
+              source={{ uri: imageUrls[modalIndex] }}
+              style={styles.modalImage}
+              resizeMode="contain"
+              onError={(e) => console.warn('ItemDetailScreen: modal image failed', { uri: imageUrls[modalIndex], error: e.nativeEvent })}
+            />
+          ) : (
+            <View style={styles.noImageContainer}>
+              <Text style={styles.noImageText}>Image not available</Text>
+            </View>
+          )}
+
+          {/* Navigation / Close Controls (bottom) */}
+          <View style={styles.modalControls}>
+            <TouchableOpacity
+              style={styles.modalNavButton}
+              onPress={() => setModalIndex((i) => (i - 1 + imageUrls.length) % imageUrls.length)}
+              disabled={imageUrls.length <= 1}
+            >
+              <Text style={styles.modalNavText}>◀</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setIsModalVisible(false)}
+            >
+              <Text style={styles.modalCloseText}>Close</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.modalNavButton}
+              onPress={() => setModalIndex((i) => (i + 1) % imageUrls.length)}
+              disabled={imageUrls.length <= 1}
+            >
+              <Text style={styles.modalNavText}>▶</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -681,6 +782,63 @@ const styles = StyleSheet.create({
   deleteButton: {
     borderColor: COLORS.black,
     backgroundColor: COLORS.black
+  }
+  ,
+  /* Modal styles */
+  modalContainer: {
+    flex: 1,
+    backgroundColor: COLORS.black,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalImage: {
+    width: '100%',
+    height: '80%'
+  },
+  modalControls: {
+    position: 'absolute',
+    bottom: 40,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center'
+  },
+  modalNavButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 8
+  },
+  modalNavText: {
+    color: COLORS.white,
+    fontSize: 22,
+    fontWeight: '600'
+  },
+  modalCloseButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: COLORS.primary,
+    borderRadius: 8
+  },
+  modalCloseText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: '600'
+  },
+  modalTopClose: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    zIndex: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 8,
+    borderRadius: 20
+  },
+  modalTopCloseText: {
+    color: COLORS.white,
+    fontSize: 20,
+    fontWeight: '700'
   }
 });
 
