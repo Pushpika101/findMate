@@ -12,7 +12,7 @@ import ChatListScreen from '../screens/chat/ChatListScreen';
 import NotificationsScreen from '../screens/notifications/NotificationsScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import { notificationsAPI, chatAPI } from '../services/api';
-import { initializeSocket, onNewMessage, removeMessageListener } from '../services/socket';
+import { initializeSocket, onNewMessage, removeMessageListener, onNotification, removeNotificationListener, getSocket } from '../services/socket';
 import { DeviceEventEmitter } from 'react-native';
 
 
@@ -140,7 +140,6 @@ const MainTabNavigator = () => {
     };
 
     let mounted = true;
-    let interval = null;
     let appState = AppState.currentState;
 
     const handleAppStateChange = (nextAppState) => {
@@ -149,13 +148,24 @@ const MainTabNavigator = () => {
       if (appState === 'active' && mounted) fetchNotificationBadge();
     };
 
-  const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
+    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
 
-    // Run initial fetch and poll at a reasonable interval (30s) to avoid heavy loads
+    // Run initial fetch once. Real-time updates will come from socket 'new_notification' events.
     fetchNotificationBadge();
-    interval = setInterval(() => {
-      if (appState === 'active' && mounted) fetchNotificationBadge();
-    }, 8000);
+
+    // Initialize socket and listen for new notifications to update badge instantly
+    (async () => {
+      try {
+        await initializeSocket();
+        // subscribe to notification events
+        onNotification((notification) => {
+          if (!mounted) return;
+          setNotificationBadge((prev) => (prev || 0) + 1);
+        });
+      } catch (err) {
+        console.error('Socket init error (notifications) in MainTabNavigator:', err);
+      }
+    })();
 
     return () => {
       mounted = false;
@@ -163,7 +173,10 @@ const MainTabNavigator = () => {
       if (appStateSubscription && typeof appStateSubscription.remove === 'function') {
         appStateSubscription.remove();
       }
-      if (interval) clearInterval(interval);
+      // remove socket listeners for notifications
+      try {
+        removeNotificationListener();
+      } catch (e) {}
     };
   }, []);
 
@@ -179,40 +192,34 @@ const MainTabNavigator = () => {
       }
     };
 
+  let mounted = true;
+
   fetchChatBadge();
-  // Poll every 1s as requested by the user. Real-time updates are also handled via socket onNewMessage.
-  const chatInterval = setInterval(fetchChatBadge, 8000);
 
-    // Initialize socket and listen for incoming messages so we can update the badge instantly
-    let mounted = true;
-    (async () => {
-      try {
-        await initializeSocket();
-        onNewMessage((newMessage) => {
-          if (!mounted) return;
+  // Initialize socket and listen for incoming messages so we can update the badge instantly
+  (async () => {
+    try {
+      await initializeSocket();
+      onNewMessage((newMessage) => {
+        if (!mounted) return;
+        if (newMessage && newMessage.sender_id && newMessage.sender_id !== user?.id) {
+          setChatBadge((prev) => (prev || 0) + 1);
+        }
+      });
+    } catch (err) {
+      console.error('Socket init error in MainTabNavigator:', err);
+    }
+  })();
 
-          // If the incoming message is from another user, increment badge count immediately
-          if (newMessage && newMessage.sender_id && newMessage.sender_id !== user?.id) {
-            setChatBadge((prev) => (prev || 0) + 1);
-          }
+  const subscription = DeviceEventEmitter.addListener('chatBadgeUpdated', (newCount) => {
+    setChatBadge(typeof newCount === 'number' ? newCount : (Number(newCount) || 0));
+  });
 
-          // Also trigger a background fetch to keep server/client in sync (debounced by interval)
-        });
-      } catch (err) {
-        console.error('Socket init error in MainTabNavigator:', err);
-      }
-    })();
-
-    const subscription = DeviceEventEmitter.addListener('chatBadgeUpdated', (newCount) => {
-      setChatBadge(typeof newCount === 'number' ? newCount : (Number(newCount) || 0));
-    });
-
-    return () => {
-      mounted = false;
-      subscription.remove();
-      removeMessageListener();
-      clearInterval(chatInterval);
-    };
+  return () => {
+    mounted = false;
+    subscription.remove();
+    removeMessageListener();
+  };
   }, []);
 
   return (

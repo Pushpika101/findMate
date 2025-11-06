@@ -10,6 +10,7 @@ import {
   Alert,
   Image
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { chatAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
 import { initializeSocket, onNewMessage, removeMessageListener } from '../../services/socket';
@@ -24,8 +25,18 @@ const ChatListScreen = ({ navigation }) => {
 
   useEffect(() => {
     setupSocket();
+    // initial full load (shows loader if no chats yet)
     fetchChats();
   }, []);
+
+  // When the screen becomes focused, refresh chats silently so the list
+  // updates immediately without requiring a manual pull-to-refresh.
+  useFocusEffect(
+    useCallback(() => {
+      // silent refresh: don't show the full-screen loading indicator
+      fetchChats(true);
+    }, [])
+  );
 
   const setupSocket = async () => {
     await initializeSocket();
@@ -105,17 +116,18 @@ const ChatListScreen = ({ navigation }) => {
     }
   };
 
-  const fetchChats = async () => {
+  // fetchChats(silent=true) will not toggle the full-screen loading state.
+  const fetchChats = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const response = await chatAPI.getAll();
-      if (response.success) {
+      if (response && response.success) {
         setChats(response.data.chats);
       }
     } catch (error) {
       Alert.alert('Error', error || 'Failed to fetch chats');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
