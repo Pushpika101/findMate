@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { notificationsAPI } from '../../services/api';
 import { initializeSocket, onNewMessage } from '../../services/socket';
+import { DeviceEventEmitter } from 'react-native';
 import NotificationItem from '../../components/notifications/NotificationItem';
 import COLORS from '../../utils/colors';
 import { useFocusEffect } from '@react-navigation/native';
@@ -148,7 +149,9 @@ const NotificationsScreen = ({ navigation }) => {
         setNotifications((prev) =>
           prev.map((n) => (n.id === notification.id ? { ...n, is_read: true } : n))
         );
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+        const newCount = Math.max(0, (unreadCount || 0) - 1);
+        setUnreadCount(newCount);
+        DeviceEventEmitter.emit('notificationBadgeUpdated', newCount);
       } catch (error) {
         console.error('Error marking as read:', error);
       }
@@ -172,7 +175,14 @@ const NotificationsScreen = ({ navigation }) => {
           onPress: async () => {
             try {
               await notificationsAPI.delete(notificationId);
+              // determine if the deleted notification was unread so we can
+              // decrement the badge correctly
+              const wasUnread = notifications.some((n) => n.id === notificationId && !n.is_read);
+              const newCount = wasUnread ? Math.max(0, (unreadCount || 0) - 1) : (unreadCount || 0);
               setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+              setUnreadCount(newCount);
+              // notify other parts of the app (MainTabNavigator) that the badge changed
+              DeviceEventEmitter.emit('notificationBadgeUpdated', newCount);
             } catch (error) {
               Alert.alert('Error', error || 'Failed to delete notification');
             }
@@ -189,6 +199,7 @@ const NotificationsScreen = ({ navigation }) => {
         prev.map((n) => ({ ...n, is_read: true }))
       );
       setUnreadCount(0);
+      DeviceEventEmitter.emit('notificationBadgeUpdated', 0);
       Alert.alert('Success', 'All notifications marked as read');
     } catch (error) {
       Alert.alert('Error', error || 'Failed to mark all as read');
@@ -212,6 +223,7 @@ const NotificationsScreen = ({ navigation }) => {
               }
               setNotifications([]);
               setUnreadCount(0);
+              DeviceEventEmitter.emit('notificationBadgeUpdated', 0);
             } catch (error) {
               Alert.alert('Error', error || 'Failed to clear notifications');
             }

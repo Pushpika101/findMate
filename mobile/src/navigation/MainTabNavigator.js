@@ -153,6 +153,12 @@ const MainTabNavigator = () => {
     // Run initial fetch once. Real-time updates will come from socket 'new_notification' events.
     fetchNotificationBadge();
 
+    // Listen for explicit badge updates emitted by screens (e.g., when user
+    // deletes or marks notifications as read) so the tab badge stays in sync.
+    const notificationSubscription = DeviceEventEmitter.addListener('notificationBadgeUpdated', (newCount) => {
+      setNotificationBadge(typeof newCount === 'number' ? newCount : (Number(newCount) || 0));
+    });
+
     // Initialize socket and listen for new notifications to update badge instantly
     (async () => {
       try {
@@ -173,6 +179,7 @@ const MainTabNavigator = () => {
       if (appStateSubscription && typeof appStateSubscription.remove === 'function') {
         appStateSubscription.remove();
       }
+      if (notificationSubscription && typeof notificationSubscription.remove === 'function') notificationSubscription.remove();
       // remove socket listeners for notifications
       try {
         removeNotificationListener();
