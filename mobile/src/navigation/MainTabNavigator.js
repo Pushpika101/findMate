@@ -155,7 +155,7 @@ const MainTabNavigator = () => {
     fetchNotificationBadge();
     interval = setInterval(() => {
       if (appState === 'active' && mounted) fetchNotificationBadge();
-    }, 1000);
+    }, 8000);
 
     return () => {
       mounted = false;
@@ -181,7 +181,7 @@ const MainTabNavigator = () => {
 
   fetchChatBadge();
   // Poll every 1s as requested by the user. Real-time updates are also handled via socket onNewMessage.
-  const chatInterval = setInterval(fetchChatBadge, 1000);
+  const chatInterval = setInterval(fetchChatBadge, 8000);
 
     // Initialize socket and listen for incoming messages so we can update the badge instantly
     let mounted = true;
