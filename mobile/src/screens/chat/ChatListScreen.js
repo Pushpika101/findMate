@@ -57,7 +57,17 @@ const ChatListScreen = ({ navigation }) => {
   useEffect(() => {
     const sub = DeviceEventEmitter.addListener('chatMarkedRead', (readChatId) => {
       if (!readChatId) return;
-      setChats((prev) => prev.map((c) => (c.id === readChatId ? { ...c, unread_count: 0 } : c)));
+      setChats((prev) => {
+        const next = prev.map((c) => (c.id === readChatId ? { ...c, unread_count: 0 } : c));
+        // recompute total unread across chats and emit so main navigator updates badge
+        try {
+          const totalUnread = next.reduce((acc, it) => acc + (Number(it.unread_count) || 0), 0);
+          DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread);
+        } catch (e) {
+          // ignore emit errors
+        }
+        return next;
+      });
     });
 
     return () => sub.remove();
@@ -93,6 +103,13 @@ const ChatListScreen = ({ navigation }) => {
       const next = [...prev];
       next.splice(idx, 1);
       next.unshift(update);
+      // recompute total unread across chats and emit event so MainTabNavigator updates badge
+      try {
+        const totalUnread = next.reduce((acc, it) => acc + (Number(it.unread_count) || 0), 0);
+        DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread);
+      } catch (e) {
+        // ignore
+      }
       return next;
     });
   };
@@ -123,6 +140,11 @@ const ChatListScreen = ({ navigation }) => {
       const response = await chatAPI.getAll();
       if (response && response.success) {
         setChats(response.data.chats);
+        // compute total unread across chats and emit so main navigator updates badge
+        try {
+          const totalUnread = (response.data.chats || []).reduce((acc, it) => acc + (Number(it.unread_count) || 0), 0);
+          DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread);
+        } catch (e) {}
       }
     } catch (error) {
       Alert.alert('Error', error || 'Failed to fetch chats');
@@ -229,7 +251,14 @@ const ChatListScreen = ({ navigation }) => {
       setLoading(true);
       const response = await chatAPI.delete(id);
       if (response && response.success) {
-        setChats((prev) => prev.filter((c) => c.id !== id));
+        setChats((prev) => {
+          const next = prev.filter((c) => c.id !== id);
+          try {
+            const totalUnread = next.reduce((acc, it) => acc + (Number(it.unread_count) || 0), 0);
+            DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread);
+          } catch (e) {}
+          return next;
+        });
       } else {
         Alert.alert('Error', response?.message || 'Failed to delete chat');
       }
