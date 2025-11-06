@@ -34,6 +34,20 @@ const EditProfileScreen = ({ navigation, route }) => {
   const [photoUri, setPhotoUri] = useState(profile?.profile_photo || null);
   const _API_URL = API_URL;
 
+  const deriveStudentIdFromEmail = (email) => {
+    if (!email) return null;
+    const m = String(email).toLowerCase().match(/^e(\d{5})/);
+    if (m) {
+      const digits = m[1];
+      const yy = digits.slice(0, 2);
+      const nnn = digits.slice(2);
+      return `E/${yy}/${nnn}`;
+    }
+    return null;
+  };
+
+  const displayStudentId = profile?.student_id || authUser?.student_id || deriveStudentIdFromEmail(profile?.email || authUser?.email) || '';
+
   const validate = () => {
     if (!name.trim()) {
       Alert.alert('Validation', 'Name is required');
@@ -52,8 +66,22 @@ const EditProfileScreen = ({ navigation, route }) => {
 
       const response = await usersAPI.updateProfile(payload);
       if (response && response.success) {
+        // Debug: log returned user object to ensure backend returns student_id
+        try {
+          console.log('[EditProfileScreen] updateProfile response.user ->', response.data?.user);
+        } catch (e) {}
         // Update auth context and go back
-        if (setUser && response.data?.user) setUser(response.data.user);
+        if (setUser && response.data?.user) setUser(prev => {
+          const returned = response.data.user || {};
+          const emailToUse = returned.email || prev?.email;
+          const derived = deriveStudentIdFromEmail(emailToUse);
+          // Preserve existing student_id if backend returned null/undefined, otherwise use derived
+          return {
+            ...(prev || {}),
+            ...returned,
+            student_id: returned.student_id ?? prev?.student_id ?? derived
+          };
+        });
         Alert.alert('Success', 'Profile updated');
         navigation.goBack();
       } else {
@@ -96,7 +124,18 @@ const EditProfileScreen = ({ navigation, route }) => {
       const response = await usersAPI.updateProfilePhoto(photo);
       if (response && response.success) {
         if (response.data?.user) {
-          if (setUser) setUser(response.data.user);
+          if (setUser) setUser(prev => ({ ...(prev || {}), ...(response.data.user || {}) }));
+            if (setUser) setUser(prev => {
+              const returned = response.data.user || {};
+              const emailToUse = returned.email || prev?.email;
+              const derived = deriveStudentIdFromEmail(emailToUse);
+              // Preserve existing student_id if backend returned null/undefined, otherwise use derived
+              return {
+                ...(prev || {}),
+                ...returned,
+                student_id: returned.student_id ?? prev?.student_id ?? derived
+              };
+            });
           // Normalize localhost/relative URLs to API origin so device can load
           let uri = response.data.user.profile_photo || null;
           try {
@@ -170,7 +209,7 @@ const EditProfileScreen = ({ navigation, route }) => {
 
         <View style={styles.readOnlyField}>
           <Text style={styles.label}>Student ID</Text>
-          <Text style={styles.readOnlyText}>{studentId || '—'}</Text>
+          <Text style={styles.readOnlyText}>{displayStudentId || '—'}</Text>
         </View>
 
         <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading || uploading}>

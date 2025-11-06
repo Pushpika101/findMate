@@ -51,7 +51,16 @@ const ProfileScreen = ({ navigation }) => {
         // we don't accidentally drop fields that may be present in the
         // auth context (e.g. student_id) — this helps keep ID visible
         // after edits that only return a subset of fields.
-        setProfileData(prev => ({ ...(prev || {}), ...(profileResponse.data.user || {}) }));
+        setProfileData(prev => {
+          const returned = profileResponse.data.user || {};
+          const emailToUse = returned.email || prev?.email;
+          const derived = deriveStudentIdFromEmail(emailToUse);
+          return {
+            ...(prev || {}),
+            ...returned,
+            student_id: returned.student_id ?? prev?.student_id ?? derived
+          };
+        });
         // Debug full profile object to inspect student_id value
         //console.log('[ProfileScreen] profileResponse.data.user =', profileResponse.data.user);
         // Debug: log returned and normalized profile photo URL
@@ -89,6 +98,19 @@ const ProfileScreen = ({ navigation }) => {
       if (uri.startsWith('/')) return apiOrigin + uri;
       return uri;
     }
+  };
+
+  const deriveStudentIdFromEmail = (email) => {
+    if (!email) return null;
+    // pattern: eYYNNN@... => E/YY/NNN (example: e21442 -> E/21/442)
+    const m = String(email).toLowerCase().match(/^e(\d{5})/);
+    if (m) {
+      const digits = m[1];
+      const yy = digits.slice(0, 2);
+      const nnn = digits.slice(2);
+      return `E/${yy}/${nnn}`;
+    }
+    return null;
   };
 
   const onRefresh = async () => {
@@ -238,11 +260,16 @@ const ProfileScreen = ({ navigation }) => {
             )}
           </View>
 
-            <Text style={styles.userName}>{profileData?.name || user?.name}</Text>
-            <Text style={styles.userEmail}>{profileData?.email || user?.email}</Text>
-            <Text style={styles.userStudentId}>
-              ID: {profileData?.student_id || user?.student_id || '—'}
-            </Text>
+            {(() => {
+              const displayStudentId = profileData?.student_id ?? user?.student_id ?? deriveStudentIdFromEmail(profileData?.email || user?.email) ?? '—';
+              return (
+                <>
+                  <Text style={styles.userName}>{profileData?.name || user?.name}</Text>
+                  <Text style={styles.userEmail}>{profileData?.email || user?.email}</Text>
+                  <Text style={styles.userStudentId}>ID: {displayStudentId}</Text>
+                </>
+              );
+            })()}
 
           <View style={styles.verifiedBadge}>
             <Text style={styles.verifiedIcon}>
