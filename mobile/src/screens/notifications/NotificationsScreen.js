@@ -17,6 +17,7 @@ import { notificationsAPI } from '../../services/api';
 import { initializeSocket, onNewMessage } from '../../services/socket';
 import NotificationItem from '../../components/notifications/NotificationItem';
 import COLORS from '../../utils/colors';
+import { useFocusEffect } from '@react-navigation/native';
 
 const NotificationsScreen = ({ navigation }) => {
   const [notifications, setNotifications] = useState([]);
@@ -30,6 +31,16 @@ const NotificationsScreen = ({ navigation }) => {
     fetchNotifications();
     fetchUnreadCount();
   }, []);
+
+  // When the screen becomes focused, refresh notifications silently so the
+  // list updates immediately without requiring a manual pull-to-refresh.
+  useFocusEffect(
+    useCallback(() => {
+      // silent refresh: don't show the full-screen loading indicator
+      fetchNotifications(true);
+      fetchUnreadCount();
+    }, [])
+  );
 
   const [showMenu, setShowMenu] = useState(false);
   const anim = useRef(new Animated.Value(0)).current;
@@ -86,11 +97,12 @@ const NotificationsScreen = ({ navigation }) => {
     }
   };
 
-  const fetchNotifications = async () => {
+  // fetchNotifications(silent = true) will not toggle the full-screen loading state.
+  const fetchNotifications = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const response = await notificationsAPI.getAll({ limit: 100 });
-      if (response.success) {
+      if (response && response.success) {
         // dedupe notifications by id when setting initial list
         const seen = new Set();
         const deduped = [];
@@ -106,7 +118,7 @@ const NotificationsScreen = ({ navigation }) => {
     } catch (error) {
       Alert.alert('Error', error || 'Failed to fetch notifications');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
