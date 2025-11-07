@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
-  Appearance
+  Appearance,
+  Switch
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
@@ -430,23 +431,25 @@ const ProfileScreen = ({ navigation }) => {
         {/* Logout Button */}
         {/* Theme toggle */}
         <View style={[styles.settingsCard, { marginTop: 12 }]}>
-          <TouchableOpacity
-            style={styles.actionItem}
-            onPress={() => {
-              // toggle between light and dark (keeps 'system' intact only if set to system)
-              if (mode === 'system') setMode('dark');
-              else setMode(mode === 'dark' ? 'light' : 'dark');
-            }}
-          >
-            <View style={styles.actionIconContainer}>
-              <Text style={styles.actionIcon}>🌓</Text>
+            <View style={styles.actionItem}>
+              <View style={styles.actionIconContainer}>
+                <Text style={styles.actionIcon}>🌓</Text>
+              </View>
+              <View style={styles.actionContent}>
+                <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>Theme</Text>
+                <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>{`Current: ${mode === 'system' ? `System (${Appearance?.getColorScheme?.() || 'light'})` : mode}`}</Text>
+              </View>
+              <Switch
+                value={mode === 'dark' || (mode === 'system' && Appearance.getColorScheme && Appearance.getColorScheme() === 'dark')}
+                onValueChange={() => {
+                  // Toggle between explicit dark and light. If currently 'system', derive current and toggle opposite.
+                  const derivedIsDark = mode === 'dark' || (mode === 'system' && Appearance.getColorScheme && Appearance.getColorScheme() === 'dark');
+                  setMode(derivedIsDark ? 'light' : 'dark');
+                }}
+                thumbColor={colors.white}
+                trackColor={{ false: colors.gray300, true: colors.primary }}
+              />
             </View>
-            <View style={styles.actionContent}>
-              <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>Theme</Text>
-              <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>Current: {mode === 'system' ? `System (${Appearance?.getColorScheme?.() || 'light'})` : mode}</Text>
-            </View>
-            <Text style={[styles.actionArrow, { color: colors.textSecondary }]}>{'›'}</Text>
-          </TouchableOpacity>
         </View>
 
         <TouchableOpacity
