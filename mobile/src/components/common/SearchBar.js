@@ -24,8 +24,8 @@ const SearchBar = ({ onSearch, onFilterPress, onFocus, onBlur, placeholder = 'Se
     input: { flex: 1, fontSize: 15, color: colors.textPrimary, paddingVertical: 0 },
     clearButton: { width: 24, height: 24, borderRadius: 12, backgroundColor: colors.gray200, justifyContent: 'center', alignItems: 'center', marginLeft: 8 },
     clearIcon: { fontSize: 12, color: colors.textSecondary },
-    filterButton: { width: 68, height: 48, borderRadius: 12, backgroundColor: colors.kk, justifyContent: 'center', alignItems: 'center' },
-    filterIcon: { fontSize: 20, color: colors.black }
+    filterButton: { width: 68, height: 48, borderRadius: 12, backgroundColor: colors.kk2, justifyContent: 'center', alignItems: 'center' },
+    filterIcon: { fontSize: 20, color: colors.white }
   }));
 
   useEffect(() => {

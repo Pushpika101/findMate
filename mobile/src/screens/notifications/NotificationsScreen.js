@@ -249,7 +249,7 @@ const NotificationsScreen = ({ navigation }) => {
     headerSubtitle: { fontSize: 14, color: colors.white, opacity: 0.9 },
     menuButton: { width: 45, height: 45, borderRadius: 40, backgroundColor: colors.black, justifyContent: 'center', alignItems: 'center', alignSelf: 'center' },
     menuIcon: { fontSize: 24, color: colors.white, fontWeight: 'bold', lineHeight: 45, textAlign: 'center' },
-    filterContainer: { flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 16, gap: 12, backgroundColor: colors.backgroundSecondary, borderBottomWidth: 1, borderBottomColor: colors.border },
+    filterContainer: { flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 16, gap: 12, backgroundColor: colors.background, borderBottomWidth: 1, borderBottomColor: colors.border },
     filterTab: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: colors.gray100 || '#f2f2f2' },
     filterTabActive: { backgroundColor: colors.black },
     filterTabText: { fontSize: 14, fontWeight: '600', color: colors.textSecondary },
@@ -264,14 +264,14 @@ const NotificationsScreen = ({ navigation }) => {
     menuItem: { paddingVertical: 12, paddingHorizontal: 14 },
     menuItemRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 12 },
     menuItemIcon: { fontSize: 16, marginRight: 12 },
-    menuItemText: { fontSize: 16, color: colors.textPrimary },
+    menuItemText: { fontSize: 16, color: colors.black },
     menuItemDestructiveText: { color: colors.danger || '#d9534f' },
     menuDivider: { height: 1, backgroundColor: colors.border, marginHorizontal: 8 },
     menuCaretContainer: { position: 'absolute', right: 28, top: -6, width: 16, height: 8, alignItems: 'center', justifyContent: 'center' },
     menuCaret: { width: 0, height: 0, borderLeftWidth: 8, borderRightWidth: 8, borderBottomWidth: 8, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: colors.backgroundSecondary },
     menuItemRead: { backgroundColor: colors.successLight || '#eaf6ec', borderWidth: 1, borderColor: colors.success || '#2e7d32', borderRadius: 8, marginHorizontal: 8, marginTop: 8 },
     menuItemDestructiveRow: { backgroundColor: colors.dangerLight || '#fff0f0', borderWidth: 1, borderColor: colors.danger || '#c62828', borderRadius: 8, marginHorizontal: 8, marginTop: 8 },
-    menuItemCancelRow: { backgroundColor: colors.gray50 || '#f7f7f7', borderWidth: 1, borderColor: colors.border || '#e0e0e0', borderRadius: 8, marginHorizontal: 8, marginTop: 8, marginBottom: 8 },
+    menuItemCancelRow: { backgroundColor: colors.white || '#f7f7f7', borderWidth: 1, borderColor: colors.border || '#e0e0e0', borderRadius: 8, marginHorizontal: 8, marginTop: 8, marginBottom: 8 },
     restOverlay: { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: 'transparent', zIndex: 1000 }
   }));
 

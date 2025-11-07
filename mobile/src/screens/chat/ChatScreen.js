@@ -50,7 +50,7 @@ const ChatScreen = ({ route, navigation }) => {
     headerInfo: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
     headerAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
     headerAvatarText: { fontSize: 18, fontWeight: 'bold', color: c.white },
-    headerName: { fontSize: 16, fontWeight: '600', color: c.textPrimary },
+    headerName: { fontSize: 16, fontWeight: '600', color: c.textInverse },
     typingIndicator: { fontSize: 12, color: c.primary, fontStyle: 'italic' },
     placeholder: { width: 40 },
     itemInfoContainer: { flexDirection: 'row', alignItems: 'center', padding: 12, backgroundColor: c.primaryLight + '20', borderBottomWidth: 1, borderBottomColor: c.border },

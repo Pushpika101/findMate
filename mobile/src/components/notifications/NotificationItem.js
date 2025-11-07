@@ -65,9 +65,9 @@ const NotificationItem = ({ notification, onPress, onDelete }) => {
       elevation: 2
     },
     unreadContainer: {
-      backgroundColor: colors.primaryLight + '10',
+      backgroundColor: colors.kk2,
       borderLeftWidth: 3,
-      borderLeftColor: colors.primary
+      borderLeftColor: colors.lost
     },
     iconContainer: {
       width: 48,
@@ -79,13 +79,13 @@ const NotificationItem = ({ notification, onPress, onDelete }) => {
     },
     icon: { fontSize: 24 },
     content: { flex: 1 },
-    title: { fontSize: 15, fontWeight: '600', color: colors.textPrimary, marginBottom: 4 },
+    title: { fontSize: 15, fontWeight: '600', color: colors.textInverse, marginBottom: 4 },
     message: { fontSize: 14, color: colors.textSecondary, lineHeight: 20, marginBottom: 8 },
     footer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     time: { fontSize: 12, color: colors.textTertiary },
     unreadDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.primary },
-    deleteButton: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center', marginLeft: 8 },
-    deleteIcon: { fontSize: 14, color: colors.textSecondary }
+    deleteButton: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.lost, justifyContent: 'center', alignItems: 'center', marginLeft: 8 },
+    deleteIcon: { fontSize: 14, color: colors.white }
   }));
 
   return (
