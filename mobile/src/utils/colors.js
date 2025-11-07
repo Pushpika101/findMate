@@ -38,7 +38,7 @@ export const LIGHT_COLORS = {
   gray900: '#111827',
   
   // Background Colors
-  background: '#000000ff',
+  background: '#ffffffff',
   backgroundSecondary: '#F9FAFB',
   backgroundTertiary: '#F3F4F6',
   
