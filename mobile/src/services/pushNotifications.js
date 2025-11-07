@@ -36,14 +36,38 @@ export async function registerForPushNotificationsAsync() {
       null;
 
     // Pass projectId if available to satisfy SDK requirements when using dev clients
-    const tokenData = projectId
-      ? await Notifications.getExpoPushTokenAsync({ projectId })
-      : await Notifications.getExpoPushTokenAsync();
-    const token = tokenData.data;
+    // Wrap the token fetch in a small retry/backoff because network or Expo service
+    // hiccups (503 / upstream connect errors) can be transient.
+    const maxAttempts = 3;
+    let attempt = 0;
+    let token = null;
+    while (attempt < maxAttempts) {
+      attempt += 1;
+      try {
+        const tokenData = projectId
+          ? await Notifications.getExpoPushTokenAsync({ projectId })
+          : await Notifications.getExpoPushTokenAsync();
+        token = tokenData?.data ?? null;
+        if (token) break;
+      } catch (err) {
+        // Log and retry unless we've exhausted attempts
+        console.warn(`getExpoPushTokenAsync attempt ${attempt} failed:`, err?.message || err);
+        if (attempt < maxAttempts) {
+          // exponential backoff
+          const waitMs = 500 * Math.pow(2, attempt - 1);
+          await new Promise((res) => setTimeout(res, waitMs));
+          continue;
+        }
+        // final failure: rethrow to be handled by outer try/catch
+        throw err;
+      }
+    }
 
     // Send token to backend to register for this user
     try {
-      await notificationsAPI.registerToken(token);
+      if (token) {
+        await notificationsAPI.registerToken(token);
+      }
     } catch (err) {
       console.error('Failed to register push token with backend:', err);
     }
@@ -60,6 +84,18 @@ export async function registerForPushNotificationsAsync() {
     return token;
   } catch (error) {
     console.error('registerForPushNotificationsAsync error', error);
+    // If this is a network / upstream error (503) surface a friendly alert once
+    // but don't spam the user. Provide guidance to check network or Expo status.
+    try {
+      const msg = error?.message || String(error);
+      if (/503|upstream connect error|connection termination|ECONNREFUSED/i.test(msg)) {
+        Alert.alert(
+          'Push registration failed',
+          'Could not contact Expo push service. This may be a temporary network or Expo outage. Push notifications will be disabled until this is resolved.'
+        );
+      }
+    } catch (_) {}
+
     return null;
   }
 }
