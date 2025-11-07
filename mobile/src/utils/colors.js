@@ -84,7 +84,7 @@ export const DARK_COLORS = {
   info: '#60a5fa',
 
   // Lost & Found Specific
-  lost: '#f87171',
+  lost: '#ee4141ff',
   found: '#34d399',
 
   // Neutrals
