@@ -1,8 +1,24 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import COLORS from '../../utils/colors';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 
 const AboutScreen = ({ navigation }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles((c) => ({
+    container: { flex: 1, backgroundColor: c.background },
+    header: { paddingTop: 60, paddingBottom: 20, paddingHorizontal: 20, backgroundColor: c.primary, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, flexDirection: 'row', alignItems: 'center' },
+    backButton: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+    backButtonText: { color: c.white, fontSize: 26, lineHeight: 26 },
+    headerTitle: { color: c.white, fontSize: 22, fontWeight: '700', marginLeft: 8 },
+    content: { padding: 20 },
+    title: { fontSize: 22, fontWeight: '700', color: c.textPrimary, marginBottom: 12 },
+    sectionTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary, marginTop: 18, marginBottom: 8 },
+    paragraph: { fontSize: 14, color: c.textSecondary, lineHeight: 20, marginBottom: 8 },
+    listItem: { fontSize: 14, color: c.textSecondary, lineHeight: 20, marginBottom: 6 },
+    smallNote: { fontSize: 12, color: c.textTertiary, marginTop: 16, lineHeight: 18 }
+  }));
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -51,33 +67,6 @@ const AboutScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  backButtonText: { color: COLORS.white, fontSize: 26, lineHeight: 26 },
-  headerTitle: { color: COLORS.white, fontSize: 22, fontWeight: '700', marginLeft: 8 },
-  content: { padding: 20 },
-  title: { fontSize: 22, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 12 },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: COLORS.textPrimary, marginTop: 18, marginBottom: 8 },
-  paragraph: { fontSize: 14, color: COLORS.textSecondary, lineHeight: 20, marginBottom: 8 },
-  listItem: { fontSize: 14, color: COLORS.textSecondary, lineHeight: 20, marginBottom: 6 },
-  smallNote: { fontSize: 12, color: COLORS.textTertiary, marginTop: 16, lineHeight: 18 }
-});
+// styles are created with useThemedStyles inside the component
 
 export default AboutScreen;

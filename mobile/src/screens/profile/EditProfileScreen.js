@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
@@ -15,7 +14,8 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { usersAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 import { API_URL } from '../../utils/constants';
 
 const EditProfileScreen = ({ navigation, route }) => {
@@ -33,6 +33,44 @@ const EditProfileScreen = ({ navigation, route }) => {
   const [uploading, setUploading] = useState(false);
   const [photoUri, setPhotoUri] = useState(profile?.profile_photo || null);
   const _API_URL = API_URL;
+
+  const { colors } = useTheme();
+  const styles = useThemedStyles((c) => ({
+    container: { padding: 20, backgroundColor: c.background, flexGrow: 1 },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingTop: 60,
+      paddingBottom: 20,
+      paddingHorizontal: 20,
+      backgroundColor: c.primary,
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24,
+      overflow: 'visible',
+      marginBottom: 8,
+      marginHorizontal: -20,
+      marginTop: -33
+    },
+    headerTitle: { fontSize: 18, fontWeight: '700', color: c.white },
+    backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
+    backButtonText: { fontSize: 28, color: c.white },
+    placeholder: { width: 40 },
+    field: { marginBottom: 16 },
+    label: { fontSize: 13, color: c.textSecondary, marginBottom: 6 },
+    input: { backgroundColor: c.white, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: c.border },
+    saveButton: { marginTop: 12, backgroundColor: c.primary, paddingVertical: 14, borderRadius: 10, alignItems: 'center' },
+    saveButtonText: { color: c.white, fontWeight: '700' },
+    photoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+    avatarContainer: { position: 'relative' },
+    avatar: { width: 96, height: 96, borderRadius: 48, backgroundColor: c.gray200 },
+    avatarPlaceholder: { width: 96, height: 96, borderRadius: 48, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
+    avatarText: { fontSize: 36, fontWeight: '700', color: c.white },
+    cameraIcon: { position: 'absolute', bottom: 0, right: 0, width: 28, height: 28, borderRadius: 14, backgroundColor: c.white, borderWidth: 1, borderColor: c.primary, justifyContent: 'center', alignItems: 'center' },
+    cameraIconText: { fontSize: 12 },
+    readOnlyField: { marginBottom: 12 },
+    readOnlyText: { backgroundColor: c.white, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: c.border, color: c.textPrimary }
+  }));
 
   const deriveStudentIdFromEmail = (email) => {
     if (!email) return null;
@@ -214,7 +252,7 @@ const EditProfileScreen = ({ navigation, route }) => {
 
         <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading || uploading}>
           {loading ? (
-            <ActivityIndicator color={COLORS.white} />
+            <ActivityIndicator color={colors.white} />
           ) : (
             <Text style={styles.saveButtonText}>Save</Text>
           )}
@@ -225,129 +263,6 @@ const EditProfileScreen = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: COLORS.background,
-    flexGrow: 1
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    overflow: 'visible',
-    marginBottom: 8,
-    // extend header to screen edges to cancel the container padding
-    marginHorizontal: -20,
-    marginTop: -33
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: COLORS.white
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  backButtonText: {
-    fontSize: 28,
-    color: COLORS.white
-  },
-  placeholder: {
-    width: 40
-  },
-  field: {
-    marginBottom: 16
-  },
-  label: {
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    marginBottom: 6
-  },
-  input: {
-    backgroundColor: COLORS.white,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: COLORS.border
-  },
-  saveButton: {
-    marginTop: 12,
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: 'center'
-  },
-  saveButtonText: {
-    color: COLORS.white,
-    fontWeight: '700'
-  }
-  ,
-  photoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16
-  },
-  avatarContainer: {
-    position: 'relative'
-  },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: COLORS.gray200
-  },
-  avatarPlaceholder: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  avatarText: {
-    fontSize: 36,
-    fontWeight: '700',
-    color: COLORS.white
-  },
-  cameraIcon: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: COLORS.white,
-    borderWidth: 1,
-    borderColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  cameraIconText: {
-    fontSize: 12
-  },
-  readOnlyField: {
-    marginBottom: 12
-  },
-  readOnlyText: {
-    backgroundColor: COLORS.white,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    color: COLORS.textPrimary
-  }
-});
+// styles are created via useThemedStyles inside the component
 
 export default EditProfileScreen;

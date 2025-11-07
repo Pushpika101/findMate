@@ -4,14 +4,14 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
-import COLORS from '../../utils/colors';
 import { usersAPI } from '../../services/api';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 
 const ChangePasswordScreen = ({ navigation }) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -49,6 +49,20 @@ const ChangePasswordScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  const { colors } = useTheme();
+  const styles = useThemedStyles((c) => ({
+    container: { flex: 1, backgroundColor: c.background },
+    header: { paddingTop: 60, paddingBottom: 20, paddingHorizontal: 20, backgroundColor: c.primary, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
+    title: { color: c.white, fontSize: 22, fontWeight: 'bold', marginLeft: 8 },
+    backButton: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+    backButtonText: { color: c.white, fontSize: 26, lineHeight: 26 },
+    form: { padding: 20 },
+    label: { marginTop: 12, color: c.textSecondary, marginBottom: 6 },
+    input: { backgroundColor: c.white, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, borderWidth: 1, borderColor: c.border },
+    button: { marginTop: 24, backgroundColor: c.black, paddingVertical: 14, borderRadius: 12, alignItems: 'center' },
+    buttonText: { color: c.white, fontWeight: '600', fontSize: 16 }
+  }));
 
   return (
     <KeyboardAvoidingView
@@ -92,7 +106,7 @@ const ChangePasswordScreen = ({ navigation }) => {
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
           {loading ? (
-            <ActivityIndicator color={COLORS.white} />
+            <ActivityIndicator color={colors.white} />
           ) : (
             <Text style={styles.buttonText}>Change Password</Text>
           )}
@@ -102,43 +116,6 @@ const ChangePasswordScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24
-  },
-  title: { color: COLORS.white, fontSize: 22, fontWeight: 'bold', marginLeft: 8 },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  backButtonText: { color: COLORS.white, fontSize: 26, lineHeight: 26 },
-  form: { padding: 20 },
-  label: { marginTop: 12, color: COLORS.textSecondary, marginBottom: 6 },
-  input: {
-    backgroundColor: COLORS.white,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border
-  },
-  button: {
-    marginTop: 24,
-    backgroundColor: COLORS.black,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center'
-  },
-  buttonText: { color: COLORS.white, fontWeight: '600', fontSize: 16 }
-});
+// styles are created with useThemedStyles inside the component
 
 export default ChangePasswordScreen;
