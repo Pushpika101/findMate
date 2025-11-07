@@ -44,7 +44,7 @@ const ChatScreen = ({ route, navigation }) => {
     container: { flex: 1, backgroundColor: c.background },
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: c.background },
     loadingText: { marginTop: 12, fontSize: 16, color: c.textSecondary },
-    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 12, paddingHorizontal: 16, backgroundColor: c.white, borderBottomWidth: 1, borderBottomColor: c.border },
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 12, paddingHorizontal: 16, backgroundColor: c.background, borderBottomWidth: 1, borderBottomColor: c.border },
     backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
     backButtonText: { fontSize: 28, color: c.primary },
     headerInfo: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -73,18 +73,18 @@ const ChatScreen = ({ route, navigation }) => {
     otherMessageBubble: { backgroundColor: c.white, alignSelf: 'flex-start', borderBottomLeftRadius: 4, borderWidth: 1, borderColor: c.border },
     messageText: { fontSize: 15, lineHeight: 20 },
     myMessageText: { color: c.white },
-    otherMessageText: { color: c.textPrimary },
+    otherMessageText: { color: c.black },
     messageTime: { fontSize: 11, color: c.textSecondary, marginTop: 4, marginLeft: 12 },
     myMessageTime: { textAlign: 'right', marginRight: 12, marginLeft: 0 },
     emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 60 },
     emptyIcon: { fontSize: 64, marginBottom: 16 },
     emptyText: { fontSize: 18, fontWeight: '600', color: c.textPrimary, marginBottom: 8 },
     emptySubtext: { fontSize: 14, color: c.textSecondary },
-    inputContainer: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: c.white, borderTopWidth: 1, borderTopColor: c.border, gap: 12 },
+    inputContainer: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: c.background, borderTopWidth: 1, borderTopColor: c.border, gap: 12 },
     input: { flex: 1, minHeight: 40, maxHeight: 100, paddingHorizontal: 16, paddingVertical: 10, backgroundColor: c.gray100, borderRadius: 20, fontSize: 15, color: c.textPrimary },
     sendButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
     sendButtonDisabled: { opacity: 0.5 },
-    sendButtonText: { fontSize: 20, color: c.white }
+    sendButtonText: { fontSize: 20, color: c.black }
   }));
 
   useEffect(() => {

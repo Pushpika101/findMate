@@ -90,8 +90,8 @@ export const DARK_COLORS = {
   // Neutrals
   white: '#FFFFFF',
   black: '#000000',
-  kk: '#0c1b38ff',
-  kk2: '#071224',
+  kk: '#021946ff',
+  kk2: '#333842ff',
 
   // Gray Scale (dark theme equivalents)
   gray50: '#0b1220',
@@ -106,7 +106,7 @@ export const DARK_COLORS = {
   gray900: '#f3f4f6',
 
   // Backgrounds
-  background: '#0B1220',
+  background: '#252526ff',
   backgroundSecondary: '#071224',
   backgroundTertiary: '#0f1724',
 
