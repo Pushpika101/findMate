@@ -17,7 +17,8 @@ import { notificationsAPI } from '../../services/api';
 import { initializeSocket, onNewMessage } from '../../services/socket';
 import { DeviceEventEmitter } from 'react-native';
 import NotificationItem from '../../components/notifications/NotificationItem';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 import { useFocusEffect } from '@react-navigation/native';
 
 const NotificationsScreen = ({ navigation }) => {
@@ -237,6 +238,43 @@ const NotificationsScreen = ({ navigation }) => {
     ? notifications.filter((n) => !n.is_read)
     : notifications;
 
+  const { colors } = useTheme();
+
+  const styles = useThemedStyles((colors) => ({
+    container: { flex: 1, backgroundColor: colors.background },
+    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
+    loadingText: { marginTop: 12, fontSize: 16, color: colors.textSecondary },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 60, paddingBottom: 20, paddingHorizontal: 20, backgroundColor: colors.primary, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, overflow: 'visible' },
+    headerTitle: { fontSize: 28, fontWeight: 'bold', color: colors.white, marginBottom: 4 },
+    headerSubtitle: { fontSize: 14, color: colors.white, opacity: 0.9 },
+    menuButton: { width: 45, height: 45, borderRadius: 40, backgroundColor: colors.black, justifyContent: 'center', alignItems: 'center', alignSelf: 'center' },
+    menuIcon: { fontSize: 24, color: colors.white, fontWeight: 'bold', lineHeight: 45, textAlign: 'center' },
+    filterContainer: { flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 16, gap: 12, backgroundColor: colors.backgroundSecondary, borderBottomWidth: 1, borderBottomColor: colors.border },
+    filterTab: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: colors.gray100 || '#f2f2f2' },
+    filterTabActive: { backgroundColor: colors.black },
+    filterTabText: { fontSize: 14, fontWeight: '600', color: colors.textSecondary },
+    filterTabTextActive: { color: colors.white },
+    listContent: { padding: 16 },
+    emptyListContent: { flex: 1 },
+    emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 60, paddingHorizontal: 40 },
+    emptyIcon: { fontSize: 64, marginBottom: 16 },
+    emptyTitle: { fontSize: 20, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 8, textAlign: 'center' },
+    emptyText: { fontSize: 14, color: colors.textSecondary, textAlign: 'center', lineHeight: 20 },
+    floatingMenu: { backgroundColor: colors.backgroundSecondary, borderRadius: 10, paddingVertical: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 20, zIndex: 9999 },
+    menuItem: { paddingVertical: 12, paddingHorizontal: 14 },
+    menuItemRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 12 },
+    menuItemIcon: { fontSize: 16, marginRight: 12 },
+    menuItemText: { fontSize: 16, color: colors.textPrimary },
+    menuItemDestructiveText: { color: colors.danger || '#d9534f' },
+    menuDivider: { height: 1, backgroundColor: colors.border, marginHorizontal: 8 },
+    menuCaretContainer: { position: 'absolute', right: 28, top: -6, width: 16, height: 8, alignItems: 'center', justifyContent: 'center' },
+    menuCaret: { width: 0, height: 0, borderLeftWidth: 8, borderRightWidth: 8, borderBottomWidth: 8, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: colors.backgroundSecondary },
+    menuItemRead: { backgroundColor: colors.successLight || '#eaf6ec', borderWidth: 1, borderColor: colors.success || '#2e7d32', borderRadius: 8, marginHorizontal: 8, marginTop: 8 },
+    menuItemDestructiveRow: { backgroundColor: colors.dangerLight || '#fff0f0', borderWidth: 1, borderColor: colors.danger || '#c62828', borderRadius: 8, marginHorizontal: 8, marginTop: 8 },
+    menuItemCancelRow: { backgroundColor: colors.gray50 || '#f7f7f7', borderWidth: 1, borderColor: colors.border || '#e0e0e0', borderRadius: 8, marginHorizontal: 8, marginTop: 8, marginBottom: 8 },
+    restOverlay: { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: 'transparent', zIndex: 1000 }
+  }));
+
   const renderNotification = ({ item }) => (
     <NotificationItem
       notification={item}
@@ -262,7 +300,7 @@ const NotificationsScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>Loading notifications...</Text>
       </View>
     );
@@ -394,11 +432,11 @@ const NotificationsScreen = ({ navigation }) => {
         // Render a fixed, non-scrolling empty state so the "No notifications" message doesn't scroll
         <ScrollView
           contentContainerStyle={styles.emptyListContent}
-          refreshControl={
+            refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={COLORS.primary}
+              tintColor={colors.primary}
             />
           }
           showsVerticalScrollIndicator={false}
@@ -416,7 +454,7 @@ const NotificationsScreen = ({ navigation }) => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={COLORS.primary}
+              tintColor={colors.primary}
             />
           }
           showsVerticalScrollIndicator={false}
@@ -426,210 +464,7 @@ const NotificationsScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.background
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: COLORS.textSecondary
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    overflow: 'visible'
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: COLORS.white,
-    marginBottom: 4
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: COLORS.white,
-    opacity: 0.9
-  },
-  menuButton: {
-    width: 45,
-    height: 45,
-    borderRadius: 40,
-    backgroundColor: COLORS.black ,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center'
-  },
-  menuIcon: {
-    fontSize: 24,
-    color: COLORS.white,
-    fontWeight: 'bold',
-    lineHeight: 45,
-    textAlign: 'center'
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    gap: 12,
-    backgroundColor: COLORS.white,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.white
-  },
-  filterTab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: COLORS.gray100
-  },
-  filterTabActive: {
-    backgroundColor: COLORS.black
-  },
-  filterTabText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.textSecondary
-  },
-  filterTabTextActive: {
-    color: COLORS.white
-  },
-  listContent: {
-    padding: 16
-  },
-  emptyListContent: {
-    flex: 1
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 60,
-    paddingHorizontal: 40
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    marginBottom: 8,
-    textAlign: 'center'
-  },
-  emptyText: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20
-  }
-  ,
-  floatingMenu: {
-    backgroundColor: COLORS.white,
-    borderRadius: 10,
-    paddingVertical: 4,
-    // shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 20,
-    zIndex: 9999
-  },
-  menuItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 14
-  },
-  menuItemRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12
-  },
-  menuItemIcon: {
-    fontSize: 16,
-    marginRight: 12
-  },
-  menuItemText: {
-    fontSize: 16,
-    color: COLORS.textPrimary
-  },
-  menuItemDestructive: {},
-  menuItemDestructiveText: {
-    color: COLORS.danger || '#d9534f'
-  },
-  menuDivider: {
-    height: 1,
-    backgroundColor: COLORS.border,
-    marginHorizontal: 8
-  },
-  menuCaretContainer: {
-    position: 'absolute',
-    right: 28,
-    top: -6,
-    width: 16,
-    height: 8,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  menuCaret: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 8,
-    borderRightWidth: 8,
-    borderBottomWidth: 8,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: COLORS.white
-  },
-  menuItemRead: {
-    backgroundColor: COLORS.successLight || '#eaf6ec',
-    borderWidth: 1,
-    borderColor: COLORS.success || '#2e7d32',
-    borderRadius: 8,
-    marginHorizontal: 8,
-    marginTop: 8
-  },
-  menuItemDestructiveRow: {
-    backgroundColor: COLORS.dangerLight || '#fff0f0',
-    borderWidth: 1,
-    borderColor: COLORS.danger || '#c62828',
-    borderRadius: 8,
-    marginHorizontal: 8,
-    marginTop: 8
-  },
-  menuItemCancelRow: {
-    backgroundColor: COLORS.gray50 || '#f7f7f7',
-    borderWidth: 1,
-    borderColor: COLORS.border || '#e0e0e0',
-    borderRadius: 8,
-    marginHorizontal: 8,
-    marginTop: 8,
-    marginBottom: 8
-  }
-  ,
-  restOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'transparent',
-    zIndex: 1000
-  }
-});
+// Styles are provided by `useThemedStyles` above so remove the old
+// module-level StyleSheet that referenced the static `COLORS` export.
 
 export default NotificationsScreen;

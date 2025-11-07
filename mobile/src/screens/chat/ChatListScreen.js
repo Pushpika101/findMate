@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { chatAPI } from '../../services/api';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 import { initializeSocket, onNewMessage, removeMessageListener } from '../../services/socket';
 import { DeviceEventEmitter } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
@@ -74,6 +75,84 @@ const ChatListScreen = ({ navigation }) => {
   }, []);
 
   const { user } = useAuth();
+  const { colors } = useTheme();
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    loadingText: {
+      marginTop: 12,
+      fontSize: 16,
+      color: colors.textSecondary
+    },
+    header: {
+      paddingTop: 60,
+      paddingBottom: 20,
+      paddingHorizontal: 20,
+      backgroundColor: colors.primary,
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24
+    },
+    headerTitle: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: colors.white
+    },
+    listContent: {
+      padding: 16
+    },
+    emptyListContent: {
+      flex: 1
+    },
+    chatItem: {
+      flexDirection: 'row',
+      padding: 16,
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: 12,
+      marginBottom: 12,
+      shadowColor: colors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.12,
+      shadowRadius: 4,
+      elevation: 2
+    },
+    avatar: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: colors.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12
+    },
+    avatarText: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: colors.white
+    },
+    chatInfo: { flex: 1 },
+    chatHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
+    userName: { fontSize: 16, fontWeight: '600', color: colors.textPrimary },
+    time: { fontSize: 12, color: colors.textSecondary },
+    itemName: { fontSize: 13, color: colors.textSecondary, marginBottom: 4 },
+    lastMessageRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    lastMessage: { flex: 1, fontSize: 14, color: colors.textSecondary },
+    unreadBadge: { backgroundColor: colors.lost, borderRadius: 10, minWidth: 20, height: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 6, marginLeft: 8 },
+    unreadText: { fontSize: 11, fontWeight: 'bold', color: colors.white },
+    emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 60 },
+    emptyIcon: { fontSize: 64, marginBottom: 16 },
+    emptyTitle: { fontSize: 20, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 8 },
+    emptyText: { fontSize: 14, color: colors.textSecondary, textAlign: 'center', paddingHorizontal: 40 },
+    deleteButton: { marginLeft: 8, width: 55, height: 32, borderRadius: 16, backgroundColor: colors.lost, justifyContent: 'center', alignItems: 'center' },
+    deleteButtonText: { fontSize: 14, color: colors.black, lineHeight: 18 }
+  }));
 
   const handleIncomingMessage = (newMessage) => {
     if (!newMessage || !newMessage.chat_id) return;
@@ -272,7 +351,7 @@ const ChatListScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>Loading chats...</Text>
       </View>
     );
@@ -296,7 +375,7 @@ const ChatListScreen = ({ navigation }) => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={COLORS.primary}
+            tintColor={colors.primary}
           />
         }
         ListEmptyComponent={
@@ -313,150 +392,7 @@ const ChatListScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: COLORS.textSecondary
-  },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: COLORS.white
-  },
-  listContent: {
-    padding: 16
-  },
-  emptyListContent: {
-    flex: 1
-  },
-  chatItem: {
-    flexDirection: 'row',
-    padding: 16,
-    backgroundColor: COLORS.kk2,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 2
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12
-  },
-  avatarText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.white
-  },
-  chatInfo: {
-    flex: 1
-  },
-  chatHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.textPrimary
-  },
-  time: {
-    fontSize: 12,
-    color: COLORS.textSecondary
-  },
-  itemName: {
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    marginBottom: 4
-  },
-  lastMessageRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  lastMessage: {
-    flex: 1,
-    fontSize: 14,
-    color: COLORS.textSecondary
-  },
-  unreadBadge: {
-    backgroundColor: COLORS.lost,
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 6,
-    marginLeft: 8
-  },
-  unreadText: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: COLORS.white
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 60
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    marginBottom: 8
-  },
-  emptyText: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-    paddingHorizontal: 40
-  }
-  ,
-  deleteButton: {
-    marginLeft: 8,
-    width: 55,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: COLORS.lost,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  deleteButtonText: {
-    fontSize: 14,
-    color: COLORS.black,
-    lineHeight: 18
-  }
-});
+// Styles are provided by `useThemedStyles` above so remove the old
+// module-level StyleSheet that referenced the static `COLORS` export.
 
 export default ChatListScreen;
