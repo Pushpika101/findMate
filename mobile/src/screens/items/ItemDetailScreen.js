@@ -31,8 +31,8 @@ const ItemDetailScreen = ({ route, navigation }) => {
     container: { flex: 1, backgroundColor: colors.background },
     header: { flexDirection: 'row', alignItems: 'center', paddingTop: 16, paddingHorizontal: 12, paddingBottom: 8, backgroundColor: 'transparent' },
     headerButton: { padding: 8 },
-    headerButtonText: { fontSize: 18, color: colors.primary },
-    headerTitle: { fontSize: 18, fontWeight: '700', color: colors.textPrimary, marginLeft: 8 },
+  headerButtonText: { fontSize: 18, color: colors.textPrimary },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: colors.primary, marginLeft: 8 },
   scrollView: { flex: 1 },
   // content container for ScrollView: provides left/right padding and extra bottom space
   scrollContainer: { padding: HORIZONTAL_PADDING, paddingBottom: 40 },
@@ -68,7 +68,8 @@ const ItemDetailScreen = ({ route, navigation }) => {
     userLabel: { fontSize: 12, color: colors.textSecondary },
     postedDate: { fontSize: 12, color: colors.textTertiary },
     actionButtons: { marginTop: 16, flexDirection: 'row', gap: 8 },
-    actionButton: { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  actionButton: { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  actionButtonText: { fontWeight: '700', fontSize: 14, color: colors.white },
     editButton: { backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderColor: colors.border },
     resolveButton: { backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderColor: colors.border },
     deleteButton: { backgroundColor: colors.error, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
@@ -76,8 +77,12 @@ const ItemDetailScreen = ({ route, navigation }) => {
     chatButton: { backgroundColor: colors.primary },
     submitButtonText: { color: colors.white, fontWeight: '700' },
     modalContainer: { flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' },
-    modalTopClose: { position: 'absolute', top: 32, right: 20, zIndex: 10 },
-    modalTopCloseText: { fontSize: 24, color: colors.white },
+  modalTopClose: { position: 'absolute', top: 32, right: 20, zIndex: 20, backgroundColor: 'rgba(0,0,0,0.5)', padding: 8, borderRadius: 20 },
+  modalTopCloseText: { fontSize: 18, color: colors.white, fontWeight: '700' },
+  modalSideNav: { position: 'absolute', top: '50%', marginTop: -28, zIndex: 20, padding: 8, borderRadius: 28, backgroundColor: 'rgba(0,0,0,0.35)' },
+  modalSideNavRight: { position: 'absolute', right: 12 },
+  modalSideNavLeft: { position: 'absolute', left: 12 },
+  modalSideNavText: { fontSize: 28, color: colors.white, fontWeight: '700' },
     modalImage: { width: '100%', height: '80%' },
     modalControls: { position: 'absolute', bottom: 32, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 24 },
     modalNavButton: { padding: 12 },
@@ -448,21 +453,21 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.editButton, { flex: 1 }]}
                     onPress={handleEditItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: colors.info }]}>Edit</Text>
+                      <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>Edit</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
                     onPress={handleShareItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: colors.secondaryDark }]}>Share</Text>
+                      <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>Share</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[styles.actionButton, styles.deleteButton, { flex: 1 }]}
                     onPress={handleDeleteItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: colors.error }]}>Delete</Text>
+                      <Text style={[styles.actionButtonText, { color: colors.white }]}>Delete</Text>
                   </TouchableOpacity>
                 </>
               ) : (
@@ -472,7 +477,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.claimButton, { flex: 1 }]}
                     onPress={handleClaimItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: colors.found }]}> 
+                    <Text style={[styles.actionButtonText, { color: colors.white }]}> 
                       {item.type === 'lost' ? 'I Found This' : 'This is Mine'}
                     </Text>
                   </TouchableOpacity>
@@ -481,14 +486,14 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.chatButton, { flex: 1 }]}
                     onPress={handleChatWithOwner}
                   >
-                    <Text style={[styles.actionButtonText, { color: colors.primary }]}>Chat</Text>
+                    <Text style={[styles.actionButtonText, { color: colors.white }]}>Chat</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
                     onPress={handleShareItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: colors.warning }]}>Share</Text>
+                    <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>Share</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -513,6 +518,26 @@ const ItemDetailScreen = ({ route, navigation }) => {
           >
             <Text style={styles.modalTopCloseText}>✕</Text>
           </TouchableOpacity>
+
+          {imageUrls.length > 1 && (
+            <>
+              <TouchableOpacity
+                style={[styles.modalSideNav, styles.modalSideNavLeft]}
+                onPress={() => setModalIndex((i) => (i - 1 + imageUrls.length) % imageUrls.length)}
+                accessibilityLabel="Previous image"
+              >
+                <Text style={styles.modalSideNavText}>◀</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalSideNav, styles.modalSideNavRight]}
+                onPress={() => setModalIndex((i) => (i + 1) % imageUrls.length)}
+                accessibilityLabel="Next image"
+              >
+                <Text style={styles.modalSideNavText}>▶</Text>
+              </TouchableOpacity>
+            </>
+          )}
 
           {imageUrls[modalIndex] ? (
             <Image
