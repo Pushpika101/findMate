@@ -19,6 +19,9 @@ import useThemedStyles from '../../hooks/useThemedStyles';
 // Note: MaterialIcons removed as it was unused in this screen
 
 const { width } = Dimensions.get('window');
+// Horizontal padding used by the screen's content container (matches styles.scrollContainer padding)
+const HORIZONTAL_PADDING = 20;
+const imageWidth = width - HORIZONTAL_PADDING * 2;
 
 const ItemDetailScreen = ({ route, navigation }) => {
   const { itemId } = route.params;
@@ -30,10 +33,12 @@ const ItemDetailScreen = ({ route, navigation }) => {
     headerButton: { padding: 8 },
     headerButtonText: { fontSize: 18, color: colors.primary },
     headerTitle: { fontSize: 18, fontWeight: '700', color: colors.textPrimary, marginLeft: 8 },
-    scrollView: { flex: 1 },
-    scrollContainer: { padding: 20 },
-    imageContainer: { width: '100%', height: 300, borderRadius: 12, overflow: 'hidden', backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center' },
-    itemImage: { width: '100%', height: '100%' },
+  scrollView: { flex: 1 },
+  // content container for ScrollView: provides left/right padding and extra bottom space
+  scrollContainer: { padding: HORIZONTAL_PADDING, paddingBottom: 40 },
+  // imageContainer is used for the visible viewport area for the images
+  imageContainer: { width: imageWidth, height: 300, borderRadius: 12, overflow: 'hidden', backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center' },
+  itemImage: { width: '100%', height: '100%' },
     imageIndicatorContainer: { position: 'absolute', bottom: 12, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center' },
     imageIndicator: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.gray300, marginHorizontal: 4, opacity: 0.6 },
     imageIndicatorActive: { backgroundColor: colors.white, opacity: 1 },
@@ -274,16 +279,16 @@ const ItemDetailScreen = ({ route, navigation }) => {
           {/* header share removed as requested */}
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+  <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         {/* Images */}
-          {imageUrls.length > 0 ? (
-          <View style={styles.imageContainer}>
+        {imageUrls.length > 0 ? (
+          <View style={{ alignItems: 'center' }}>
             <ScrollView
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
               onScroll={(e) => {
-                const index = Math.round(e.nativeEvent.contentOffset.x / width);
+                const index = Math.round(e.nativeEvent.contentOffset.x / imageWidth);
                 setActiveImageIndex(index);
               }}
               scrollEventThrottle={16}
@@ -296,27 +301,29 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     setModalIndex(index);
                     setIsModalVisible(true);
                   }}
+                  style={[styles.imageContainer, { marginRight: index === imageUrls.length - 1 ? 0 : 12 }]}
                 >
                   <Image
                     source={{ uri: imageUrl }}
                     style={styles.itemImage}
                     resizeMode="cover"
-                        onError={(e) => {
-                          console.warn('ItemDetailScreen: image load error', { uri: imageUrl, error: e.nativeEvent });
-                          // Replace failed image with a safe placeholder
-                          const fallback = 'https://via.placeholder.com/800?text=No+Image+Available';
-                          setImageUrls((prev) => {
-                            const next = [...prev];
-                            next[index] = fallback;
-                            return next;
-                          });
-                        }}
+                    onError={(e) => {
+                      console.warn('ItemDetailScreen: image load error', { uri: imageUrl, error: e.nativeEvent });
+                      // Replace failed image with a safe placeholder
+                      const fallback = 'https://via.placeholder.com/800?text=No+Image+Available';
+                      setImageUrls((prev) => {
+                        const next = [...prev];
+                        next[index] = fallback;
+                        return next;
+                      });
+                    }}
                   />
                 </TouchableOpacity>
               ))}
             </ScrollView>
+
             {imageUrls.length > 1 && (
-              <View style={styles.imageIndicatorContainer}>
+              <View style={[styles.imageIndicatorContainer, { width: imageWidth, alignSelf: 'center' }]}> 
                 {imageUrls.map((_, index) => (
                   <View
                     key={index}
@@ -330,7 +337,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
             )}
           </View>
         ) : (
-          <View style={styles.noImageContainer}>
+          <View style={[styles.noImageContainer, { width: imageWidth, alignSelf: 'center' }] }>
             <Text style={styles.noImageIcon}>📷</Text>
             <Text style={styles.noImageText}>No images available</Text>
           </View>
