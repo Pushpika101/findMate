@@ -216,7 +216,7 @@ const HomeScreen = ({ navigation }) => {
     itemDateAbsolute: { position: 'absolute', top: 12, right: 0, fontSize: 13, color: colors.textSecondary },
     searchBarWrapper: { zIndex: 20, elevation: 20, backgroundColor: 'transparent' },
     blurOverlay: { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.12)', zIndex: 10, elevation: 10 },
-    itemName: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 12 },
+    itemName: { fontSize: 18, fontWeight: 'bold', color: colors.textInverse, marginBottom: 12 },
     itemDetails: { marginBottom: 12 },
     detailRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
     detailIcon: { fontSize: 14, marginRight: 8 },

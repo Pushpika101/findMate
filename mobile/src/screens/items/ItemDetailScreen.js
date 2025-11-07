@@ -32,7 +32,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
     header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 16, paddingHorizontal: 20, backgroundColor: colors.background },
     headerButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
   headerButtonText: { fontSize: 28, color: colors.primary },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: colors.textPrimary },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: colors.textInverse },
   scrollView: { flex: 1 },
   // content container for ScrollView: provides left/right padding and extra bottom space
   scrollContainer: { padding: HORIZONTAL_PADDING, paddingBottom: 40 },
@@ -48,7 +48,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
     content: { marginTop: 16 },
     typeBadge: { alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
     typeBadgeText: { fontSize: 12, fontWeight: '700', color: colors.black },
-    itemName: { fontSize: 22, fontWeight: '700', color: colors.textPrimary, marginTop: 12 },
+    itemName: { fontSize: 22, fontWeight: '700', color: colors.textInverse, marginTop: 12 },
     resolvedBadge: { marginTop: 8, backgroundColor: colors.success, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start' },
     resolvedText: { color: colors.white, fontWeight: '700' },
     detailsGrid: { marginTop: 12, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
@@ -58,13 +58,13 @@ const ItemDetailScreen = ({ route, navigation }) => {
     detailValue: { fontSize: 14, color: colors.textPrimary, fontWeight: '600' },
     infoSection: { marginTop: 12 },
     infoLabel: { fontSize: 13, color: colors.textSecondary, marginBottom: 4 },
-    infoValue: { fontSize: 15, color: colors.textPrimary },
+    infoValue: { fontSize: 15, color: colors.textInverse },
     description: { fontSize: 14, color: colors.textSecondary, lineHeight: 20 },
     userSection: { marginTop: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     userInfo: { flexDirection: 'row', alignItems: 'center' },
     avatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
     avatarText: { color: colors.white, fontWeight: '700' },
-    userName: { fontSize: 15, color: colors.textPrimary, fontWeight: '700' },
+    userName: { fontSize: 15, color: colors.textInverse, fontWeight: '700' },
     userLabel: { fontSize: 12, color: colors.textSecondary },
     postedDate: { fontSize: 12, color: colors.textTertiary },
     actionButtons: { marginTop: 16, flexDirection: 'row', gap: 8 },
@@ -453,14 +453,14 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.editButton, { flex: 1 }]}
                     onPress={handleEditItem}
                   >
-                      <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>Edit</Text>
+                      <Text style={[styles.actionButtonText, { color: colors.textInverse }]}>Edit</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
                     onPress={handleShareItem}
                   >
-                      <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>Share</Text>
+                      <Text style={[styles.actionButtonText, { color: colors.textInverse }]}>Share</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -493,7 +493,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
                     onPress={handleShareItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>Share</Text>
+                    <Text style={[styles.actionButtonText, { color: colors.textInverse }]}>Share</Text>
                   </TouchableOpacity>
                 </>
               )}

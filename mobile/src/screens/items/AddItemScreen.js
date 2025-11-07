@@ -60,7 +60,7 @@ const AddItemScreen = ({ navigation }) => {
     typeButtonText: { fontSize: 16, fontWeight: '600', color: colors.textSecondary },
     typeButtonTextActive: { color: colors.white },
     inputContainer: { marginBottom: 20 },
-    label: { fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 },
+    label: { fontSize: 14, fontWeight: '600', color: colors.textInverse, marginBottom: 8 },
     input: { height: 50, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: colors.white, color: colors.textPrimary },
     inputError: { borderColor: colors.error },
     errorText: { color: colors.error, fontSize: 12, marginTop: 4 },

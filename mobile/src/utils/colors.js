@@ -46,7 +46,7 @@ export const LIGHT_COLORS = {
   textPrimary: '#111827',
   textSecondary: '#6B7280',
   textTertiary: '#9CA3AF',
-  textInverse: '#FFFFFF',
+  textInverse: '#0B1220',
   
   // Border Colors
   border: '#E5E7EB',
@@ -68,7 +68,7 @@ export const LIGHT_COLORS = {
 
 export const DARK_COLORS = {
   // Primary tuned for dark background
-  primary: '#60a5fa',
+  primary: '#032f66ff',
   primaryDark: '#2563EB',
   primaryLight: '#93c5fd',
 
@@ -111,10 +111,10 @@ export const DARK_COLORS = {
   backgroundTertiary: '#0f1724',
 
   // Text
-  textPrimary: '#F3F4F6',
+  textPrimary: '#111827',
   textSecondary: '#D1D5DB',
   textTertiary: '#9CA3AF',
-  textInverse: '#0B1220',
+  textInverse: '#FFFFFF',
 
   // Borders
   border: '#1f2937',
