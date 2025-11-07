@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { Link } from 'expo-router';
 import { StyleSheet } from 'react-native';
 

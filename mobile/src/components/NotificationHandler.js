@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
 
@@ -26,22 +26,12 @@ export default function NotificationHandler() {
     });
 
     return () => {
-      // Newer expo-notifications returns subscription objects with a .remove() method
-      try {
-        if (receivedListener.current && typeof receivedListener.current.remove === 'function') {
-          receivedListener.current.remove();
-        }
-        if (responseListener.current && typeof responseListener.current.remove === 'function') {
-          responseListener.current.remove();
-        }
-      } catch (e) {
-        // Fallback: try the older removal API if available
-        if (receivedListener.current) {
-          try { Notifications.removeNotificationSubscription(receivedListener.current); } catch (_) {}
-        }
-        if (responseListener.current) {
-          try { Notifications.removeNotificationSubscription(responseListener.current); } catch (_) {}
-        }
+      // Remove subscriptions using the subscription object's remove() if available.
+      if (receivedListener.current && typeof receivedListener.current.remove === 'function') {
+        try { receivedListener.current.remove(); } catch (_) {}
+      }
+      if (responseListener.current && typeof responseListener.current.remove === 'function') {
+        try { responseListener.current.remove(); } catch (_) {}
       }
     };
   }, []);

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { Tabs } from 'expo-router';
 import React from 'react';
 

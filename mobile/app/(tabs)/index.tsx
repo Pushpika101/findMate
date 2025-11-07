@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { Image } from 'expo-image';
 import { Platform, StyleSheet } from 'react-native';
 
