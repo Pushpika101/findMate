@@ -13,9 +13,10 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import { itemsAPI } from '../../services/api';
-import COLORS from '../../utils/colors';
 import SearchBar from '../../components/common/SearchBar';
 import FilterModal from '../../components/items/FilterModal';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 
 const HomeScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('lost');
@@ -123,10 +124,10 @@ const HomeScreen = ({ navigation }) => {
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <View style={{ flex: 1 }}>
           <View style={styles.itemHeader}>
-        <View style={[
-          styles.typeBadge,
-          { backgroundColor: item.type === 'lost' ? COLORS.lost : COLORS.found }
-        ]}>
+          <View style={[
+            styles.typeBadge,
+            { backgroundColor: item.type === 'lost' ? colors.lost : colors.found }
+          ]}>
           <Text style={styles.typeBadgeText}>
             {item.type === 'lost' ? 'LOST' : 'FOUND'}
           </Text>
@@ -175,7 +176,7 @@ const HomeScreen = ({ navigation }) => {
             />
           ) : (
             <View style={[styles.thumbnailImage, styles.thumbnailPlaceholder]}>
-              <Text style={{ color: COLORS.textSecondary }}>No Image</Text>
+              <Text style={{ color: colors.textSecondary }}>No Image</Text>
             </View>
           )}
         </View>
@@ -184,6 +185,52 @@ const HomeScreen = ({ navigation }) => {
   );
 
   const activeFilterCount = getActiveFilterCount();
+
+  const { colors } = useTheme();
+
+  const styles = useThemedStyles((colors) => ({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { paddingTop: 60, paddingBottom: 20, paddingHorizontal: 20, backgroundColor: colors.primary, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
+    headerTitle: { fontSize: 28, fontWeight: 'bold', color: colors.white, marginBottom: 4 },
+    headerSubtitle: { fontSize: 14, color: colors.white, opacity: 0.9 },
+    activeFiltersIndicator: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 8, backgroundColor: colors.primaryLight + '20', borderBottomWidth: 1, borderBottomColor: colors.border },
+    activeFiltersText: { fontSize: 13, color: colors.primary, fontWeight: '600' },
+    viewFiltersButton: { paddingHorizontal: 12, paddingVertical: 4, backgroundColor: colors.primary, borderRadius: 12 },
+    viewFiltersText: { fontSize: 12, color: colors.white, fontWeight: '600' },
+    tabContainer: { flexDirection: 'row', backgroundColor: colors.backgroundSecondary, marginHorizontal: 20, marginTop: -16, borderRadius: 12, padding: 4, shadowColor: colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.12, shadowRadius: 8, elevation: 4 },
+    tab: { flex: 1, paddingVertical: 12, alignItems: 'center', position: 'relative' },
+    tabActive: { backgroundColor: colors.kk, borderRadius: 8 },
+    tabText: { fontSize: 15, fontWeight: '600', color: colors.textSecondary },
+    tabTextActive: { color: colors.primaryDark },
+    listContent: { padding: 20, paddingTop: 16 },
+    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    loadingText: { marginTop: 12, fontSize: 16, color: colors.textSecondary },
+    itemCard: { backgroundColor: colors.backgroundSecondary, borderRadius: 16, padding: 16, position: 'relative', marginBottom: 16, shadowColor: colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.12, shadowRadius: 8, elevation: 3 },
+    thumbnailContainer: { width: 125, height: 125, marginLeft: 12, borderRadius: 12, overflow: 'hidden', backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center' },
+    thumbnailImage: { width: '100%', height: '100%' },
+    thumbnailPlaceholder: { justifyContent: 'center', alignItems: 'center' },
+    itemHeader: { flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 12 },
+    typeBadge: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 6 },
+    typeBadgeText: { color: colors.black, fontSize: 11, fontWeight: 'bold', letterSpacing: 0.5 },
+    itemDate: { fontSize: 13, color: colors.textSecondary },
+    itemDateAbsolute: { position: 'absolute', top: 12, right: 0, fontSize: 13, color: colors.textSecondary },
+    searchBarWrapper: { zIndex: 20, elevation: 20, backgroundColor: 'transparent' },
+    blurOverlay: { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.12)', zIndex: 10, elevation: 10 },
+    itemName: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 12 },
+    itemDetails: { marginBottom: 12 },
+    detailRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
+    detailIcon: { fontSize: 14, marginRight: 8 },
+    detailText: { fontSize: 14, color: colors.textSecondary },
+    itemDescription: { fontSize: 14, color: colors.textSecondary, lineHeight: 20, marginBottom: 12 },
+    itemFooter: { paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.gray400 },
+    postedBy: { fontSize: 12, color: colors.textTertiary },
+    emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 60 },
+    emptyIcon: { fontSize: 64, marginBottom: 16 },
+    emptyTitle: { fontSize: 20, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 8 },
+    emptyText: { fontSize: 14, color: colors.textSecondary, textAlign: 'center', paddingHorizontal: 40 },
+    clearFiltersButton: { marginTop: 20, paddingHorizontal: 24, paddingVertical: 12, backgroundColor: colors.primary, borderRadius: 20 },
+    clearFiltersText: { color: colors.white, fontSize: 14, fontWeight: '600' }
+  }));
 
   return (
     <View style={styles.container}>
@@ -273,7 +320,7 @@ const HomeScreen = ({ navigation }) => {
       {/* Items List */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Loading items...</Text>
         </View>
       ) : (
@@ -285,11 +332,11 @@ const HomeScreen = ({ navigation }) => {
           ListFooterComponent={<View style={{ height: 100 }} />}
           keyboardShouldPersistTaps="handled"
           ListEmptyComponent={renderEmptyState}
-          refreshControl={
+            refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={COLORS.primary}
+              tintColor={colors.primary}
             />
           }
           showsVerticalScrollIndicator={false}
@@ -307,245 +354,6 @@ const HomeScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background
-  },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: COLORS.white,
-    marginBottom: 4
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: COLORS.white,
-    opacity: 0.9
-  },
-  activeFiltersIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    backgroundColor: COLORS.primaryLight + '20',
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border
-  },
-  activeFiltersText: {
-    fontSize: 13,
-    color: COLORS.primary,
-    fontWeight: '600'
-  },
-  viewFiltersButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    backgroundColor: COLORS.primary,
-    borderRadius: 12
-  },
-  viewFiltersText: {
-    fontSize: 12,
-    color: COLORS.white,
-    fontWeight: '600'
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.white,
-    marginHorizontal: 20,
-    marginTop: -16,
-    borderRadius: 12,
-    padding: 4,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 4
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    position: 'relative'
-  },
-  tabActive: {
-    backgroundColor: COLORS.kk,
-    borderRadius: 8
-  },
-  tabText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: COLORS.textSecondary
-  },
-  tabTextActive: {
-    color: COLORS.primaryDark
-  },
-  
-  listContent: {
-    padding: 20,
-    paddingTop: 16
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: COLORS.textSecondary
-  },
-  itemCard: {
-    backgroundColor: COLORS.kk2,
-    borderRadius: 16,
-    padding: 16,
-    position: 'relative',
-    marginBottom: 16,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 3
-  },
-  thumbnailContainer: {
-    width: 125,
-    height: 125,
-    marginLeft: 12,
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: COLORS.gray100,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  thumbnailImage: {
-    width: '100%',
-    height: '100%'
-  },
-  thumbnailPlaceholder: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  itemHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginBottom: 12
-  },
-  typeBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 6
-  },
-  typeBadgeText: {
-    color: COLORS.black,
-    fontSize: 11,
-    fontWeight: 'bold',
-    letterSpacing: 0.5
-  },
-  itemDate: {
-    fontSize: 13,
-    color: COLORS.textSecondary
-  },
-  itemDateAbsolute: {
-    position: 'absolute',
-    top: 12,
-    right: 0,
-    fontSize: 13,
-    color: COLORS.textSecondary
-  },
-  searchBarWrapper: {
-    zIndex: 20,
-    elevation: 20,
-    backgroundColor: 'transparent'
-  },
-  blurOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.12)',
-    zIndex: 10,
-    elevation: 10
-  },
-  itemName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    marginBottom: 12
-  },
-  itemDetails: {
-    marginBottom: 12
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6
-  },
-  detailIcon: {
-    fontSize: 14,
-    marginRight: 8
-  },
-  detailText: {
-    fontSize: 14,
-    color: COLORS.textSecondary
-  },
-  itemDescription: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    lineHeight: 20,
-    marginBottom: 12
-  },
-  itemFooter: {
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.gray400
-  },
-  postedBy: {
-    fontSize: 12,
-    color: COLORS.textTertiary
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 60
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    marginBottom: 8
-  },
-  emptyText: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-    paddingHorizontal: 40
-  },
-  clearFiltersButton: {
-    marginTop: 20,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    backgroundColor: COLORS.primary,
-    borderRadius: 20
-  },
-  clearFiltersText: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: '600'
-  }
-});
+
 
 export default HomeScreen;

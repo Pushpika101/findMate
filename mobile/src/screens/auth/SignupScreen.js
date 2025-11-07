@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -12,7 +11,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 import { ALLOWED_EMAIL_DOMAIN } from '../../utils/constants';
 
 const SignupScreen = ({ navigation }) => {
@@ -226,7 +226,7 @@ const SignupScreen = ({ navigation }) => {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color={COLORS.white} />
+              <ActivityIndicator color={colors.white} />
             ) : (
               <Text style={styles.signupButtonText}>Sign Up</Text>
             )}
@@ -250,10 +250,10 @@ const SignupScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = useThemedStyles((c) => ({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background
+    backgroundColor: c.background
   },
   scrollContent: {
     flexGrow: 1,
@@ -267,12 +267,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: c.textPrimary,
     marginBottom: 8
   },
   subtitle: {
     fontSize: 16,
-    color: COLORS.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center'
   },
   form: {
@@ -284,29 +284,29 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: c.textPrimary,
     marginBottom: 8
   },
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: c.border,
     borderRadius: 12,
     paddingHorizontal: 16,
     fontSize: 16,
-    backgroundColor: COLORS.white
+    backgroundColor: c.white
   },
   inputError: {
-    borderColor: COLORS.error
+    borderColor: c.error
   },
   errorText: {
-    color: COLORS.error,
+    color: c.error,
     fontSize: 12,
     marginTop: 4
   },
   signupButton: {
     height: 50,
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -317,13 +317,13 @@ const styles = StyleSheet.create({
     opacity: 0.6
   },
   signupButtonText: {
-    color: COLORS.white,
+    color: c.white,
     fontSize: 16,
     fontWeight: '600'
   },
   termsText: {
     fontSize: 12,
-    color: COLORS.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
     marginBottom: 24,
     lineHeight: 18
@@ -335,18 +335,14 @@ const styles = StyleSheet.create({
     paddingBottom: 24
   },
   loginText: {
-    color: COLORS.textSecondary,
+    color: c.textSecondary,
     fontSize: 14
   },
   loginLink: {
-    color: COLORS.primary,
+    color: c.primary,
     fontSize: 14,
     fontWeight: '600'
-  }
-});
-
-// Styles for password toggle
-const extraStyles = StyleSheet.create({
+  },
   inputWithToggle: {
     position: 'relative'
   },
@@ -358,11 +354,9 @@ const extraStyles = StyleSheet.create({
     paddingHorizontal: 8
   },
   showButtonText: {
-    color: COLORS.primary,
+    color: c.primary,
     fontWeight: '600'
   }
-});
-
-Object.assign(styles, extraStyles);
+}));
 
 export default SignupScreen;

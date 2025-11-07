@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import { AppState } from 'react-native';
 import HomeScreen from '../screens/home/HomeScreen';
 import AddItemScreen from '../screens/items/AddItemScreen';
-import COLORS from '../utils/colors';
 import { useAuth } from '../context/AuthContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import ChatListScreen from '../screens/chat/ChatListScreen';

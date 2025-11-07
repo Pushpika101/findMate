@@ -1,10 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import { TouchableOpacity, Text, Animated } from 'react-native';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
 
 const AnimatedAddButton = ({ onPress, isFocused }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  const { colors } = useTheme();
 
   useEffect(() => {
     if (isFocused) {
@@ -48,11 +50,11 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
         width: 56,
         height: 56,
         borderRadius: 28,
-        backgroundColor: COLORS.primary,
+        backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: -20,
-        shadowColor: COLORS.primary,
+        shadowColor: colors.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -72,7 +74,7 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
         <Text
           style={{
             fontSize: 32,
-            color: COLORS.white,
+            color: colors.white,
             fontWeight: '300',
             marginTop: -4,
           }}

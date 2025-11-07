@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import COLORS from '../../utils/colors';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 
 const NotificationItem = ({ notification, onPress, onDelete }) => {
+  const { colors } = useTheme();
+
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'new_item':
@@ -21,15 +24,15 @@ const NotificationItem = ({ notification, onPress, onDelete }) => {
   const getNotificationColor = (type) => {
     switch (type) {
       case 'new_item':
-        return COLORS.info;
+        return colors.info;
       case 'match_found':
-        return COLORS.success;
+        return colors.success;
       case 'item_claimed':
-        return COLORS.warning;
+        return colors.warning;
       case 'new_message':
-        return COLORS.primary;
+        return colors.primary;
       default:
-        return COLORS.gray500;
+        return colors.gray500;
     }
   };
 
@@ -47,6 +50,43 @@ const NotificationItem = ({ notification, onPress, onDelete }) => {
     if (diffInDays < 7) return `${diffInDays}d ago`;
     return date.toLocaleDateString();
   };
+
+  const styles = useThemedStyles((colors) => ({
+    container: {
+      flexDirection: 'row',
+      padding: 16,
+      backgroundColor: colors.white,
+      borderRadius: 12,
+      marginBottom: 12,
+      shadowColor: colors.black,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2
+    },
+    unreadContainer: {
+      backgroundColor: colors.primaryLight + '10',
+      borderLeftWidth: 3,
+      borderLeftColor: colors.primary
+    },
+    iconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12
+    },
+    icon: { fontSize: 24 },
+    content: { flex: 1 },
+    title: { fontSize: 15, fontWeight: '600', color: colors.textPrimary, marginBottom: 4 },
+    message: { fontSize: 14, color: colors.textSecondary, lineHeight: 20, marginBottom: 8 },
+    footer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    time: { fontSize: 12, color: colors.textTertiary },
+    unreadDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.primary },
+    deleteButton: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center', marginLeft: 8 },
+    deleteIcon: { fontSize: 14, color: colors.textSecondary }
+  }));
 
   return (
     <TouchableOpacity
@@ -92,78 +132,6 @@ const NotificationItem = ({ notification, onPress, onDelete }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    padding: 16,
-    backgroundColor: COLORS.white,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2
-  },
-  unreadContainer: {
-    backgroundColor: COLORS.primaryLight + '10',
-    borderLeftWidth: 3,
-    borderLeftColor: COLORS.primary
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12
-  },
-  icon: {
-    fontSize: 24
-  },
-  content: {
-    flex: 1
-  },
-  title: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    marginBottom: 4
-  },
-  message: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    lineHeight: 20,
-    marginBottom: 8
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8
-  },
-  time: {
-    fontSize: 12,
-    color: COLORS.textTertiary
-  },
-  unreadDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: COLORS.primary
-  },
-  deleteButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: COLORS.gray100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 8
-  },
-  deleteIcon: {
-    fontSize: 14,
-    color: COLORS.textSecondary
-  }
-});
+// Styles are created dynamically via useThemedStyles above.
 
 export default NotificationItem;

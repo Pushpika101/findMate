@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -12,7 +11,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { authAPI } from '../../services/api';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 
 // ResetPassword screen: accepts a token and new password, submits to backend
 const ResetPassword = ({ navigation, route }) => {
@@ -22,6 +22,27 @@ const ResetPassword = ({ navigation, route }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const { colors } = useTheme();
+  const styles = useThemedStyles((colors) => ({
+    container: { flex: 1, backgroundColor: colors.background },
+    scrollContent: { flexGrow: 1, padding: 24, paddingTop: 60 },
+    header: { marginBottom: 32, alignItems: 'center' },
+    title: { fontSize: 28, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 8 },
+    subtitle: { fontSize: 14, color: colors.textSecondary, textAlign: 'center' },
+    form: { width: '100%' },
+    inputContainer: { marginBottom: 20 },
+    label: { fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 },
+    input: { height: 50, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: colors.white },
+    inputError: { borderColor: colors.error },
+    errorText: { color: colors.error, fontSize: 12, marginTop: 4 },
+    resetButton: { height: 50, backgroundColor: colors.primary, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 16 },
+    resetButtonDisabled: { opacity: 0.6 },
+    resetButtonText: { color: colors.white, fontSize: 16, fontWeight: '600' },
+    loginContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingBottom: 24 },
+    loginText: { color: colors.textSecondary, fontSize: 14 },
+    loginLink: { color: colors.primary, fontSize: 14, fontWeight: '600' }
+  }));
 
   useEffect(() => {
     if (route?.params?.token) setToken(route.params.token);
@@ -117,7 +138,7 @@ const ResetPassword = ({ navigation, route }) => {
             onPress={handleSubmit}
             disabled={loading}
           >
-            {loading ? <ActivityIndicator color={COLORS.white} /> : <Text style={styles.resetButtonText}>Set new password</Text>}
+            {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.resetButtonText}>Set new password</Text>}
           </TouchableOpacity>
 
           <View style={styles.loginContainer}>
@@ -132,24 +153,6 @@ const ResetPassword = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
-  scrollContent: { flexGrow: 1, padding: 24, paddingTop: 60 },
-  header: { marginBottom: 32, alignItems: 'center' },
-  title: { fontSize: 28, fontWeight: 'bold', color: COLORS.textPrimary, marginBottom: 8 },
-  subtitle: { fontSize: 14, color: COLORS.textSecondary, textAlign: 'center' },
-  form: { width: '100%' },
-  inputContainer: { marginBottom: 20 },
-  label: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary, marginBottom: 8 },
-  input: { height: 50, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: COLORS.white },
-  inputError: { borderColor: COLORS.error },
-  errorText: { color: COLORS.error, fontSize: 12, marginTop: 4 },
-  resetButton: { height: 50, backgroundColor: COLORS.primary, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 16 },
-  resetButtonDisabled: { opacity: 0.6 },
-  resetButtonText: { color: COLORS.white, fontSize: 16, fontWeight: '600' },
-  loginContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingBottom: 24 },
-  loginText: { color: COLORS.textSecondary, fontSize: 14 },
-  loginLink: { color: COLORS.primary, fontSize: 14, fontWeight: '600' }
-});
+// styles are created via useThemedStyles above
 
 export default ResetPassword;

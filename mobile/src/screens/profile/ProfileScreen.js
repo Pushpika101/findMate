@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   Image,
@@ -15,7 +14,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { usersAPI } from '../../services/api';
-import COLORS from '../../utils/colors';
 import { API_URL } from '../../utils/constants';
 
 const ProfileScreen = ({ navigation }) => {
@@ -424,281 +422,50 @@ const ProfileScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.background
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: COLORS.textSecondary
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: COLORS.white
-  },
-  settingsButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.white + '20',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  settingsIcon: {
-    fontSize: 20
-  },
-  scrollView: {
-    flex: 1
-  },
-  profileCard: {
-    backgroundColor: COLORS.white,
-    marginHorizontal: 20,
-    marginTop: 20,
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4
-  },
-  avatarContainer: {
-    position: 'relative',
-    marginBottom: 16
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: COLORS.gray200
-  },
-  avatarPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  avatarText: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: COLORS.white
-  },
-  cameraIcon: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: COLORS.white,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  cameraIconText: {
-    fontSize: 16
-  },
-  userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    marginBottom: 4
-  },
-  userEmail: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    marginBottom: 4
-  },
-  userStudentId: {
-    fontSize: 13,
-    color: COLORS.textTertiary,
-    marginBottom: 12
-  },
-  verifiedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: COLORS.success + '20',
-    borderRadius: 12,
-    marginBottom: 16,
-    gap: 6
-  },
-  verifiedIcon: {
-    fontSize: 14
-  },
-  verifiedText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: COLORS.success
-  },
-  editButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    backgroundColor: COLORS.primary,
-    borderRadius: 20
-  },
-  editButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.white
-  },
-  statsCard: {
-    backgroundColor: COLORS.white,
-    marginHorizontal: 20,
-    marginTop: 16,
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    marginBottom: 16
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12
-  },
-  statItem: {
-    flex: 1,
-    minWidth: '30%',
-    backgroundColor: COLORS.gray50,
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center'
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: COLORS.primary,
-    marginBottom: 4
-  },
-  statLabel: {
-    fontSize: 12,
-    color: COLORS.textSecondary,
-    textAlign: 'center'
-  },
-  actionsCard: {
-    backgroundColor: COLORS.kk2,
-    marginHorizontal: 20,
-    marginTop: 16,
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4
-  },
-  settingsCard: {
-    backgroundColor: COLORS.kk2,
-    marginHorizontal: 20,
-    marginTop: 16,
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4
-  },
-  actionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border
-  },
-  actionIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.gray100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12
-  },
-  actionIcon: {
-    fontSize: 20
-  },
-  actionContent: {
-    flex: 1
-  },
-  actionTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    marginBottom: 2
-  },
-  actionSubtitle: {
-    fontSize: 13,
-    color: COLORS.textSecondary
-  },
-  actionArrow: {
-    fontSize: 24,
-    color: COLORS.textSecondary,
-    marginLeft: 8
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.lost,
-    marginHorizontal: 20,
-    marginTop: 16,
-    paddingVertical: 14,
-    borderRadius: 12,
-    gap: 8
-  },
-  logoutIcon: {
-    fontSize: 20
-  },
-  logoutText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.white
-  },
-  appInfo: {
-    fontSize: 12,
-    color: COLORS.textTertiary,
-    textAlign: 'center',
-    marginTop: 24,
-    lineHeight: 18
-  },
-  bottomPadding: {
-    height: 120
-  }
-});
+  const styles = useThemedStyles((colors) => ({
+    container: { flex: 1, backgroundColor: colors.background },
+    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
+    loadingText: { marginTop: 12, fontSize: 16, color: colors.textSecondary },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 60, paddingBottom: 20, paddingHorizontal: 20, backgroundColor: colors.primary, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
+    headerTitle: { fontSize: 28, fontWeight: 'bold', color: colors.white },
+    settingsButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.white + '20', justifyContent: 'center', alignItems: 'center' },
+    settingsIcon: { fontSize: 20 },
+    scrollView: { flex: 1 },
+    profileCard: { backgroundColor: colors.white, marginHorizontal: 20, marginTop: 20, borderRadius: 16, padding: 24, alignItems: 'center', shadowColor: colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 },
+    avatarContainer: { position: 'relative', marginBottom: 16 },
+    avatar: { width: 100, height: 100, borderRadius: 50, backgroundColor: colors.gray200 },
+    avatarPlaceholder: { width: 100, height: 100, borderRadius: 50, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' },
+    avatarText: { fontSize: 40, fontWeight: 'bold', color: colors.white },
+    cameraIcon: { position: 'absolute', bottom: 0, right: 0, width: 32, height: 32, borderRadius: 16, backgroundColor: colors.white, borderWidth: 2, borderColor: colors.primary, justifyContent: 'center', alignItems: 'center' },
+    cameraIconText: { fontSize: 16 },
+    userName: { fontSize: 24, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 4 },
+    userEmail: { fontSize: 14, color: colors.textSecondary, marginBottom: 4 },
+    userStudentId: { fontSize: 13, color: colors.textTertiary, marginBottom: 12 },
+    verifiedBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.success + '20', borderRadius: 12, marginBottom: 16, gap: 6 },
+    verifiedIcon: { fontSize: 14 },
+    verifiedText: { fontSize: 13, fontWeight: '600', color: colors.success },
+    editButton: { paddingHorizontal: 24, paddingVertical: 10, backgroundColor: colors.primary, borderRadius: 20 },
+    editButtonText: { fontSize: 14, fontWeight: '600', color: colors.white },
+    statsCard: { backgroundColor: colors.white, marginHorizontal: 20, marginTop: 16, borderRadius: 16, padding: 20, shadowColor: colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 },
+    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 16 },
+    statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+    statItem: { flex: 1, minWidth: '30%', backgroundColor: colors.gray50, padding: 16, borderRadius: 12, alignItems: 'center' },
+    statValue: { fontSize: 24, fontWeight: 'bold', color: colors.primary, marginBottom: 4 },
+    statLabel: { fontSize: 12, color: colors.textSecondary, textAlign: 'center' },
+    actionsCard: { backgroundColor: colors.kk2, marginHorizontal: 20, marginTop: 16, borderRadius: 16, padding: 20, shadowColor: colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 },
+    settingsCard: { backgroundColor: colors.kk2, marginHorizontal: 20, marginTop: 16, borderRadius: 16, padding: 20, shadowColor: colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 },
+    actionItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.border },
+    actionIconContainer: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+    actionIcon: { fontSize: 20 },
+    actionContent: { flex: 1 },
+    actionTitle: { fontSize: 15, fontWeight: '600', color: colors.textPrimary, marginBottom: 2 },
+    actionSubtitle: { fontSize: 13, color: colors.textSecondary },
+    actionArrow: { fontSize: 24, color: colors.textSecondary, marginLeft: 8 },
+    logoutButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.lost, marginHorizontal: 20, marginTop: 16, paddingVertical: 14, borderRadius: 12, gap: 8 },
+    logoutIcon: { fontSize: 20 },
+    logoutText: { fontSize: 16, fontWeight: '600', color: colors.white },
+    appInfo: { fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: 24, lineHeight: 18 },
+    bottomPadding: { height: 120 }
+  }));
 
 export default ProfileScreen;

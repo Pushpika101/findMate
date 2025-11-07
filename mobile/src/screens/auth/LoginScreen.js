@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,7 +12,8 @@ import {
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../services/api';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 
 const LoginScreen = ({ navigation }) => {
   const { login } = useAuth();
@@ -167,7 +167,7 @@ const LoginScreen = ({ navigation }) => {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color={COLORS.white} />
+              <ActivityIndicator color={colors.white} />
             ) : (
               <Text style={styles.loginButtonText}>Sign In</Text>
             )}
@@ -188,10 +188,10 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = useThemedStyles((c) => ({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background
+    backgroundColor: c.background
   },
   scrollContent: {
     flexGrow: 1,
@@ -205,12 +205,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: c.textPrimary,
     marginBottom: 8
   },
   subtitle: {
     fontSize: 16,
-    color: COLORS.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center'
   },
   form: {
@@ -222,23 +222,23 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: c.textPrimary,
     marginBottom: 8
   },
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: c.border,
     borderRadius: 12,
     paddingHorizontal: 16,
     fontSize: 16,
-    backgroundColor: COLORS.white
+    backgroundColor: c.white
   },
   inputError: {
-    borderColor: COLORS.error
+    borderColor: c.error
   },
   errorText: {
-    color: COLORS.error,
+    color: c.error,
     fontSize: 12,
     marginTop: 4
   },
@@ -247,13 +247,13 @@ const styles = StyleSheet.create({
     marginBottom: 24
   },
   forgotText: {
-    color: COLORS.primary,
+    color: c.primary,
     fontSize: 14,
     fontWeight: '600'
   },
   loginButton: {
     height: 50,
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     opacity: 0.6
   },
   loginButtonText: {
-    color: COLORS.white,
+    color: c.white,
     fontSize: 16,
     fontWeight: '600'
   },
@@ -273,42 +273,37 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   signupText: {
-    color: COLORS.textSecondary,
+    color: c.textSecondary,
     fontSize: 14
   },
   signupLink: {
-    color: COLORS.primary,
+    color: c.primary,
     fontSize: 14,
     fontWeight: '600'
-  }
-  ,
+  },
   resendContainer: {
     marginTop: 18,
     alignItems: 'center'
   },
   resendMessage: {
-    color: COLORS.textSecondary,
+    color: c.textSecondary,
     fontSize: 13,
     marginBottom: 8,
     textAlign: 'center'
   },
   resendButton: {
     height: 44,
-    backgroundColor: COLORS.lost,
+    backgroundColor: c.lost,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16
   },
   resendButtonText: {
-    color: COLORS.white,
+    color: c.white,
     fontSize: 14,
     fontWeight: '600'
-  }
-});
-
-// Extra styles for password toggle
-const extraStyles = StyleSheet.create({
+  },
   inputWithToggle: {
     position: 'relative'
   },
@@ -320,12 +315,9 @@ const extraStyles = StyleSheet.create({
     paddingHorizontal: 8
   },
   showButtonText: {
-    color: COLORS.primary,
+    color: c.primary,
     fontWeight: '600'
   }
-});
-
-// Merge styles for convenience
-Object.assign(styles, extraStyles);
+}));
 
 export default LoginScreen;

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   Image,
   TouchableOpacity,
@@ -16,13 +15,32 @@ import {
 import { itemsAPI, chatAPI } from '../../services/api';
 import { API_URL } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const { width } = Dimensions.get('window');
 
 const ItemDetailScreen = ({ route, navigation }) => {
   const { itemId } = route.params;
+  const { colors } = useTheme();
+
+  const styles = useThemedStyles((colors) => ({
+    container: { flex: 1, backgroundColor: colors.background },
+    scrollContainer: { padding: 20 },
+    imageWrapper: { width: '100%', height: 300, borderRadius: 12, overflow: 'hidden', backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center' },
+    image: { width: '100%', height: '100%' },
+    title: { fontSize: 22, fontWeight: '700', color: colors.textPrimary, marginTop: 12 },
+    subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 6 },
+    tag: { marginTop: 8, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+    tagText: { fontSize: 12, fontWeight: '700', color: colors.black },
+    section: { marginTop: 16 },
+    sectionTitle: { fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 8 },
+    sectionText: { fontSize: 14, color: colors.textSecondary, lineHeight: 20 },
+    footer: { marginTop: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    contactButton: { backgroundColor: colors.primary, paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12 },
+    contactButtonText: { color: colors.white, fontWeight: '700' }
+  }));
   const { user } = useAuth();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -205,7 +223,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>Loading item details...</Text>
       </View>
     );
@@ -305,7 +323,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
           {/* Type Badge */}
           <View style={[
             styles.typeBadge,
-            { backgroundColor: item.type === 'lost' ? COLORS.lost : COLORS.found }
+            { backgroundColor: item.type === 'lost' ? colors.lost : colors.found }
           ]}>
             <Text style={styles.typeBadgeText}>
               {item.type === 'lost' ? 'LOST ITEM' : 'FOUND ITEM'}
@@ -405,21 +423,21 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.editButton, { flex: 1 }]}
                     onPress={handleEditItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.info }]}>Edit</Text>
+                    <Text style={[styles.actionButtonText, { color: colors.info }]}>Edit</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
                     onPress={handleShareItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.secondaryDark }]}>Share</Text>
+                    <Text style={[styles.actionButtonText, { color: colors.secondaryDark }]}>Share</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[styles.actionButton, styles.deleteButton, { flex: 1 }]}
                     onPress={handleDeleteItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.error }]}>Delete</Text>
+                    <Text style={[styles.actionButtonText, { color: colors.error }]}>Delete</Text>
                   </TouchableOpacity>
                 </>
               ) : (
@@ -429,7 +447,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.claimButton, { flex: 1 }]}
                     onPress={handleClaimItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.found }]}>
+                    <Text style={[styles.actionButtonText, { color: colors.found }]}> 
                       {item.type === 'lost' ? 'I Found This' : 'This is Mine'}
                     </Text>
                   </TouchableOpacity>
@@ -438,14 +456,14 @@ const ItemDetailScreen = ({ route, navigation }) => {
                     style={[styles.actionButton, styles.chatButton, { flex: 1 }]}
                     onPress={handleChatWithOwner}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.primary }]}>Chat</Text>
+                    <Text style={[styles.actionButtonText, { color: colors.primary }]}>Chat</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[styles.actionButton, styles.resolveButton, { flex: 1 }]}
                     onPress={handleShareItem}
                   >
-                    <Text style={[styles.actionButtonText, { color: COLORS.warning }]}>Share</Text>
+                    <Text style={[styles.actionButtonText, { color: colors.warning }]}>Share</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -515,331 +533,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.background
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: COLORS.textSecondary
-  },
-  errorText: {
-    fontSize: 16,
-    color: COLORS.error
-  },
-  header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingTop: 60,
-      paddingBottom: 20,
-      paddingHorizontal: 20,
-      backgroundColor: COLORS.primary,
-      borderBottomLeftRadius: 24,
-      borderBottomRightRadius: 24,
-      overflow: 'visible',
-      marginBottom: 8,
-      // extend header to screen edges to cancel the container padding
-      //marginHorizontal: -20,
-      //marginTop: -33
-    },
-  headerButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  headerButtonText: {
-    fontSize: 28,
-    color: COLORS.black
-  },
-  headerButtonIcon: {
-    fontSize: 20
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary
-  },
-  scrollView: {
-    flex: 1
-  },
-  imageContainer: {
-    position: 'relative'
-  },
-  itemImage: {
-    width: width,
-    height: 300
-  },
-  noImageContainer: {
-    width: width,
-    height: 300,
-    backgroundColor: COLORS.gray100,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  noImageIcon: {
-    fontSize: 64,
-    marginBottom: 8
-  },
-  noImageText: {
-    fontSize: 16,
-    color: COLORS.textSecondary
-  },
-  imageIndicatorContainer: {
-    position: 'absolute',
-    bottom: 16,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8
-  },
-  imageIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.white,
-    opacity: 0.5
-  },
-  imageIndicatorActive: {
-    opacity: 1,
-    width: 24
-  },
-  content: {
-    padding: 20
-  },
-  typeBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginBottom: 16
-  },
-  typeBadgeText: {
-    color: COLORS.black,
-    fontSize: 12,
-    fontWeight: 'bold',
-    letterSpacing: 0.5
-  },
-  itemName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    marginBottom: 16
-  },
-  resolvedBadge: {
-    backgroundColor: COLORS.success,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-    marginBottom: 16
-  },
-  resolvedText: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  detailsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 24
-  },
-  detailCard: {
-    flex: 1,
-    minWidth: '45%',
-    backgroundColor: COLORS.kk,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLORS.kk,
-    alignItems: 'center'
-  },
-  detailIcon: {
-    fontSize: 24,
-    marginBottom: 8
-  },
-  detailLabel: {
-    fontSize: 12,
-    color: COLORS.textSecondary,
-    marginBottom: 4
-  },
-  detailValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    textAlign: 'center'
-  },
-  infoSection: {
-    marginBottom: 20
-  },
-  infoLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.textSecondary,
-    marginBottom: 8
-  },
-  infoValue: {
-    fontSize: 16,
-    color: COLORS.textPrimary
-  },
-  description: {
-    fontSize: 16,
-    color: COLORS.textPrimary,
-    lineHeight: 24
-  },
-  userSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: COLORS.border,
-    marginBottom: 24
-  },
-  userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  avatarText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.white
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.textPrimary
-  },
-  userLabel: {
-    fontSize: 12,
-    color: COLORS.textSecondary
-  },
-  postedDate: {
-    fontSize: 12,
-    color: COLORS.textSecondary
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    justifyContent: 'space-between'
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    gap: 6,
-    marginHorizontal: 4,
-    borderWidth: 1
-  },
-  actionButtonIcon: {
-    fontSize: 18
-  },
-  actionButtonText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: COLORS.textPrimary
-  },
-  claimButton: {
-    borderColor: COLORS.black,
-    backgroundColor: COLORS.black
-  },
-  chatButton: {
-    borderColor: COLORS.black,
-    backgroundColor: COLORS.black
-  },
-  editButton: {
-    borderColor: COLORS.black,
-    backgroundColor: COLORS.black
-  },
-  resolveButton: {
-    borderColor: COLORS.black,
-    backgroundColor: COLORS.black
-  },
-  deleteButton: {
-    borderColor: COLORS.black,
-    backgroundColor: COLORS.black
-  }
-  ,
-  /* Modal styles */
-  modalContainer: {
-    flex: 1,
-    backgroundColor: COLORS.black,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  modalImage: {
-    width: '100%',
-    height: '80%'
-  },
-  modalControls: {
-    position: 'absolute',
-    bottom: 40,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center'
-  },
-  modalNavButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 8
-  },
-  modalNavText: {
-    color: COLORS.white,
-    fontSize: 22,
-    fontWeight: '600'
-  },
-  modalCloseButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    backgroundColor: COLORS.primary,
-    borderRadius: 8
-  },
-  modalCloseText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  modalTopClose: {
-    position: 'absolute',
-    top: 50,
-    right: 20,
-    zIndex: 20,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: 8,
-    borderRadius: 20
-  },
-  modalTopCloseText: {
-    color: COLORS.white,
-    fontSize: 20,
-    fontWeight: '700'
-  }
-});
+
+// Styles moved to useThemedStyles above; module-level COLORS-based StyleSheet removed.
 
 export default ItemDetailScreen;

@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -12,7 +11,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { authAPI } from '../../services/api';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 
 const VerifyOtp = ({ navigation, route }) => {
   const emailFromParams = route?.params?.email || '';
@@ -70,6 +70,29 @@ const VerifyOtp = ({ navigation, route }) => {
     }
   };
 
+  const { colors } = useTheme();
+  const styles = useThemedStyles((c) => ({
+    container: { flex: 1, backgroundColor: c.background },
+    scrollContent: { flexGrow: 1, padding: 24, paddingTop: 60 },
+    header: { marginBottom: 24, alignItems: 'center' },
+    title: { fontSize: 24, fontWeight: '700', color: c.textPrimary },
+    subtitle: { fontSize: 14, color: c.textSecondary, textAlign: 'center' },
+    form: { width: '100%', marginTop: 20 },
+    inputContainer: { marginBottom: 16 },
+    label: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 8 },
+    input: { height: 50, borderWidth: 1, borderColor: c.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: c.white },
+    verifyButton: { height: 50, backgroundColor: c.primary, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 12 },
+    verifyText: { color: c.white, fontWeight: '700' },
+    disabled: { opacity: 0.6 },
+    resendRow: { marginTop: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    resendText: { color: c.textSecondary },
+    resendButton: { color: c.primary, fontWeight: '700' },
+    disabledText: { color: c.textSecondary },
+    loginContainer: { marginTop: 24, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+    loginText: { color: c.textSecondary },
+    loginLink: { color: c.primary, fontWeight: '700' }
+  }));
+
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
@@ -104,7 +127,7 @@ const VerifyOtp = ({ navigation, route }) => {
           </View>
 
           <TouchableOpacity style={[styles.verifyButton, loading && styles.disabled]} onPress={handleVerify} disabled={loading}>
-            {loading ? <ActivityIndicator color={COLORS.white} /> : <Text style={styles.verifyText}>Verify</Text>}
+            {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.verifyText}>Verify</Text>}
           </TouchableOpacity>
 
           <View style={styles.resendRow}>
@@ -128,26 +151,6 @@ const VerifyOtp = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
-  scrollContent: { flexGrow: 1, padding: 24, paddingTop: 60 },
-  header: { marginBottom: 24, alignItems: 'center' },
-  title: { fontSize: 24, fontWeight: '700', color: COLORS.textPrimary },
-  subtitle: { fontSize: 14, color: COLORS.textSecondary, textAlign: 'center' },
-  form: { width: '100%', marginTop: 20 },
-  inputContainer: { marginBottom: 16 },
-  label: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary, marginBottom: 8 },
-  input: { height: 50, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: COLORS.white },
-  verifyButton: { height: 50, backgroundColor: COLORS.primary, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 12 },
-  verifyText: { color: COLORS.white, fontWeight: '700' },
-  disabled: { opacity: 0.6 },
-  resendRow: { marginTop: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  resendText: { color: COLORS.textSecondary },
-  resendButton: { color: COLORS.primary, fontWeight: '700' },
-  disabledText: { color: COLORS.textSecondary },
-  loginContainer: { marginTop: 24, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
-  loginText: { color: COLORS.textSecondary },
-  loginLink: { color: COLORS.primary, fontWeight: '700' }
-});
+// styles defined inside component via useThemedStyles
 
 export default VerifyOtp;

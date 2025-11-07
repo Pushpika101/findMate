@@ -15,7 +15,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 import { /* Modal, Pressable, ScrollView as RNScrollView */ } from 'react-native';
 import { itemsAPI } from '../../services/api';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 import { ITEM_CATEGORIES, ITEM_COLORS, COMMON_LOCATIONS } from '../../utils/constants';
 
 const AddItemScreen = ({ navigation }) => {
@@ -41,7 +42,59 @@ const AddItemScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   // showing categories/colors as inline chips instead of dropdown modals
+  
+  const { colors } = useTheme();
 
+  const styles = useThemedStyles((colors) => ({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 16, paddingHorizontal: 20, backgroundColor: colors.background, borderBottomWidth: 1, borderBottomColor: colors.background },
+    backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
+    backButtonText: { fontSize: 28, color: colors.primary },
+    headerTitle: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary },
+    placeholder: { width: 40 },
+    scrollView: { flex: 1 },
+    scrollContent: { padding: 20 },
+    typeSelector: { flexDirection: 'row', marginBottom: 24, gap: 12 },
+    typeButton: { flex: 1, paddingVertical: 16, borderRadius: 12, borderWidth: 2, borderColor: colors.border, alignItems: 'center' },
+    typeButtonActive: { borderColor: 'transparent' },
+    typeButtonText: { fontSize: 16, fontWeight: '600', color: colors.textSecondary },
+    typeButtonTextActive: { color: colors.white },
+    inputContainer: { marginBottom: 20 },
+    label: { fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 },
+    input: { height: 50, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: colors.white, color: colors.textPrimary },
+    inputError: { borderColor: colors.error },
+    errorText: { color: colors.error, fontSize: 12, marginTop: 4 },
+    pickerContainer: { borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.white, overflow: 'hidden' },
+    picker: { height: 50 },
+    textArea: { height: 100, paddingTop: 12, textAlignVertical: 'top' },
+    locationSuggestions: { marginTop: 8 },
+    locationChip: { paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.black, borderRadius: 16, marginRight: 8 },
+    locationChipText: { fontSize: 12, color: colors.primary, fontWeight: '600' },
+    photoContainer: { flexDirection: 'row', gap: 12 },
+    photoBox: { flex: 1, aspectRatio: 1, borderRadius: 12, overflow: 'hidden' },
+    photoPlaceholder: { flex: 1, backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: colors.border, borderStyle: 'dashed', borderRadius: 12 },
+    photoPlaceholderIcon: { fontSize: 32, marginBottom: 8 },
+    photoPlaceholderText: { fontSize: 12, color: colors.textSecondary, fontWeight: '600' },
+    photoPreview: { flex: 1, position: 'relative' },
+    photoImage: { width: '100%', height: '100%' },
+    removePhotoButton: { position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: 14, backgroundColor: colors.error, justifyContent: 'center', alignItems: 'center' },
+    removePhotoText: { color: colors.white, fontSize: 16, fontWeight: 'bold' },
+    submitButton: { height: 54, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 8 },
+    submitButtonDisabled: { opacity: 0.6 },
+    submitButtonText: { color: colors.white, fontSize: 16, fontWeight: 'bold' },
+    bottomPadding: { height: 40 },
+    dropdown: { height: 50, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.white, justifyContent: 'center', paddingHorizontal: 12 },
+    dropdownPlaceholder: { color: colors.textSecondary },
+    dropdownText: { color: colors.textPrimary },
+    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+    modalContent: { backgroundColor: colors.white, maxHeight: '50%', borderTopLeftRadius: 12, borderTopRightRadius: 12, padding: 12 },
+    modalItem: { paddingVertical: 14, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: colors.gray100 },
+    modalItemText: { fontSize: 16, color: colors.textPrimary },
+    modalClose: { paddingVertical: 12, alignItems: 'center' },
+    modalCloseText: { color: colors.primary, fontSize: 16, fontWeight: '600' },
+    chipSelected: { backgroundColor: colors.primary },
+    chipSelectedText: { color: colors.white, fontWeight: '700' }
+  }));
   // Request permission for image picker
   const requestPermission = async () => {
     if (Platform.OS !== 'web') {
@@ -469,252 +522,6 @@ const AddItemScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.kk2
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 50,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.kk2,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.kk2
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  backButtonText: {
-    fontSize: 28,
-    color: COLORS.primary
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary
-  },
-  placeholder: {
-    width: 40
-  },
-  scrollView: {
-    flex: 1
-  },
-  scrollContent: {
-    padding: 20
-  },
-  typeSelector: {
-    flexDirection: 'row',
-    marginBottom: 24,
-    gap: 12
-  },
-  typeButton: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: COLORS.border,
-    alignItems: 'center'
-  },
-  typeButtonActive: {
-    borderColor: 'transparent'
-  },
-  typeButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.textSecondary
-  },
-  typeButtonTextActive: {
-    color: COLORS.white
-  },
-  inputContainer: {
-    marginBottom: 20
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    marginBottom: 8
-  },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    backgroundColor: COLORS.white
-  },
-  inputError: {
-    borderColor: COLORS.error
-  },
-  errorText: {
-    color: COLORS.error,
-    fontSize: 12,
-    marginTop: 4
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 12,
-    backgroundColor: COLORS.white,
-    overflow: 'hidden'
-  },
-  picker: {
-    height: 50
-  },
-  textArea: {
-    height: 100,
-    paddingTop: 12,
-    textAlignVertical: 'top'
-  },
-  locationSuggestions: {
-    marginTop: 8
-  },
-  locationChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: COLORS.black,
-    borderRadius: 16,
-    marginRight: 8
-  },
-  locationChipText: {
-    fontSize: 12,
-    color: COLORS.primary,
-    fontWeight: '600'
-  },
-  photoContainer: {
-    flexDirection: 'row',
-    gap: 12
-  },
-  photoBox: {
-    flex: 1,
-    aspectRatio: 1,
-    borderRadius: 12,
-    overflow: 'hidden'
-  },
-  photoPlaceholder: {
-    flex: 1,
-    backgroundColor: COLORS.gray100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: COLORS.border,
-    borderStyle: 'dashed',
-    borderRadius: 12
-  },
-  photoPlaceholderIcon: {
-    fontSize: 32,
-    marginBottom: 8
-  },
-  photoPlaceholderText: {
-    fontSize: 12,
-    color: COLORS.textSecondary,
-    fontWeight: '600'
-  },
-  photoPreview: {
-    flex: 1,
-    position: 'relative'
-  },
-  photoImage: {
-    width: '100%',
-    height: '100%'
-  },
-  removePhotoButton: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: COLORS.error,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  removePhotoText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  submitButton: {
-    height: 54,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8
-  },
-  submitButtonDisabled: {
-    opacity: 0.6
-  },
-  submitButtonText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  bottomPadding: {
-    height: 40
-  }
-  ,
-  dropdown: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 12,
-    backgroundColor: COLORS.white,
-    justifyContent: 'center',
-    paddingHorizontal: 12
-  },
-  dropdownPlaceholder: {
-    color: COLORS.textSecondary
-  },
-  dropdownText: {
-    color: COLORS.textPrimary
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end'
-  },
-  modalContent: {
-    backgroundColor: COLORS.white,
-    maxHeight: '50%',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    padding: 12
-  },
-  modalItem: {
-    paddingVertical: 14,
-    paddingHorizontal: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray100
-  },
-  modalItemText: {
-    fontSize: 16,
-    color: COLORS.textPrimary
-  },
-  modalClose: {
-    paddingVertical: 12,
-    alignItems: 'center'
-  },
-  modalCloseText: {
-    color: COLORS.primary,
-    fontSize: 16,
-    fontWeight: '600'
-  }
-  ,
-  chipSelected: {
-    backgroundColor: COLORS.primary,
-  },
-  chipSelectedText: {
-    color: COLORS.white,
-    fontWeight: '700'
-  }
-});
+
 
 export default AddItemScreen;

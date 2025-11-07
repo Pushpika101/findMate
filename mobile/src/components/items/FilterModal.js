@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   Modal,
   TouchableOpacity,
   ScrollView,
   TextInput
 } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 // Picker replaced by chip-style selectors in this modal
-import COLORS from '../../utils/colors';
+// NOTE: colors come from ThemeContext via useTheme/useThemedStyles
 import { ITEM_CATEGORIES, ITEM_COLORS, SORT_OPTIONS } from '../../utils/constants';
 
 const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
@@ -48,6 +49,195 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
   const updateFilter = (key, value) => {
     setFilters({ ...filters, [key]: value });
   };
+
+  const { colors } = useTheme();
+  const styles = useThemedStyles((c) => ({
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: c.overlay,
+      justifyContent: 'flex-end'
+    },
+    modalContent: {
+      backgroundColor: c.kk2,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      maxHeight: '90%',
+      paddingBottom: 20
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: c.textPrimary
+    },
+    closeButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: c.lost,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    closeButtonText: {
+      fontSize: 20,
+      color: c.black
+    },
+    scrollView: {
+      paddingHorizontal: 20
+    },
+    filterSection: {
+      marginTop: 20
+    },
+    filterLabel: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: c.textPrimary,
+      marginBottom: 12
+    },
+    pickerContainer: {
+      borderWidth: 1,
+      borderColor: c.border,
+      borderRadius: 12,
+      backgroundColor: c.white,
+      overflow: 'hidden'
+    },
+    picker: {
+      height: 50
+    },
+    input: {
+      height: 50,
+      borderWidth: 1,
+      borderColor: c.black,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      fontSize: 15,
+      color: c.black,
+      backgroundColor: c.white
+    },
+    dateRow: {
+      flexDirection: 'row',
+      gap: 12
+    },
+    dateInput: {
+      flex: 1
+    },
+    dateLabel: {
+      fontSize: 13,
+      color: c.textSecondary,
+      marginBottom: 8
+    },
+    sortOptions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 5
+    },
+    sortOption: {
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: c.black,
+      backgroundColor: c.black
+    },
+    sortOptionActive: {
+      backgroundColor: c.primary,
+      borderColor: c.primary
+    },
+    sortOptionText: {
+      fontSize: 14,
+      color: c.primary,
+      fontWeight: '500'
+    },
+    sortOptionTextActive: {
+      color: c.white,
+      fontWeight: '600'
+    },
+    activeFiltersSection: {
+      marginTop: 20,
+      padding: 16,
+      backgroundColor: c.primaryLight + '20',
+      borderRadius: 12
+    },
+    activeFiltersTitle: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: c.primary,
+      marginBottom: 8
+    },
+    activeFiltersList: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8
+    },
+    activeFilterChip: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      backgroundColor: c.primary,
+      borderRadius: 16
+    },
+    activeFilterText: {
+      fontSize: 12,
+      color: c.white,
+      fontWeight: '500'
+    },
+    locationChip: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      backgroundColor: c.black,
+      borderRadius: 16,
+      marginRight: 8
+    },
+    locationChipText: {
+      fontSize: 12,
+      color: c.primary,
+      fontWeight: '600'
+    },
+    chipSelected: {
+      backgroundColor: c.primary,
+    },
+    chipSelectedText: {
+      color: c.white,
+      fontWeight: '700'
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      gap: 12,
+      paddingHorizontal: 20,
+      paddingTop: 20
+    },
+    button: {
+      flex: 1,
+      height: 50,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    resetButton: {
+      backgroundColor: c.black,
+      borderWidth: 1,
+      borderColor: c.black
+    },
+    resetButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: c.primary
+    },
+    applyButton: {
+      backgroundColor: c.primary
+    },
+    applyButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: c.white
+    }
+  }));
 
   return (
     <Modal
@@ -117,7 +307,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Enter location..."
-                placeholderTextColor={COLORS.gray300}
+                placeholderTextColor={colors.gray300}
                 value={filters.location}
                 onChangeText={(text) => updateFilter('location', text)}
               />
@@ -132,7 +322,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
                   <TextInput
                     style={styles.input}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor={COLORS.gray300}
+                    placeholderTextColor={colors.gray300}
                     value={filters.date_from}
                     onChangeText={(text) => updateFilter('date_from', text)}
                   />
@@ -142,7 +332,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
                   <TextInput
                     style={styles.input}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor={COLORS.gray300}
+                    placeholderTextColor={colors.gray300}
                     value={filters.date_to}
                     onChangeText={(text) => updateFilter('date_to', text)}
                   />
@@ -234,193 +424,5 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: COLORS.overlay,
-    justifyContent: 'flex-end'
-  },
-  modalContent: {
-    backgroundColor: COLORS.kk2,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '90%',
-    paddingBottom: 20
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: COLORS.lost,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  closeButtonText: {
-    fontSize: 20,
-    color: COLORS.black
-  },
-  scrollView: {
-    paddingHorizontal: 20
-  },
-  filterSection: {
-    marginTop: 20
-  },
-  filterLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    marginBottom: 12
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 12,
-    backgroundColor: COLORS.white,
-    overflow: 'hidden'
-  },
-  picker: {
-    height: 50
-  },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: COLORS.black,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 15,
-    color: COLORS.black,
-    backgroundColor: COLORS.white
-  },
-  dateRow: {
-    flexDirection: 'row',
-    gap: 12
-  },
-  dateInput: {
-    flex: 1
-  },
-  dateLabel: {
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    marginBottom: 8
-  },
-  sortOptions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 5
-  },
-  sortOption: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: COLORS.black,
-    backgroundColor: COLORS.black
-  },
-  sortOptionActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary
-  },
-  sortOptionText: {
-    fontSize: 14,
-    color: COLORS.primary,
-    fontWeight: '500'
-  },
-  sortOptionTextActive: {
-    color: COLORS.white,
-    fontWeight: '600'
-  },
-  activeFiltersSection: {
-    marginTop: 20,
-    padding: 16,
-    backgroundColor: COLORS.primaryLight + '20',
-    borderRadius: 12
-  },
-  activeFiltersTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.primary,
-    marginBottom: 8
-  },
-  activeFiltersList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8
-  },
-  activeFilterChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: COLORS.primary,
-    borderRadius: 16
-  },
-  activeFilterText: {
-    fontSize: 12,
-    color: COLORS.white,
-    fontWeight: '500'
-  },
-  locationChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: COLORS.black,
-    borderRadius: 16,
-    marginRight: 8
-  },
-  locationChipText: {
-    fontSize: 12,
-    color: COLORS.primary,
-    fontWeight: '600'
-  },
-  chipSelected: {
-    backgroundColor: COLORS.primary,
-  },
-  chipSelectedText: {
-    color: COLORS.white,
-    fontWeight: '700'
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 20,
-    paddingTop: 20
-  },
-  button: {
-    flex: 1,
-    height: 50,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  resetButton: {
-    backgroundColor: COLORS.black,
-    borderWidth: 1,
-    borderColor: COLORS.black
-  },
-  resetButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.primary
-  },
-  applyButton: {
-    backgroundColor: COLORS.primary
-  },
-  applyButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.white
-  }
-});
 
 export default FilterModal;
