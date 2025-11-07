@@ -14,24 +14,29 @@ import ProfileScreen from '../screens/profile/ProfileScreen';
 import { notificationsAPI, chatAPI } from '../services/api';
 import { initializeSocket, onNewMessage, removeMessageListener, onNotification, removeNotificationListener, getSocket } from '../services/socket';
 import { DeviceEventEmitter } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 
 
 
 const Tab = createBottomTabNavigator();
 
 // Placeholder screens
-const ChatsScreen = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
-    <Text style={{ fontSize: 48 }}>💬</Text>
-    <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 16 }}>Chats</Text>
-  </View>
-);
+const ChatsScreen = () => {
+  const { colors } = useTheme();
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+      <Text style={{ fontSize: 48 }}>💬</Text>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 16, color: colors.textPrimary }}>Chats</Text>
+    </View>
+  );
+};
 
 // (use actual NotificationsScreen & ProfileScreen imported above)
 
 // Animated Add Button
 const AnimatedAddButton = ({ onPress, isFocused }) => {
   const navigation = useNavigation();
+  const { colors } = useTheme();
   // Start hidden and animate in when mounted or when navigation state changes
   const scaleAnim = React.useRef(new Animated.Value(0)).current;
   const rotateAnim = React.useRef(new Animated.Value(0)).current;
@@ -98,14 +103,14 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
         width: 70,
         height: 70,
         borderRadius: 28,
-        backgroundColor: COLORS.primary,
+  backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
         left: '50%',
         marginLeft: -35, // half width to center
         top: -24,
-        shadowColor: COLORS.primary,
+  shadowColor: colors.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -115,9 +120,9 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
       onPress={handlePress}
       activeOpacity={0.9}
     >
-      <Animated.View style={{ transform: [{ scale: scaleAnim }, { rotate: rotation }], opacity: opacityAnim }}>
-        <Text style={{ fontSize: 32, color: COLORS.black, fontWeight: '300', marginTop: -4 }}>+</Text>
-      </Animated.View>
+        <Animated.View style={{ transform: [{ scale: scaleAnim }, { rotate: rotation }], opacity: opacityAnim }}>
+          <Text style={{ fontSize: 32, color: colors.black, fontWeight: '300', marginTop: -4 }}>+</Text>
+        </Animated.View>
     </TouchableOpacity>
   );
 };
@@ -126,6 +131,7 @@ const MainTabNavigator = () => {
   const [notificationBadge, setNotificationBadge] = useState(0);
   const [chatBadge, setChatBadge] = useState(0);
   const { user } = useAuth();
+  const { colors } = useTheme();
 
   useEffect(() => {
     const fetchNotificationBadge = async () => {
@@ -233,15 +239,15 @@ const MainTabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textSecondary,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {
           height: 80,
           paddingBottom: 8,
           paddingTop: 4,
-          backgroundColor: COLORS.kk,
-          borderTopWidth: 5,
-          borderTopColor: COLORS.black,
+          backgroundColor: colors.kk,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           marginHorizontal: 12,
@@ -259,7 +265,7 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="home" size={size ?? 24} color={COLORS.black} /> }}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="home" size={size ?? 24} color={colors.black} /> }}
       />
       
       <Tab.Screen
@@ -268,10 +274,10 @@ const MainTabNavigator = () => {
         options={{
           tabBarIcon: ({ color, size }) => (
             <View style={{ width: 36, height: 36, justifyContent: 'center', alignItems: 'center' }}>
-              <MaterialIcons name="chat" size={size ?? 24} color={COLORS.black} />
+              <MaterialIcons name="chat" size={size ?? 24} color={colors.black} />
               {chatBadge > 0 && (
-                <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: COLORS.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
-                  <Text style={{ color: COLORS.white, fontSize: 15, fontWeight: '600' }}>{chatBadge > 99 ? '99+' : chatBadge}</Text>
+                <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: colors.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
+                  <Text style={{ color: colors.white, fontSize: 15, fontWeight: '600' }}>{chatBadge > 99 ? '99+' : chatBadge}</Text>
                 </View>
               )}
             </View>
@@ -298,10 +304,10 @@ const MainTabNavigator = () => {
         options={{
           tabBarIcon: ({ color, size }) => (
             <View style={{ width: 36, height: 36, justifyContent: 'center', alignItems: 'center' }}>
-              <MaterialIcons name="notifications" size={size ?? 24} color={COLORS.black} />
+              <MaterialIcons name="notifications" size={size ?? 24} color={colors.black} />
               {notificationBadge > 0 && (
-                <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: COLORS.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
-                  <Text style={{ color: COLORS.white, fontSize: 15, fontWeight: '600' }}>{notificationBadge > 99 ? '99+' : notificationBadge}</Text>
+                <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: colors.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
+                  <Text style={{ color: colors.white, fontSize: 15, fontWeight: '600' }}>{notificationBadge > 99 ? '99+' : notificationBadge}</Text>
                 </View>
               )}
             </View>
@@ -311,7 +317,7 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="person" size={size ?? 24} color={COLORS.black} /> }}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="person" size={size ?? 24} color={colors.black} /> }}
       />
     </Tab.Navigator>
   );

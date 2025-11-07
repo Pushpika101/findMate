@@ -8,16 +8,19 @@ import {
   Image,
   ActivityIndicator,
   Alert,
-  RefreshControl
+  RefreshControl,
+  Appearance
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { usersAPI } from '../../services/api';
 import COLORS from '../../utils/colors';
 import { API_URL } from '../../utils/constants';
 
 const ProfileScreen = ({ navigation }) => {
   const { user, logout, setUser } = useAuth();
+  const { colors, mode, setMode, toggle } = useTheme();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [profileData, setProfileData] = useState(null);
@@ -214,9 +217,9 @@ const ProfileScreen = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.loadingText}>Loading profile...</Text>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Loading profile...</Text>
       </View>
     );
   }
@@ -235,7 +238,7 @@ const ProfileScreen = ({ navigation }) => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={COLORS.primary}
+            tintColor={colors.primary}
           />
         }
       >
@@ -381,6 +384,27 @@ const ProfileScreen = ({ navigation }) => {
         </View>
 
         {/* Logout Button */}
+        {/* Theme toggle */}
+        <View style={[styles.settingsCard, { marginTop: 12 }]}>
+          <TouchableOpacity
+            style={styles.actionItem}
+            onPress={() => {
+              // toggle between light and dark (keeps 'system' intact only if set to system)
+              if (mode === 'system') setMode('dark');
+              else setMode(mode === 'dark' ? 'light' : 'dark');
+            }}
+          >
+            <View style={styles.actionIconContainer}>
+              <Text style={styles.actionIcon}>🌓</Text>
+            </View>
+            <View style={styles.actionContent}>
+              <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>Theme</Text>
+              <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>Current: {mode === 'system' ? `System (${Appearance?.getColorScheme?.() || 'light'})` : mode}</Text>
+            </View>
+            <Text style={[styles.actionArrow, { color: colors.textSecondary }]}>{'›'}</Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
           style={styles.logoutButton}
           onPress={handleLogout}

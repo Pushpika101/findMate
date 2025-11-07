@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import ThemeContext, { ThemeProvider, useTheme } from './src/context/ThemeContext';
 import NotificationHandler from './src/components/NotificationHandler';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
@@ -67,6 +68,7 @@ function AuthNavigator() {
 // Root Navigator
 function RootNavigator() {
   const { loading, isAuthenticated } = useAuth();
+  const { colors, isDark } = useTheme();
 
   if (loading) {
     return (
@@ -91,8 +93,33 @@ function RootNavigator() {
     }
   };
 
+  const navTheme = {
+    dark: !!isDark,
+    colors: {
+      primary: colors.primary,
+      background: colors.background,
+      card: colors.backgroundSecondary,
+      text: colors.textPrimary,
+      border: colors.border,
+      notification: colors.lost
+    }
+  };
+
+  // Provide a minimal `fonts` object to guard against libraries that
+  // expect theme.fonts.medium / fonts.regular to exist. Some internal
+  // header components merge platform-specific font styles from
+  // `theme.fonts`, so providing harmless defaults prevents a crash when
+  // our theme only supplies colors.
+  if (!navTheme.fonts) {
+    navTheme.fonts = {
+      regular: {},
+      medium: {},
+      bold: {},
+    };
+  }
+
   return (
-    <NavigationContainer linking={linking}>
+    <NavigationContainer linking={linking} theme={navTheme}>
       {isAuthenticated ? <MainNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
@@ -102,11 +129,13 @@ function RootNavigator() {
 export default function App() {
   return (
     <AuthProvider>
-      <ErrorBoundary>
-        <RootNavigator />
-        <NotificationHandler />
-      </ErrorBoundary>
-      <StatusBar style="auto" />
+      <ThemeProvider>
+        <ErrorBoundary>
+          <RootNavigator />
+          <NotificationHandler />
+        </ErrorBoundary>
+        <StatusBar style="auto" />
+      </ThemeProvider>
     </AuthProvider>
   );
 }
@@ -132,15 +161,18 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
+      // read colors from context when available
+      const theme = this.context || { colors: COLORS };
+      const c = theme.colors || COLORS;
       return (
-        <View style={styles.loadingContainer}>
-          <Text style={{ color: COLORS.error, fontSize: 18, marginBottom: 12 }}>Something went wrong.</Text>
-          <Text style={{ color: COLORS.textSecondary, fontSize: 13, marginBottom: 12 }}>{this.state.error?.toString()}</Text>
+        <View style={[styles.loadingContainer, { backgroundColor: c.background }]}>
+          <Text style={{ color: c.error, fontSize: 18, marginBottom: 12 }}>Something went wrong.</Text>
+          <Text style={{ color: c.textSecondary, fontSize: 13, marginBottom: 12 }}>{this.state.error?.toString()}</Text>
           <TouchableOpacity
             onPress={() => this.setState({ hasError: false, error: null, info: null })}
-            style={{ paddingVertical: 10, paddingHorizontal: 16, backgroundColor: COLORS.primary, borderRadius: 8 }}
+            style={{ paddingVertical: 10, paddingHorizontal: 16, backgroundColor: c.primary, borderRadius: 8 }}
           >
-            <Text style={{ color: COLORS.white }}>Dismiss</Text>
+            <Text style={{ color: c.white }}>Dismiss</Text>
           </TouchableOpacity>
         </View>
       );
@@ -148,6 +180,9 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+// Consume ThemeContext in ErrorBoundary via contextType so class component can access theme
+ErrorBoundary.contextType = ThemeContext;
 
 const styles = StyleSheet.create({
   loadingContainer: {
