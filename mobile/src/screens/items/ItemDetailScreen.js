@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,6 @@ import {
   Alert,
   ActivityIndicator,
   Share,
-  Linking,
   Dimensions,
   Modal
 } from 'react-native';
@@ -17,7 +16,7 @@ import { API_URL } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import useThemedStyles from '../../hooks/useThemedStyles';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+// Note: MaterialIcons removed as it was unused in this screen
 
 const { width } = Dimensions.get('window');
 
@@ -27,19 +26,61 @@ const ItemDetailScreen = ({ route, navigation }) => {
 
   const styles = useThemedStyles((colors) => ({
     container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', paddingTop: 16, paddingHorizontal: 12, paddingBottom: 8, backgroundColor: 'transparent' },
+    headerButton: { padding: 8 },
+    headerButtonText: { fontSize: 18, color: colors.primary },
+    headerTitle: { fontSize: 18, fontWeight: '700', color: colors.textPrimary, marginLeft: 8 },
+    scrollView: { flex: 1 },
     scrollContainer: { padding: 20 },
-    imageWrapper: { width: '100%', height: 300, borderRadius: 12, overflow: 'hidden', backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center' },
-    image: { width: '100%', height: '100%' },
-    title: { fontSize: 22, fontWeight: '700', color: colors.textPrimary, marginTop: 12 },
-    subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 6 },
-    tag: { marginTop: 8, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
-    tagText: { fontSize: 12, fontWeight: '700', color: colors.black },
-    section: { marginTop: 16 },
-    sectionTitle: { fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 8 },
-    sectionText: { fontSize: 14, color: colors.textSecondary, lineHeight: 20 },
-    footer: { marginTop: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    contactButton: { backgroundColor: colors.primary, paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12 },
-    contactButtonText: { color: colors.white, fontWeight: '700' }
+    imageContainer: { width: '100%', height: 300, borderRadius: 12, overflow: 'hidden', backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center' },
+    itemImage: { width: '100%', height: '100%' },
+    imageIndicatorContainer: { position: 'absolute', bottom: 12, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center' },
+    imageIndicator: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.gray300, marginHorizontal: 4, opacity: 0.6 },
+    imageIndicatorActive: { backgroundColor: colors.white, opacity: 1 },
+    noImageContainer: { width: '100%', height: 300, borderRadius: 12, backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center' },
+    noImageIcon: { fontSize: 48 },
+    noImageText: { fontSize: 14, color: colors.textSecondary, marginTop: 8 },
+    content: { marginTop: 16 },
+    typeBadge: { alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+    typeBadgeText: { fontSize: 12, fontWeight: '700', color: colors.black },
+    itemName: { fontSize: 22, fontWeight: '700', color: colors.textPrimary, marginTop: 12 },
+    resolvedBadge: { marginTop: 8, backgroundColor: colors.success, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start' },
+    resolvedText: { color: colors.white, fontWeight: '700' },
+    detailsGrid: { marginTop: 12, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+    detailCard: { width: '48%', backgroundColor: colors.backgroundSecondary, padding: 12, borderRadius: 8, marginBottom: 8 },
+    detailIcon: { fontSize: 18, marginBottom: 6 },
+    detailLabel: { fontSize: 12, color: colors.textSecondary },
+    detailValue: { fontSize: 14, color: colors.textPrimary, fontWeight: '600' },
+    infoSection: { marginTop: 12 },
+    infoLabel: { fontSize: 13, color: colors.textSecondary, marginBottom: 4 },
+    infoValue: { fontSize: 15, color: colors.textPrimary },
+    description: { fontSize: 14, color: colors.textSecondary, lineHeight: 20 },
+    userSection: { marginTop: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    userInfo: { flexDirection: 'row', alignItems: 'center' },
+    avatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+    avatarText: { color: colors.white, fontWeight: '700' },
+    userName: { fontSize: 15, color: colors.textPrimary, fontWeight: '700' },
+    userLabel: { fontSize: 12, color: colors.textSecondary },
+    postedDate: { fontSize: 12, color: colors.textTertiary },
+    actionButtons: { marginTop: 16, flexDirection: 'row', gap: 8 },
+    actionButton: { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+    editButton: { backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderColor: colors.border },
+    resolveButton: { backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderColor: colors.border },
+    deleteButton: { backgroundColor: colors.error, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
+    claimButton: { backgroundColor: colors.lost },
+    chatButton: { backgroundColor: colors.primary },
+    submitButtonText: { color: colors.white, fontWeight: '700' },
+    modalContainer: { flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' },
+    modalTopClose: { position: 'absolute', top: 32, right: 20, zIndex: 10 },
+    modalTopCloseText: { fontSize: 24, color: colors.white },
+    modalImage: { width: '100%', height: '80%' },
+    modalControls: { position: 'absolute', bottom: 32, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 24 },
+    modalNavButton: { padding: 12 },
+    modalNavText: { fontSize: 18, color: colors.white },
+    modalCloseButton: { paddingHorizontal: 16, paddingVertical: 8, backgroundColor: colors.primary, borderRadius: 8 },
+    modalCloseText: { color: colors.white, fontWeight: '700' },
+    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    loadingText: { marginTop: 12, color: colors.textSecondary }
   }));
   const { user } = useAuth();
   const [item, setItem] = useState(null);
@@ -51,32 +92,8 @@ const ItemDetailScreen = ({ route, navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalIndex, setModalIndex] = useState(0);
 
-  useEffect(() => {
-    fetchItemDetails();
-  }, [itemId]);
-
-  const fetchItemDetails = async () => {
-    try {
-      setLoading(true);
-      const response = await itemsAPI.getById(itemId);
-      if (response.success) {
-        const fetchedItem = response.data.item;
-        setItem(fetchedItem);
-        const raw = [fetchedItem.photo1_url, fetchedItem.photo2_url].filter(Boolean);
-        const imgs = raw.map((uri) => normalizeImageUrl(uri)).filter(Boolean);
-        setImageUrls(imgs);
-        // Debug: log normalized image URLs so we can inspect what RN receives
-        console.log('ItemDetailScreen: normalized imageUrls ->', imgs);
-      }
-    } catch (error) {
-      Alert.alert('Error', error || 'Failed to fetch item details');
-      navigation.goBack();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const normalizeImageUrl = (uri) => {
+  // Normalize image URL helper
+  const normalizeImageUrl = useCallback((uri) => {
     if (!uri) return null;
     const trimmed = String(uri).trim();
 
@@ -97,7 +114,32 @@ const ItemDetailScreen = ({ route, navigation }) => {
 
     // Otherwise treat as a relative path and prefix with API origin
     return apiOrigin + (trimmed.startsWith('/') ? trimmed : `/${trimmed}`);
-  };
+  }, []);
+
+  const fetchItemDetails = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await itemsAPI.getById(itemId);
+      if (response.success) {
+        const fetchedItem = response.data.item;
+        setItem(fetchedItem);
+        const raw = [fetchedItem.photo1_url, fetchedItem.photo2_url].filter(Boolean);
+        const imgs = raw.map((uri) => normalizeImageUrl(uri)).filter(Boolean);
+        setImageUrls(imgs);
+        // Debug: log normalized image URLs so we can inspect what RN receives
+        // console.log('ItemDetailScreen: normalized imageUrls ->', imgs);
+      }
+    } catch (error) {
+      Alert.alert('Error', error || 'Failed to fetch item details');
+      navigation.goBack();
+    } finally {
+      setLoading(false);
+    }
+  }, [itemId, normalizeImageUrl, navigation]);
+
+  useEffect(() => {
+    fetchItemDetails();
+  }, [fetchItemDetails]);
 
   const handleClaimItem = async () => {
     Alert.alert(
@@ -150,31 +192,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleMarkAsResolved = () => {
-    Alert.alert(
-      'Mark as Resolved?',
-      'This will mark the item as found/returned. This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Mark as Resolved',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const response = await itemsAPI.resolve(itemId);
-              if (response.success) {
-                Alert.alert('Success', 'Item marked as resolved!', [
-                  { text: 'OK', onPress: () => navigation.goBack() }
-                ]);
-              }
-            } catch (error) {
-              Alert.alert('Error', error || 'Failed to resolve item');
-            }
-          }
-        }
-      ]
-    );
-  };
+  // (removed unused handleMarkAsResolved) - keep code minimal for this screen
 
   const handleDeleteItem = () => {
     Alert.alert(
@@ -238,7 +256,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
   }
 
   const isOwner = user && user.id === item.user_id;
-  const images = item ? [item.photo1_url, item.photo2_url].filter(Boolean) : [];
+  // imageUrls holds normalized URLs used for display
 
   
 
