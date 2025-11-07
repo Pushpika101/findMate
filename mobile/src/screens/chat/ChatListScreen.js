@@ -114,7 +114,7 @@ const ChatListScreen = ({ navigation }) => {
     chatItem: {
       flexDirection: 'row',
       padding: 16,
-      backgroundColor: colors.backgroundSecondary,
+      backgroundColor: colors.kk2,
       borderRadius: 12,
       marginBottom: 12,
       shadowColor: colors.black,

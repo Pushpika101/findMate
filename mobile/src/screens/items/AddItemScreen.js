@@ -46,8 +46,8 @@ const AddItemScreen = ({ navigation }) => {
   const { colors } = useTheme();
 
   const styles = useThemedStyles((colors) => ({
-    container: { flex: 1, backgroundColor: colors.background },
-    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 16, paddingHorizontal: 20, backgroundColor: colors.background, borderBottomWidth: 1, borderBottomColor: colors.background },
+    container: { flex: 1, backgroundColor: colors.kk2 },
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 16, paddingHorizontal: 20, backgroundColor: colors.kk2, borderBottomWidth: 1, borderBottomColor: colors.background },
     backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
     backButtonText: { fontSize: 28, color: colors.primary },
     headerTitle: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary },

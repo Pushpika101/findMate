@@ -205,7 +205,7 @@ const HomeScreen = ({ navigation }) => {
     listContent: { padding: 20, paddingTop: 16 },
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     loadingText: { marginTop: 12, fontSize: 16, color: colors.textSecondary },
-    itemCard: { backgroundColor: colors.backgroundSecondary, borderRadius: 16, padding: 16, position: 'relative', marginBottom: 16, shadowColor: colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.12, shadowRadius: 8, elevation: 3 },
+    itemCard: { backgroundColor: colors.kk2, borderRadius: 16, padding: 16, position: 'relative', marginBottom: 16, shadowColor: colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.12, shadowRadius: 8, elevation: 3 },
     thumbnailContainer: { width: 125, height: 125, marginLeft: 12, borderRadius: 12, overflow: 'hidden', backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center' },
     thumbnailImage: { width: '100%', height: '100%' },
     thumbnailPlaceholder: { justifyContent: 'center', alignItems: 'center' },

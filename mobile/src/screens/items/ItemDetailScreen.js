@@ -52,7 +52,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
     resolvedBadge: { marginTop: 8, backgroundColor: colors.success, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start' },
     resolvedText: { color: colors.white, fontWeight: '700' },
     detailsGrid: { marginTop: 12, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-    detailCard: { width: '48%', backgroundColor: colors.backgroundSecondary, padding: 12, borderRadius: 8, marginBottom: 8 },
+    detailCard: { width: '48%', backgroundColor: colors.kk2, padding: 12, borderRadius: 8, marginBottom: 8 },
     detailIcon: { fontSize: 18, marginBottom: 6 },
     detailLabel: { fontSize: 12, color: colors.textSecondary },
     detailValue: { fontSize: 14, color: colors.textPrimary, fontWeight: '600' },
@@ -87,7 +87,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
     modalControls: { position: 'absolute', bottom: 32, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 24 },
     modalNavButton: { padding: 12 },
     modalNavText: { fontSize: 18, color: colors.white },
-    modalCloseButton: { paddingHorizontal: 16, paddingVertical: 8, backgroundColor: colors.primary, borderRadius: 8 },
+    modalCloseButton: { paddingHorizontal: 106, paddingVertical: 15, backgroundColor: colors.lost, borderRadius: 8 },
     modalCloseText: { color: colors.white, fontWeight: '700' },
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     loadingText: { marginTop: 12, color: colors.textSecondary }
