@@ -29,10 +29,10 @@ const ItemDetailScreen = ({ route, navigation }) => {
 
   const styles = useThemedStyles((colors) => ({
     container: { flex: 1, backgroundColor: colors.background },
-    header: { flexDirection: 'row', alignItems: 'center', paddingTop: 16, paddingHorizontal: 12, paddingBottom: 8, backgroundColor: 'transparent' },
-    headerButton: { padding: 8 },
-  headerButtonText: { fontSize: 18, color: colors.textPrimary },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: colors.primary, marginLeft: 8 },
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 16, paddingHorizontal: 20, backgroundColor: colors.background },
+    headerButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
+  headerButtonText: { fontSize: 28, color: colors.primary },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: colors.textPrimary },
   scrollView: { flex: 1 },
   // content container for ScrollView: provides left/right padding and extra bottom space
   scrollContainer: { padding: HORIZONTAL_PADDING, paddingBottom: 40 },
@@ -281,7 +281,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
           <Text style={styles.headerButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Item Details</Text>
-          {/* header share removed as requested */}
+        <View style={{ width: 40 }} />
       </View>
 
   <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
