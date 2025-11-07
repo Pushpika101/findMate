@@ -281,7 +281,7 @@ const AddItemScreen = ({ navigation }) => {
             style={[
               styles.typeButton,
               formData.type === 'lost' && styles.typeButtonActive,
-              { backgroundColor: formData.type === 'lost' ? COLORS.lost : COLORS.white }
+              { backgroundColor: formData.type === 'lost' ? colors.lost : colors.white }
             ]}
             onPress={() => handleInputChange('type', 'lost')}
           >
@@ -297,7 +297,7 @@ const AddItemScreen = ({ navigation }) => {
             style={[
               styles.typeButton,
               formData.type === 'found' && styles.typeButtonActive,
-              { backgroundColor: formData.type === 'found' ? COLORS.found : COLORS.white }
+              { backgroundColor: formData.type === 'found' ? colors.found : colors.white }
             ]}
             onPress={() => handleInputChange('type', 'found')}
           >
@@ -313,10 +313,10 @@ const AddItemScreen = ({ navigation }) => {
         {/* Item Name */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Item Name *</Text>
-          <TextInput
+            <TextInput
             style={[styles.input, errors.item_name && styles.inputError]}
             placeholder="e.g., Blue Backpack, iPhone 13, Calculator"
-            placeholderTextColor={COLORS.gray400}
+            placeholderTextColor={colors.gray400}
             value={formData.item_name}
             onChangeText={(text) => handleInputChange('item_name', text)}
           />
@@ -369,7 +369,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="e.g., Nike, Apple, Casio"
-            placeholderTextColor={COLORS.gray400}
+            placeholderTextColor={colors.gray400}
             value={formData.brand}
             onChangeText={(text) => handleInputChange('brand', text)}
           />
@@ -381,7 +381,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={[styles.input, errors.location && styles.inputError]}
             placeholder="e.g., Main Library, Engineering Faculty"
-            placeholderTextColor={COLORS.gray400}
+            placeholderTextColor={colors.gray400}
             value={formData.location}
             onChangeText={(text) => handleInputChange('location', text)}
           />
@@ -409,7 +409,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={[styles.input, errors.date && styles.inputError]}
             placeholder="YYYY-MM-DD"
-            placeholderTextColor={COLORS.gray400}
+            placeholderTextColor={colors.gray400}
             value={formData.date}
             onChangeText={(text) => handleInputChange('date', text)}
           />
@@ -421,10 +421,10 @@ const AddItemScreen = ({ navigation }) => {
         {/* Time */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Time (Optional)</Text>
-          <TextInput
+            <TextInput
             style={styles.input}
             placeholder="HH:MM (e.g., 14:30)"
-            placeholderTextColor={COLORS.gray400}
+            placeholderTextColor={colors.gray400}
             value={formData.time}
             onChangeText={(text) => handleInputChange('time', text)}
           />
@@ -436,7 +436,7 @@ const AddItemScreen = ({ navigation }) => {
           <TextInput
             style={[styles.input, styles.textArea]}
             placeholder="Add any additional details that might help..."
-            placeholderTextColor={COLORS.gray400}
+            placeholderTextColor={colors.gray400}
             value={formData.description}
             onChangeText={(text) => handleInputChange('description', text)}
             multiline
@@ -499,16 +499,16 @@ const AddItemScreen = ({ navigation }) => {
 
         {/* Submit Button */}
         <TouchableOpacity
-          style={[
+            style={[
             styles.submitButton,
             loading && styles.submitButtonDisabled,
-            { backgroundColor: formData.type === 'lost' ? COLORS.lost : COLORS.found }
+            { backgroundColor: formData.type === 'lost' ? colors.lost : colors.found }
           ]}
           onPress={handleSubmit}
           disabled={loading}
         >
           {loading ? (
-            <ActivityIndicator color={COLORS.white} />
+            <ActivityIndicator color={colors.white} />
           ) : (
             <Text style={styles.submitButtonText}>
               Report {formData.type === 'lost' ? 'Lost' : 'Found'} Item

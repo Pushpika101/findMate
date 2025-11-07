@@ -88,8 +88,8 @@ export const DARK_COLORS = {
   found: '#34d399',
 
   // Neutrals
-  white: '#000000',
-  black: '#FFFFFF',
+  white: '#FFFFFF',
+  black: '#000000',
   kk: '#0c1b38ff',
   kk2: '#071224',
 

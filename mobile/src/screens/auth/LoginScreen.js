@@ -23,6 +23,141 @@ const LoginScreen = ({ navigation }) => {
   // No inline resend UI; navigate to VerifyOtp when needed
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState(null);
+
+  const { colors } = useTheme();
+  const styles = useThemedStyles((c) => ({
+    container: {
+      flex: 1,
+      backgroundColor: c.background
+    },
+    scrollContent: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      padding: 24
+    },
+    header: {
+      marginBottom: 40,
+      alignItems: 'center'
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: c.textPrimary,
+      marginBottom: 8
+    },
+    subtitle: {
+      fontSize: 16,
+      color: c.textSecondary,
+      textAlign: 'center'
+    },
+    form: {
+      width: '100%'
+    },
+    inputContainer: {
+      marginBottom: 20
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: c.textPrimary,
+      marginBottom: 8
+    },
+    input: {
+      height: 50,
+      borderWidth: 1,
+      borderColor: c.border,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      fontSize: 16,
+      backgroundColor: c.white
+    },
+    inputError: {
+      borderColor: c.error
+    },
+    errorText: {
+      color: c.error,
+      fontSize: 12,
+      marginTop: 4
+    },
+    forgotButton: {
+      alignSelf: 'flex-end',
+      marginBottom: 24
+    },
+    forgotText: {
+      color: c.primary,
+      fontSize: 14,
+      fontWeight: '600'
+    },
+    loginButton: {
+      height: 50,
+      backgroundColor: c.primary,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 16
+    },
+    loginButtonDisabled: {
+      opacity: 0.6
+    },
+    loginButtonText: {
+      color: c.white,
+      fontSize: 16,
+      fontWeight: '600'
+    },
+    signupContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    signupText: {
+      color: c.textSecondary,
+      fontSize: 14
+    },
+    signupLink: {
+      color: c.primary,
+      fontSize: 14,
+      fontWeight: '600'
+    },
+    resendContainer: {
+      marginTop: 18,
+      alignItems: 'center'
+    },
+    resendMessage: {
+      color: c.textSecondary,
+      fontSize: 13,
+      marginBottom: 8,
+      textAlign: 'center'
+    },
+    resendButton: {
+      height: 44,
+      backgroundColor: c.lost,
+      borderRadius: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 16
+    },
+    resendButtonText: {
+      color: c.white,
+      fontSize: 14,
+      fontWeight: '600'
+    },
+    inputWithToggle: {
+      position: 'relative'
+    },
+    showButton: {
+      position: 'absolute',
+      right: 12,
+      top: 12,
+      paddingVertical: 4,
+      paddingHorizontal: 8
+    },
+    showButtonText: {
+      color: c.primary,
+      fontWeight: '600'
+    }
+  }));
 
   const validateForm = () => {
     const newErrors = {};
@@ -187,137 +322,5 @@ const LoginScreen = ({ navigation }) => {
     </KeyboardAvoidingView>
   );
 };
-
-const styles = useThemedStyles((c) => ({
-  container: {
-    flex: 1,
-    backgroundColor: c.background
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: 24
-  },
-  header: {
-    marginBottom: 40,
-    alignItems: 'center'
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: c.textPrimary,
-    marginBottom: 8
-  },
-  subtitle: {
-    fontSize: 16,
-    color: c.textSecondary,
-    textAlign: 'center'
-  },
-  form: {
-    width: '100%'
-  },
-  inputContainer: {
-    marginBottom: 20
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: c.textPrimary,
-    marginBottom: 8
-  },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: c.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    backgroundColor: c.white
-  },
-  inputError: {
-    borderColor: c.error
-  },
-  errorText: {
-    color: c.error,
-    fontSize: 12,
-    marginTop: 4
-  },
-  forgotButton: {
-    alignSelf: 'flex-end',
-    marginBottom: 24
-  },
-  forgotText: {
-    color: c.primary,
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  loginButton: {
-    height: 50,
-    backgroundColor: c.primary,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16
-  },
-  loginButtonDisabled: {
-    opacity: 0.6
-  },
-  loginButtonText: {
-    color: c.white,
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  signupText: {
-    color: c.textSecondary,
-    fontSize: 14
-  },
-  signupLink: {
-    color: c.primary,
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  resendContainer: {
-    marginTop: 18,
-    alignItems: 'center'
-  },
-  resendMessage: {
-    color: c.textSecondary,
-    fontSize: 13,
-    marginBottom: 8,
-    textAlign: 'center'
-  },
-  resendButton: {
-    height: 44,
-    backgroundColor: c.lost,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16
-  },
-  resendButtonText: {
-    color: c.white,
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  inputWithToggle: {
-    position: 'relative'
-  },
-  showButton: {
-    position: 'absolute',
-    right: 12,
-    top: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 8
-  },
-  showButtonText: {
-    color: c.primary,
-    fontWeight: '600'
-  }
-}));
 
 export default LoginScreen;

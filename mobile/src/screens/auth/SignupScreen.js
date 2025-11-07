@@ -29,6 +29,50 @@ const SignupScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const { colors } = useTheme();
+  const styles = useThemedStyles((c) => ({
+    container: {
+      flex: 1,
+      backgroundColor: c.background
+    },
+    scrollContent: {
+      flexGrow: 1,
+      padding: 24,
+      paddingTop: 60
+    },
+    header: {
+      marginBottom: 32,
+      alignItems: 'center'
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: c.textPrimary,
+      marginBottom: 8
+    },
+    subtitle: {
+      fontSize: 16,
+      color: c.textSecondary,
+      textAlign: 'center'
+    },
+    form: { width: '100%' },
+    inputContainer: { marginBottom: 20 },
+    label: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 8 },
+    input: { height: 50, borderWidth: 1, borderColor: c.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: c.white },
+    inputError: { borderColor: c.error },
+    errorText: { color: c.error, fontSize: 12, marginTop: 4 },
+    signupButton: { height: 50, backgroundColor: c.primary, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 16 },
+    signupButtonDisabled: { opacity: 0.6 },
+    signupButtonText: { color: c.white, fontSize: 16, fontWeight: '600' },
+    termsText: { fontSize: 12, color: c.textSecondary, textAlign: 'center', marginBottom: 24, lineHeight: 18 },
+    loginContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingBottom: 24 },
+    loginText: { color: c.textSecondary, fontSize: 14 },
+    loginLink: { color: c.primary, fontSize: 14, fontWeight: '600' },
+    inputWithToggle: { position: 'relative' },
+    showButton: { position: 'absolute', right: 12, top: 12, paddingVertical: 4, paddingHorizontal: 8 },
+    showButtonText: { color: c.primary, fontWeight: '600' }
+  }));
+
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
     // Clear error for this field
@@ -249,114 +293,5 @@ const SignupScreen = ({ navigation }) => {
     </KeyboardAvoidingView>
   );
 };
-
-const styles = useThemedStyles((c) => ({
-  container: {
-    flex: 1,
-    backgroundColor: c.background
-  },
-  scrollContent: {
-    flexGrow: 1,
-    padding: 24,
-    paddingTop: 60
-  },
-  header: {
-    marginBottom: 32,
-    alignItems: 'center'
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: c.textPrimary,
-    marginBottom: 8
-  },
-  subtitle: {
-    fontSize: 16,
-    color: c.textSecondary,
-    textAlign: 'center'
-  },
-  form: {
-    width: '100%'
-  },
-  inputContainer: {
-    marginBottom: 20
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: c.textPrimary,
-    marginBottom: 8
-  },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: c.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    backgroundColor: c.white
-  },
-  inputError: {
-    borderColor: c.error
-  },
-  errorText: {
-    color: c.error,
-    fontSize: 12,
-    marginTop: 4
-  },
-  signupButton: {
-    height: 50,
-    backgroundColor: c.primary,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 16
-  },
-  signupButtonDisabled: {
-    opacity: 0.6
-  },
-  signupButtonText: {
-    color: c.white,
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  termsText: {
-    fontSize: 12,
-    color: c.textSecondary,
-    textAlign: 'center',
-    marginBottom: 24,
-    lineHeight: 18
-  },
-  loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: 24
-  },
-  loginText: {
-    color: c.textSecondary,
-    fontSize: 14
-  },
-  loginLink: {
-    color: c.primary,
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  inputWithToggle: {
-    position: 'relative'
-  },
-  showButton: {
-    position: 'absolute',
-    right: 12,
-    top: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 8
-  },
-  showButtonText: {
-    color: c.primary,
-    fontWeight: '600'
-  }
-}));
 
 export default SignupScreen;

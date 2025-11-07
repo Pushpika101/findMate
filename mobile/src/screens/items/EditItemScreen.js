@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
   Alert,
   ActivityIndicator,
@@ -13,7 +12,8 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { itemsAPI } from '../../services/api';
-import COLORS from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
+import useThemedStyles from '../../hooks/useThemedStyles';
 import { ITEM_CATEGORIES, ITEM_COLORS } from '../../utils/constants';
 
 const EditItemScreen = ({ route, navigation }) => {
@@ -34,6 +34,57 @@ const EditItemScreen = ({ route, navigation }) => {
   const [photos, setPhotos] = useState({ photo1: null, photo2: null });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const { colors } = useTheme();
+  const styles = useThemedStyles((c) => ({
+    container: { flex: 1, backgroundColor: c.background },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingTop: 50,
+      paddingBottom: 16,
+      paddingHorizontal: 20,
+      backgroundColor: c.white,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border
+    },
+    backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
+    backButtonText: { fontSize: 28, color: c.primary },
+    headerTitle: { fontSize: 18, fontWeight: 'bold', color: c.textPrimary },
+    placeholder: { width: 40 },
+    scrollView: { flex: 1 },
+    scrollContent: { padding: 20 },
+    typeSelector: { flexDirection: 'row', marginBottom: 24, gap: 12 },
+    typeButton: { flex: 1, paddingVertical: 16, borderRadius: 12, borderWidth: 2, borderColor: c.border, alignItems: 'center' },
+    typeButtonActive: { borderColor: 'transparent' },
+    typeButtonText: { fontSize: 16, fontWeight: '600', color: c.textSecondary },
+    typeButtonTextActive: { color: c.white },
+    inputContainer: { marginBottom: 20 },
+    label: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 8 },
+    input: { height: 50, borderWidth: 1, borderColor: c.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: c.white },
+    inputError: { borderColor: c.error },
+    errorText: { color: c.error, fontSize: 12, marginTop: 4 },
+    textArea: { height: 100, paddingTop: 12, textAlignVertical: 'top' },
+    locationChip: { paddingHorizontal: 12, paddingVertical: 6, backgroundColor: c.black, borderRadius: 16, marginRight: 8 },
+    locationChipText: { fontSize: 12, color: c.primary, fontWeight: '600' },
+    chipSelected: { backgroundColor: c.primary },
+    chipSelectedText: { color: c.white, fontWeight: '700' },
+    photoContainer: { flexDirection: 'row', gap: 12 },
+    photoBox: { flex: 1, aspectRatio: 1, borderRadius: 12, overflow: 'hidden' },
+    photoPlaceholder: { flex: 1, backgroundColor: c.gray100, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: c.border, borderStyle: 'dashed', borderRadius: 12 },
+    photoPlaceholderIcon: { fontSize: 32, marginBottom: 8 },
+    photoPlaceholderText: { fontSize: 12, color: c.textSecondary, fontWeight: '600' },
+    photoPreview: { flex: 1, position: 'relative' },
+    photoImage: { width: '100%', height: '100%' },
+    removePhotoButton: { position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: 14, backgroundColor: c.error, justifyContent: 'center', alignItems: 'center' },
+    removePhotoText: { color: c.white, fontSize: 16, fontWeight: 'bold' },
+    submitButton: { height: 54, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 8, backgroundColor: c.primary },
+    submitButtonDisabled: { opacity: 0.6 },
+    submitButtonText: { color: c.white, fontSize: 16, fontWeight: 'bold' },
+    bottomPadding: { height: 40 },
+    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' }
+  }));
 
   useEffect(() => {
     if (initialItem) {
@@ -197,7 +248,7 @@ const EditItemScreen = ({ route, navigation }) => {
   if (loading && !initialItem) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -216,14 +267,14 @@ const EditItemScreen = ({ route, navigation }) => {
         {/* Type Selector */}
         <View style={styles.typeSelector}>
           <TouchableOpacity
-            style={[styles.typeButton, formData.type === 'lost' && styles.typeButtonActive, { backgroundColor: formData.type === 'lost' ? COLORS.lost : COLORS.white }]}
+            style={[styles.typeButton, formData.type === 'lost' && styles.typeButtonActive, { backgroundColor: formData.type === 'lost' ? colors.lost : colors.white }]}
             onPress={() => handleInputChange('type', 'lost')}
           >
             <Text style={[styles.typeButtonText, formData.type === 'lost' && styles.typeButtonTextActive]}>🔍 Lost Item</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.typeButton, formData.type === 'found' && styles.typeButtonActive, { backgroundColor: formData.type === 'found' ? COLORS.found : COLORS.white }]}
+            style={[styles.typeButton, formData.type === 'found' && styles.typeButtonActive, { backgroundColor: formData.type === 'found' ? colors.found : colors.white }]}
             onPress={() => handleInputChange('type', 'found')}
           >
             <Text style={[styles.typeButtonText, formData.type === 'found' && styles.typeButtonTextActive]}>✨ Found Item</Text>
@@ -356,7 +407,7 @@ const EditItemScreen = ({ route, navigation }) => {
         </View>
 
         <TouchableOpacity style={[styles.submitButton, loading && styles.submitButtonDisabled]} onPress={handleSubmit} disabled={loading}>
-          {loading ? <ActivityIndicator color={COLORS.white} /> : <Text style={styles.submitButtonText}>Save Changes</Text>}
+          {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.submitButtonText}>Save Changes</Text>}
         </TouchableOpacity>
 
         <View style={styles.bottomPadding} />
@@ -365,53 +416,6 @@ const EditItemScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 50,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.white,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border
-  },
-  backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  backButtonText: { fontSize: 28, color: COLORS.primary },
-  headerTitle: { fontSize: 18, fontWeight: 'bold', color: COLORS.textPrimary },
-  placeholder: { width: 40 },
-  scrollView: { flex: 1 },
-  scrollContent: { padding: 20 },
-  typeSelector: { flexDirection: 'row', marginBottom: 24, gap: 12 },
-  typeButton: { flex: 1, paddingVertical: 16, borderRadius: 12, borderWidth: 2, borderColor: COLORS.border, alignItems: 'center' },
-  typeButtonActive: { borderColor: 'transparent' },
-  typeButtonText: { fontSize: 16, fontWeight: '600', color: COLORS.textSecondary },
-  typeButtonTextActive: { color: COLORS.white },
-  inputContainer: { marginBottom: 20 },
-  label: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary, marginBottom: 8 },
-  input: { height: 50, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: COLORS.white },
-  inputError: { borderColor: COLORS.error },
-  errorText: { color: COLORS.error, fontSize: 12, marginTop: 4 },
-  textArea: { height: 100, paddingTop: 12, textAlignVertical: 'top' },
-  locationChip: { paddingHorizontal: 12, paddingVertical: 6, backgroundColor: COLORS.black, borderRadius: 16, marginRight: 8 },
-  locationChipText: { fontSize: 12, color: COLORS.primary, fontWeight: '600' },
-  chipSelected: { backgroundColor: COLORS.primary },
-  chipSelectedText: { color: COLORS.white, fontWeight: '700' },
-  photoContainer: { flexDirection: 'row', gap: 12 },
-  photoBox: { flex: 1, aspectRatio: 1, borderRadius: 12, overflow: 'hidden' },
-  photoPlaceholder: { flex: 1, backgroundColor: COLORS.gray100, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: COLORS.border, borderStyle: 'dashed', borderRadius: 12 },
-  photoPlaceholderIcon: { fontSize: 32, marginBottom: 8 },
-  photoPlaceholderText: { fontSize: 12, color: COLORS.textSecondary, fontWeight: '600' },
-  photoPreview: { flex: 1, position: 'relative' },
-  photoImage: { width: '100%', height: '100%' },
-  removePhotoButton: { position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: 14, backgroundColor: COLORS.error, justifyContent: 'center', alignItems: 'center' },
-  removePhotoText: { color: COLORS.white, fontSize: 16, fontWeight: 'bold' },
-  submitButton: { height: 54, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 8, backgroundColor: COLORS.primary },
-  submitButtonDisabled: { opacity: 0.6 },
-  submitButtonText: { color: COLORS.white, fontSize: 16, fontWeight: 'bold' },
-  bottomPadding: { height: 40 },
-});
+// styles are created with useThemedStyles inside the component
 
 export default EditItemScreen;
