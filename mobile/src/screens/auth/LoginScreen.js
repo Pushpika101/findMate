@@ -44,7 +44,7 @@ const LoginScreen = ({ navigation }) => {
     title: {
       fontSize: 32,
       fontWeight: 'bold',
-      color: c.textPrimary,
+      color: c.textInverse,
       marginBottom: 8
     },
     subtitle: {
@@ -61,7 +61,7 @@ const LoginScreen = ({ navigation }) => {
     label: {
       fontSize: 14,
       fontWeight: '600',
-      color: c.textPrimary,
+      color: c.textInverse,
       marginBottom: 8
     },
     input: {
@@ -86,7 +86,7 @@ const LoginScreen = ({ navigation }) => {
       marginBottom: 24
     },
     forgotText: {
-      color: c.primary,
+      color: c.textInverse,
       fontSize: 14,
       fontWeight: '600'
     },

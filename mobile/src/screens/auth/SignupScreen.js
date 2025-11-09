@@ -47,7 +47,7 @@ const SignupScreen = ({ navigation }) => {
     title: {
       fontSize: 32,
       fontWeight: 'bold',
-      color: c.textPrimary,
+      color: c.textInverse,
       marginBottom: 8
     },
     subtitle: {
@@ -57,7 +57,7 @@ const SignupScreen = ({ navigation }) => {
     },
     form: { width: '100%' },
     inputContainer: { marginBottom: 20 },
-    label: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 8 },
+    label: { fontSize: 14, fontWeight: '600', color: c.textInverse, marginBottom: 8 },
     input: { height: 50, borderWidth: 1, borderColor: c.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: c.white },
     inputError: { borderColor: c.error },
     errorText: { color: c.error, fontSize: 12, marginTop: 4 },

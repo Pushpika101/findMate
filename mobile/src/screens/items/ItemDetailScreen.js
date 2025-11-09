@@ -511,13 +511,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
       >
         <View style={styles.modalContainer}>
           {/* Top-right close for quick exit (visible even if image fails) */}
-          <TouchableOpacity
-            onPress={() => setIsModalVisible(false)}
-            style={styles.modalTopClose}
-            accessibilityLabel="Close image viewer"
-          >
-            <Text style={styles.modalTopCloseText}>✕</Text>
-          </TouchableOpacity>
+          
 
           {imageUrls.length > 1 && (
             <>
@@ -559,7 +553,6 @@ const ItemDetailScreen = ({ route, navigation }) => {
               onPress={() => setModalIndex((i) => (i - 1 + imageUrls.length) % imageUrls.length)}
               disabled={imageUrls.length <= 1}
             >
-              <Text style={styles.modalNavText}>◀</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -574,7 +567,6 @@ const ItemDetailScreen = ({ route, navigation }) => {
               onPress={() => setModalIndex((i) => (i + 1) % imageUrls.length)}
               disabled={imageUrls.length <= 1}
             >
-              <Text style={styles.modalNavText}>▶</Text>
             </TouchableOpacity>
           </View>
         </View>
