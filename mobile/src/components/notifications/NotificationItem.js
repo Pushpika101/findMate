@@ -55,7 +55,7 @@ const NotificationItem = ({ notification, onPress, onDelete }) => {
     container: {
       flexDirection: 'row',
       padding: 16,
-      backgroundColor: colors.white,
+      backgroundColor: colors.kk2,
       borderRadius: 12,
       marginBottom: 12,
       shadowColor: colors.black,
@@ -66,7 +66,7 @@ const NotificationItem = ({ notification, onPress, onDelete }) => {
     },
     unreadContainer: {
       backgroundColor: colors.kk2,
-      borderLeftWidth: 3,
+      borderLeftWidth: 5,
       borderLeftColor: colors.lost
     },
     iconContainer: {

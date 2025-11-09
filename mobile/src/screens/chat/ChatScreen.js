@@ -81,7 +81,7 @@ const ChatScreen = ({ route, navigation }) => {
     emptyText: { fontSize: 18, fontWeight: '600', color: c.textPrimary, marginBottom: 8 },
     emptySubtext: { fontSize: 14, color: c.textSecondary },
     inputContainer: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: c.background, borderTopWidth: 1, borderTopColor: c.border, gap: 12 },
-    input: { flex: 1, minHeight: 40, maxHeight: 100, paddingHorizontal: 16, paddingVertical: 10, backgroundColor: c.gray100, borderRadius: 20, fontSize: 15, color: c.textPrimary },
+    input: { flex: 1, minHeight: 40, maxHeight: 100, paddingHorizontal: 16, paddingVertical: 10, backgroundColor: c.gray100, borderRadius: 20, fontSize: 15, color: c.textInverse },
     sendButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
     sendButtonDisabled: { opacity: 0.5 },
     sendButtonText: { fontSize: 20, color: c.black }
