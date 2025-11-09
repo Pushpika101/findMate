@@ -67,7 +67,7 @@ const NotificationItem = ({ notification, onPress, onDelete }) => {
     unreadContainer: {
       backgroundColor: colors.kk2,
       borderLeftWidth: 5,
-      borderLeftColor: colors.lost
+      borderLeftColor: colors.primaryDark
     },
     iconContainer: {
       width: 48,
