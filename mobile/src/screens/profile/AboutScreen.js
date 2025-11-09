@@ -48,7 +48,7 @@ const AboutScreen = ({ navigation }) => {
 
       <Text style={styles.sectionTitle}>Credits & contact</Text>
       <Text style={styles.paragraph}>
-        Built by Pushpika Anuradha. For feedback, bug reports, or partnership inquiries: pushpikaanuradhagmail.com
+        Built by Pushpika Anuradha. For feedback, bug reports, or partnership inquiries: pushpikaanuradha@gmail.com
       </Text>
 
       <Text style={styles.sectionTitle}>Version & tech</Text>

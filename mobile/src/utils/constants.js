@@ -13,6 +13,7 @@ export const ITEM_CATEGORIES = [
   { label: 'Laptop', value: 'Laptop' },
   { label: 'Tablet', value: 'Tablet' },
   { label: 'Keys', value: 'Keys' },
+  { label: 'Earphones', value: 'Earphones' },
   { label: 'Wallet', value: 'Wallet' },
   { label: 'Books', value: 'Books' },
   { label: 'Clothing', value: 'Clothing' },
