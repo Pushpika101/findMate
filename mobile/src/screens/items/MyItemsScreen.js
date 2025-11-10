@@ -32,7 +32,7 @@ const MyItemsScreen = ({ navigation }) => {
       borderBottomColor: c.background
     },
     backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-    backButtonText: { fontSize: 28, color: c.primary },
+    backButtonText: { fontSize: 28, color: c.textInverse },
     headerTitle: { fontSize: 18, fontWeight: 'bold', color: c.textInverse },
     placeholder: { width: 40 },
     filterContainer: { flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 16, gap: 8, backgroundColor: c.background, borderBottomWidth: 1, borderBottomColor: c.border },

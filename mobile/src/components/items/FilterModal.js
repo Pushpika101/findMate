@@ -75,7 +75,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
     modalTitle: {
       fontSize: 20,
       fontWeight: 'bold',
-      color: c.textPrimary
+      color: c.textInverse
     },
     closeButton: {
       width: 32,
@@ -98,7 +98,7 @@ const FilterModal = ({ visible, onClose, onApply, currentFilters }) => {
     filterLabel: {
       fontSize: 16,
       fontWeight: '600',
-      color: c.textPrimary,
+      color: c.textInverse,
       marginBottom: 12
     },
     pickerContainer: {

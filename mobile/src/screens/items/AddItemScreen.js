@@ -49,7 +49,7 @@ const AddItemScreen = ({ navigation }) => {
     container: { flex: 1, backgroundColor: colors.kk2 },
     header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 16, paddingHorizontal: 20, backgroundColor: colors.kk2, borderBottomWidth: 1, borderBottomColor: colors.background },
     backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-    backButtonText: { fontSize: 28, color: colors.primary },
+    backButtonText: { fontSize: 28, color: colors.textInverse },
     headerTitle: { fontSize: 18, fontWeight: 'bold', color: colors.textInverse },
     placeholder: { width: 40 },
     scrollView: { flex: 1 },

@@ -58,7 +58,7 @@ const EditProfileScreen = ({ navigation, route }) => {
     placeholder: { width: 40 },
     field: { marginBottom: 16 },
     label: { fontSize: 13, color: c.textSecondary, marginBottom: 6 },
-    input: { backgroundColor: c.white, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: c.border },
+  input: { backgroundColor: c.white, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: c.border, color: c.textPrimary },
     saveButton: { marginTop: 12, backgroundColor: c.primary, paddingVertical: 14, borderRadius: 10, alignItems: 'center' },
     saveButtonText: { color: c.white, fontWeight: '700' },
     photoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
@@ -69,7 +69,7 @@ const EditProfileScreen = ({ navigation, route }) => {
     cameraIcon: { position: 'absolute', bottom: 0, right: 0, width: 28, height: 28, borderRadius: 14, backgroundColor: c.white, borderWidth: 1, borderColor: c.primary, justifyContent: 'center', alignItems: 'center' },
     cameraIconText: { fontSize: 12 },
     readOnlyField: { marginBottom: 12 },
-    readOnlyText: { backgroundColor: c.white, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: c.border, color: c.textPrimary }
+  readOnlyText: { backgroundColor: c.white, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: c.border, color: c.textSecondary }
   }));
 
   const deriveStudentIdFromEmail = (email) => {

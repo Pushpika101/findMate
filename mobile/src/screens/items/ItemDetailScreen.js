@@ -31,7 +31,7 @@ const ItemDetailScreen = ({ route, navigation }) => {
     container: { flex: 1, backgroundColor: colors.background },
     header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 16, paddingHorizontal: 20, backgroundColor: colors.background },
     headerButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  headerButtonText: { fontSize: 28, color: colors.primary },
+  headerButtonText: { fontSize: 28, color: colors.textInverse },
   headerTitle: { fontSize: 18, fontWeight: '700', color: colors.textInverse },
   scrollView: { flex: 1 },
   // content container for ScrollView: provides left/right padding and extra bottom space

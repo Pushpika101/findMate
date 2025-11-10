@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TouchableOpacity, View, Text, Animated, Platform } from 'react-native';
+import { TouchableOpacity, View, Text, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AppState } from 'react-native';
 import HomeScreen from '../screens/home/HomeScreen';
@@ -32,96 +32,35 @@ const ChatsScreen = () => {
 
 // (use actual NotificationsScreen & ProfileScreen imported above)
 
-// Animated Add Button
+// Static Add Button (no animation)
 const AnimatedAddButton = ({ onPress, isFocused }) => {
-  const navigation = useNavigation();
   const { colors } = useTheme();
-  // Start hidden and animate in when mounted or when navigation state changes
-  const scaleAnim = React.useRef(new Animated.Value(0)).current;
-  const rotateAnim = React.useRef(new Animated.Value(0)).current;
-  const opacityAnim = React.useRef(new Animated.Value(0)).current;
-
-  React.useEffect(() => {
-    Animated.spring(rotateAnim, {
-      toValue: isFocused ? 1 : 0,
-      useNativeDriver: true,
-      friction: 5,
-    }).start();
-  }, [isFocused]);
-
-  // Appear animation on mount
-  React.useEffect(() => {
-    Animated.parallel([
-      Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, friction: 7 }),
-      Animated.timing(opacityAnim, { toValue: 1, duration: 220, useNativeDriver: true })
-    ]).start();
-
-    // Re-appear when navigation state changes (e.g., returning from AddItem)
-    const unsubscribe = navigation.addListener('state', () => {
-      // Only animate in if currently hidden
-      opacityAnim.stopAnimation((val) => {
-        if (val === 0) {
-          scaleAnim.setValue(0);
-          opacityAnim.setValue(0);
-          rotateAnim.setValue(0); // reset rotation back to plus
-          Animated.parallel([
-            Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, friction: 7 }),
-            Animated.timing(opacityAnim, { toValue: 1, duration: 220, useNativeDriver: true }),
-            Animated.timing(rotateAnim, { toValue: 0, duration: 220, useNativeDriver: true })
-          ]).start();
-        }
-      });
-    });
-
-    return unsubscribe;
-  }, []);
-
-  const handlePress = () => {
-    // Navigate immediately for snappy UX, then run a short vanish animation for polish
-    try {
-      onPress();
-    } catch (e) {
-      // ignore navigation errors
-    }
-
-    Animated.parallel([
-      Animated.spring(scaleAnim, { toValue: 0, useNativeDriver: true, friction: 8 }),
-      Animated.timing(opacityAnim, { toValue: 0, duration: 140, useNativeDriver: true }),
-      Animated.timing(rotateAnim, { toValue: 1, duration: 160, useNativeDriver: true })
-    ]).start();
-  };
-
-  const rotation = rotateAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '0deg'],
-  });
-
   return (
     <TouchableOpacity
       style={{
         width: 70,
         height: 70,
         borderRadius: 28,
-  backgroundColor: colors.primary,
+        backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
         left: '50%',
         marginLeft: -35, // half width to center
         top: -24,
-  shadowColor: colors.primary,
+        shadowColor: colors.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
         elevation: 8,
         zIndex: 999,
       }}
-      onPress={handlePress}
+      onPress={onPress}
       activeOpacity={0.9}
     >
-        <Animated.View style={{ transform: [{ scale: scaleAnim }, { rotate: rotation }], opacity: opacityAnim }}>
-          <Text style={{ fontSize: 32, color: colors.black, fontWeight: '300', marginTop: -4 }}>+</Text>
-        </Animated.View>
+      <View>
+        <Text style={{ fontSize: 32, color: colors.black, fontWeight: '300', marginTop: -4 }}>+</Text>
+      </View>
     </TouchableOpacity>
   );
 };

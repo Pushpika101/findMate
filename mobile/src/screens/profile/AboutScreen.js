@@ -12,8 +12,8 @@ const AboutScreen = ({ navigation }) => {
     backButtonText: { color: c.white, fontSize: 26, lineHeight: 26 },
     headerTitle: { color: c.white, fontSize: 22, fontWeight: '700', marginLeft: 8 },
     content: { padding: 20 },
-    title: { fontSize: 22, fontWeight: '700', color: c.textPrimary, marginBottom: 12 },
-    sectionTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary, marginTop: 18, marginBottom: 8 },
+    title: { fontSize: 22, fontWeight: '700', color: c.textInverse, marginBottom: 12 },
+    sectionTitle: { fontSize: 18, fontWeight: '700', color: c.textInverse, marginTop: 18, marginBottom: 8 },
     paragraph: { fontSize: 14, color: c.textSecondary, lineHeight: 20, marginBottom: 8 },
     listItem: { fontSize: 14, color: c.textSecondary, lineHeight: 20, marginBottom: 6 },
     smallNote: { fontSize: 12, color: c.textTertiary, marginTop: 16, lineHeight: 18 }

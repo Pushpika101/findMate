@@ -46,7 +46,7 @@ const ProfileScreen = ({ navigation }) => {
     editButton: { paddingHorizontal: 24, paddingVertical: 10, backgroundColor: colors.black, borderRadius: 20 },
     editButtonText: { fontSize: 14, fontWeight: '600', color: colors.white },
     statsCard: { backgroundColor: colors.white, marginHorizontal: 20, marginTop: 16, borderRadius: 16, padding: 20, shadowColor: colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 },
-    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 16 },
+    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: colors.textInverse, marginBottom: 16 },
     statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
     statItem: { flex: 1, minWidth: '30%', backgroundColor: colors.gray50, padding: 16, borderRadius: 12, alignItems: 'center' },
     statValue: { fontSize: 24, fontWeight: 'bold', color: colors.black, marginBottom: 4 },
@@ -57,7 +57,7 @@ const ProfileScreen = ({ navigation }) => {
     actionIconContainer: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.gray100, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
     actionIcon: { fontSize: 20 },
     actionContent: { flex: 1 },
-    actionTitle: { fontSize: 15, fontWeight: '600', color: colors.black, marginBottom: 2 },
+    actionTitle: { fontSize: 15, fontWeight: '600', color: colors.textInverse, marginBottom: 2 },
     actionSubtitle: { fontSize: 13, color: colors.textSecondary },
     actionArrow: { fontSize: 24, color: colors.textSecondary, marginLeft: 8 },
     logoutButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.lost, marginHorizontal: 20, marginTop: 16, paddingVertical: 14, borderRadius: 12, gap: 8 },
@@ -436,7 +436,7 @@ const ProfileScreen = ({ navigation }) => {
                 <Text style={styles.actionIcon}>🌓</Text>
               </View>
               <View style={styles.actionContent}>
-                <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>Theme</Text>
+                <Text style={[styles.actionTitle, { color: colors.textInverse }]}>Theme</Text>
                 <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>{`Current: ${mode === 'system' ? `System (${Appearance?.getColorScheme?.() || 'light'})` : mode}`}</Text>
               </View>
               <Switch

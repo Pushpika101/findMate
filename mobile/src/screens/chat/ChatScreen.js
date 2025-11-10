@@ -46,7 +46,7 @@ const ChatScreen = ({ route, navigation }) => {
     loadingText: { marginTop: 12, fontSize: 16, color: c.textSecondary },
     header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 12, paddingHorizontal: 16, backgroundColor: c.background, borderBottomWidth: 1, borderBottomColor: c.border },
     backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-    backButtonText: { fontSize: 28, color: c.primary },
+    backButtonText: { fontSize: 28, color: c.textInverse },
     headerInfo: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
     headerAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
     headerAvatarText: { fontSize: 18, fontWeight: 'bold', color: c.white },

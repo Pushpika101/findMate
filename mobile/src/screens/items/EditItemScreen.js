@@ -50,7 +50,7 @@ const EditItemScreen = ({ route, navigation }) => {
       borderBottomColor: c.background
     },
     backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-    backButtonText: { fontSize: 28, color: c.primary },
+    backButtonText: { fontSize: 28, color: c.textInverse },
     headerTitle: { fontSize: 18, fontWeight: 'bold', color: c.textInverse },
     placeholder: { width: 40 },
     scrollView: { flex: 1 },
@@ -270,14 +270,14 @@ const EditItemScreen = ({ route, navigation }) => {
             style={[styles.typeButton, formData.type === 'lost' && styles.typeButtonActive, { backgroundColor: formData.type === 'lost' ? colors.lost : colors.white }]}
             onPress={() => handleInputChange('type', 'lost')}
           >
-            <Text style={[styles.typeButtonText, formData.type === 'lost' && styles.typeButtonTextActive]}>🔍 Lost Item</Text>
+            <Text style={[styles.typeButtonText, formData.type === 'lost' && styles.typeButtonTextActive]}>Lost Item</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.typeButton, formData.type === 'found' && styles.typeButtonActive, { backgroundColor: formData.type === 'found' ? colors.found : colors.white }]}
             onPress={() => handleInputChange('type', 'found')}
           >
-            <Text style={[styles.typeButtonText, formData.type === 'found' && styles.typeButtonTextActive]}>✨ Found Item</Text>
+            <Text style={[styles.typeButtonText, formData.type === 'found' && styles.typeButtonTextActive]}>Found Item</Text>
           </TouchableOpacity>
         </View>
 
