@@ -34,21 +34,21 @@ const ChatsScreen = () => {
 
 // Static Add Button (no animation)
 const AnimatedAddButton = ({ onPress, isFocused }) => {
-  const { colors } = useTheme();
-  return (
+    const { colors } = useTheme();
+return (
     <TouchableOpacity
       style={{
         width: 70,
         height: 70,
         borderRadius: 28,
-        backgroundColor: colors.primary,
+              backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
         left: '50%',
         marginLeft: -35, // half width to center
         top: -24,
-        shadowColor: colors.primary,
+              shadowColor: colors.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -57,57 +57,11 @@ const AnimatedAddButton = ({ onPress, isFocused }) => {
       }}
       onPress={onPress}
       activeOpacity={0.9}
-    >
+      >
       <View>
         <Text style={{ fontSize: 32, color: colors.black, fontWeight: '300', marginTop: -4 }}>+</Text>
       </View>
     </TouchableOpacity>
-  );
-};
-
-// Tab icon with optional bubble background when focused and optional badge
-const TabIconBubble = ({ name, size = 24, focused, badgeCount, label }) => {
-  const { colors } = useTheme();
-  const iconSize = size ?? 24;
-  // Use a consistent bubble size for all tabs (matches Notifications size)
-  const bubbleWidth = 56;
-  const bubbleHeight = 56;
-  const iconColor = focused ? colors.white : colors.black;
-
-  const bubbleStyle = {
-    width: bubbleWidth,
-    height: bubbleHeight,
-    borderRadius: bubbleWidth / 2,
-    backgroundColor: focused ? colors.primary : 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // Keep a subtle shadow only when focused
-    shadowColor: focused ? colors.primary : 'transparent',
-    shadowOffset: { width: 0, height: focused ? 4 : 0 },
-    shadowOpacity: focused ? 0.3 : 0,
-    shadowRadius: focused ? 8 : 0,
-    elevation: focused ? 6 : 0,
-  };
-
-  return (
-    <View style={{ width: bubbleWidth + 4, height: bubbleHeight + 4, justifyContent: 'center', alignItems: 'center' }}>
-      <View style={bubbleStyle}>
-        {/* Icon placed above label when focused, otherwise center icon */}
-        {focused && label ? (
-          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <MaterialIcons name={name} size={iconSize - 2} color={iconColor} />
-            <Text style={{ color: colors.white, fontSize: 10, fontWeight: '700', marginTop: 2 }}>{label}</Text>
-          </View>
-        ) : (
-          <MaterialIcons name={name} size={iconSize} color={iconColor} />
-        )}
-      </View>
-      {badgeCount > 0 && (
-        <View style={{ position: 'absolute', top: 6, right: 8, backgroundColor: colors.lost, minWidth: 18, height: 18, borderRadius: 18, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
-          <Text style={{ color: colors.white, fontSize: 11, fontWeight: '700' }}>{badgeCount > 99 ? '99+' : badgeCount}</Text>
-        </View>
-      )}
-    </View>
   );
 };
 
@@ -225,25 +179,17 @@ const MainTabNavigator = () => {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
-        // Keep labels consistent: Notifications -> Alerts, Profile -> You
-        tabBarLabel: ({ focused, color }) => (
-          focused ? null : (
-            <Text style={{ fontSize: 11, fontWeight: '600', color: color ?? colors.textSecondary }}>
-              {route.name === 'Notifications' ? 'Alerts' : route.name === 'Profile' ? 'You' : route.name}
-            </Text>
-          )
-        ),
         tabBarStyle: {
           height: 80,
           paddingBottom: 8,
-          paddingTop: 10,
+          paddingTop: 4,
           backgroundColor: colors.kk2,
           borderTopWidth: 4,
           borderTopColor: colors.black,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           marginHorizontal: 12,
-          overflow: 'visible',
+            overflow: 'visible',
           display: route.name === 'AddItem' ? 'none' : 'flex', // Hide on AddItem
           position: 'absolute',
           elevation: 0,
@@ -257,15 +203,22 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ tabBarIcon: ({ focused, size }) => <TabIconBubble name="home" size={size ?? 24} focused={focused} label="Home" /> }}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="home" size={size ?? 24} color={colors.black} /> }}
       />
-      
+
       <Tab.Screen
         name="Chats"
         component={ChatListScreen}
         options={{
-          tabBarIcon: ({ focused, size }) => (
-            <TabIconBubble name="chat" size={size ?? 24} focused={focused} badgeCount={chatBadge} label="Chats" />
+          tabBarIcon: ({ color, size }) => (
+            <View style={{ width: 36, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+              <MaterialIcons name="chat" size={size ?? 24} color={colors.black} />
+              {chatBadge > 0 && (
+                <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: colors.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
+                  <Text style={{ color: colors.white, fontSize: 15, fontWeight: '600' }}>{chatBadge > 99 ? '99+' : chatBadge}</Text>
+                </View>
+              )}
+            </View>
           )
         }}
       />
@@ -287,18 +240,24 @@ const MainTabNavigator = () => {
         name="Notifications"
         component={NotificationsScreen}
         options={{
-          tabBarIcon: ({ focused, size }) => (
-            <TabIconBubble name="notifications" size={size ?? 24} focused={focused} badgeCount={notificationBadge} label="Alerts" />
+          tabBarIcon: ({ color, size }) => (
+            <View style={{ width: 36, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+              <MaterialIcons name="notifications" size={size ?? 24} color={colors.black} />
+              {notificationBadge > 0 && (
+                <View style={{ position: 'absolute', top: 0, right: -3, backgroundColor: colors.lost, minWidth: 20, height: 20, borderRadius: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4 }}>
+                  <Text style={{ color: colors.white, fontSize: 15, fontWeight: '600' }}>{notificationBadge > 99 ? '99+' : notificationBadge}</Text>
+                </View>
+              )}
+            </View>
           )
         }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ tabBarIcon: ({ focused, size }) => <TabIconBubble name="person" size={size ?? 24} focused={focused} label="You" /> }}
+        options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="person" size={size ?? 24} color={colors.black} /> }}
       />
     </Tab.Navigator>
   );
 };
-
 export default MainTabNavigator;
