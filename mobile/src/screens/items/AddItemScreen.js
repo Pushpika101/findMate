@@ -53,7 +53,8 @@ const AddItemScreen = ({ navigation }) => {
     headerTitle: { fontSize: 18, fontWeight: 'bold', color: colors.textInverse },
     placeholder: { width: 40 },
     scrollView: { flex: 1 },
-    scrollContent: { padding: 20 },
+  // ensure enough bottom spacing so content isn't hidden behind the tab bar / Add button
+  scrollContent: { padding: 20, paddingBottom: 140 },
     typeSelector: { flexDirection: 'row', marginBottom: 24, gap: 12 },
     typeButton: { flex: 1, paddingVertical: 16, borderRadius: 12, borderWidth: 2, borderColor: colors.border, alignItems: 'center' },
     typeButtonActive: { borderColor: 'transparent' },
@@ -82,7 +83,8 @@ const AddItemScreen = ({ navigation }) => {
     submitButton: { height: 54, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 8 },
     submitButtonDisabled: { opacity: 0.6 },
     submitButtonText: { color: colors.white, fontSize: 16, fontWeight: 'bold' },
-    bottomPadding: { height: 40 },
+  // additional safe bottom padding (kept for legacy spacing if needed)
+  bottomPadding: { height: 40 },
     dropdown: { height: 50, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.white, justifyContent: 'center', paddingHorizontal: 12 },
     dropdownPlaceholder: { color: colors.textSecondary },
     dropdownText: { color: colors.textPrimary },

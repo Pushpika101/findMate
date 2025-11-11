@@ -231,38 +231,38 @@ const MainTabNavigator = () => {
 
     return (
       <View onLayout={onContainerLayout} style={[styles.tabBarContainer, { backgroundColor: colors.kk2 }]}>
-        {/* animated bubble */}
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            styles.bubble,
-            {
-              backgroundColor: colors.primary,
-              transform: [{ translateX: bubbleX }],
-            },
-            { width: bubbleW },
-          ]}
-        >
-          {/* Render the active icon+label inside the bubble */}
-            {state.routes[state.index] && (
-              <View style={{ alignItems: 'center' }}>
-                <MaterialIcons name={iconFor(state.routes[state.index].name)} size={22} color={colors.white} />
-                <Text style={{ color: colors.white, fontSize: 12, fontWeight: '600', marginTop: 2 }}>{descriptors[state.routes[state.index].key].options.title ?? state.routes[state.index].name}</Text>
+        {/* animated bubble: hide when AddItem is active */}
+        {state.routes[state.index] && state.routes[state.index].name !== 'AddItem' && (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.bubble,
+              {
+                backgroundColor: colors.primary,
+                transform: [{ translateX: bubbleX }],
+              },
+              { width: bubbleW },
+            ]}
+          >
+            {/* Render the active icon+label inside the bubble */}
+            <View style={{ alignItems: 'center' }}>
+              <MaterialIcons name={iconFor(state.routes[state.index].name)} size={22} color={colors.white} />
+              <Text style={{ color: colors.white, fontSize: 12, fontWeight: '600', marginTop: 2 }}>{descriptors[state.routes[state.index].key].options.title ?? state.routes[state.index].name}</Text>
 
-                {/* Render unread badge inside the bubble when active */}
-                {state.routes[state.index].name === 'Chats' && chatBadge > 0 && (
-                  <View style={[styles.bubbleBadge, { backgroundColor: colors.lost }]}> 
-                    <Text style={styles.badgeText}>{chatBadge > 99 ? '99+' : chatBadge}</Text>
-                  </View>
-                )}
-                {state.routes[state.index].name === 'Notifications' && notificationBadge > 0 && (
-                  <View style={[styles.bubbleBadge, { backgroundColor: colors.lost }]}> 
-                    <Text style={styles.badgeText}>{notificationBadge > 99 ? '99+' : notificationBadge}</Text>
-                  </View>
-                )}
-              </View>
-            )}
-        </Animated.View>
+              {/* Render unread badge inside the bubble when active */}
+              {state.routes[state.index].name === 'Chats' && chatBadge > 0 && (
+                <View style={[styles.bubbleBadge, { backgroundColor: colors.lost }]}> 
+                  <Text style={styles.badgeText}>{chatBadge > 99 ? '99+' : chatBadge}</Text>
+                </View>
+              )}
+              {state.routes[state.index].name === 'Notifications' && notificationBadge > 0 && (
+                <View style={[styles.bubbleBadge, { backgroundColor: colors.lost }]}> 
+                  <Text style={styles.badgeText}>{notificationBadge > 99 ? '99+' : notificationBadge}</Text>
+                </View>
+              )}
+            </View>
+          </Animated.View>
+        )}
 
         {/* Tab buttons (icons + badges). They remain in normal flow so layout doesn't change. */}
         {state.routes.map((route, index) => {
