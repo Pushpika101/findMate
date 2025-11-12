@@ -20,6 +20,8 @@ const ResetPassword = ({ navigation, route }) => {
   const [token, setToken] = useState(route?.params?.token || '');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -28,12 +30,15 @@ const ResetPassword = ({ navigation, route }) => {
     container: { flex: 1, backgroundColor: colors.background },
     scrollContent: { flexGrow: 1, padding: 24, paddingTop: 60 },
     header: { marginBottom: 32, alignItems: 'center' },
-    title: { fontSize: 28, fontWeight: 'bold', color: colors.textPrimary, marginBottom: 8 },
+    title: { fontSize: 28, fontWeight: 'bold', color: colors.textInverse, marginBottom: 8 },
     subtitle: { fontSize: 14, color: colors.textSecondary, textAlign: 'center' },
     form: { width: '100%' },
     inputContainer: { marginBottom: 20 },
-    label: { fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 },
-    input: { height: 50, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: colors.white },
+    label: { fontSize: 14, fontWeight: '600', color: colors.textInverse, marginBottom: 8 },
+  input: { height: 50, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, backgroundColor: colors.white },
+  inputRow: { position: 'relative', justifyContent: 'center' },
+  showToggle: { position: 'absolute', right: 12, padding: 6 },
+  showToggleText: { color: colors.primary, fontWeight: '700' },
     inputError: { borderColor: colors.error },
     errorText: { color: colors.error, fontSize: 12, marginTop: 4 },
     resetButton: { height: 50, backgroundColor: colors.primary, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 16 },
@@ -124,24 +129,34 @@ const ResetPassword = ({ navigation, route }) => {
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>New Password</Text>
-            <TextInput
-              style={[styles.input, error && styles.inputError]}
-              placeholder="At least 6 characters"
-              value={password}
-              onChangeText={(t) => { setPassword(t); setError(null); }}
-              secureTextEntry
-            />
+            <View style={styles.inputRow}>
+              <TextInput
+                style={[styles.input, error && styles.inputError]}
+                placeholder="At least 6 characters"
+                value={password}
+                onChangeText={(t) => { setPassword(t); setError(null); }}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity style={styles.showToggle} onPress={() => setShowPassword(!showPassword)}>
+                <Text style={styles.showToggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Confirm Password</Text>
-            <TextInput
-              style={[styles.input, error && styles.inputError]}
-              placeholder="Re-enter new password"
-              value={confirmPassword}
-              onChangeText={(t) => { setConfirmPassword(t); setError(null); }}
-              secureTextEntry
-            />
+            <View style={styles.inputRow}>
+              <TextInput
+                style={[styles.input, error && styles.inputError]}
+                placeholder="Re-enter new password"
+                value={confirmPassword}
+                onChangeText={(t) => { setConfirmPassword(t); setError(null); }}
+                secureTextEntry={!showConfirm}
+              />
+              <TouchableOpacity style={styles.showToggle} onPress={() => setShowConfirm(!showConfirm)}>
+                <Text style={styles.showToggleText}>{showConfirm ? 'Hide' : 'Show'}</Text>
+              </TouchableOpacity>
+            </View>
             {error && <Text style={styles.errorText}>{error}</Text>}
           </View>
 

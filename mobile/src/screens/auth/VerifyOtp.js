@@ -75,7 +75,7 @@ const VerifyOtp = ({ navigation, route }) => {
     container: { flex: 1, backgroundColor: c.background },
     scrollContent: { flexGrow: 1, padding: 24, paddingTop: 60 },
     header: { marginBottom: 24, alignItems: 'center' },
-    title: { fontSize: 24, fontWeight: '700', color: c.textPrimary },
+    title: { fontSize: 24, fontWeight: '700', color: c.textInverse },
     subtitle: { fontSize: 14, color: c.textSecondary, textAlign: 'center' },
     form: { width: '100%', marginTop: 20 },
     inputContainer: { marginBottom: 16 },

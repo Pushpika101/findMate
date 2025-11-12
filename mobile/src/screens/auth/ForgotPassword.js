@@ -40,7 +40,7 @@ const ForgotPassword = ({ navigation }) => {
       // Use OTP-based reset: backend will send a 6-digit code and short expiry
       await authAPI.forgotPasswordOtp({ email: email.trim().toLowerCase() });
       setLoading(false);
-      Alert.alert('Email Sent', 'If an account exists, a 6-digit reset code has been sent to that email. Please check your inbox.', [
+      Alert.alert('Email Sent', 'A 6-digit reset code has been sent to that email. Please check your inbox.', [
         { text: 'OK', onPress: () => navigation.navigate('ResetPassword', { email: email.trim().toLowerCase() }) }
       ]);
     } catch (err) {

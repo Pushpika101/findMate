@@ -48,7 +48,7 @@ if (process.env.SENDGRID_API_KEY) {
         subject: 'Your findMate verification code',
         html: `<p>Hi ${name},</p>
                <p>Your verification code is <strong>${otp}</strong>. It expires in 15 minutes.</p>
-               <p>If you're on mobile you can open the app directly: <a href="${appResetUrl}">Open in app</a></p>`
+               <p> <a href="${appResetUrl}">Open in app</a></p>`
       };
       try {
         await sgMail.send(msg);
@@ -91,7 +91,7 @@ if (process.env.SENDGRID_API_KEY) {
           subject: 'Your findMate password reset code',
           html: `<p>Hi ${name},</p>
                  <p>Your password reset code is <strong>${otp}</strong>. It expires in 5 minutes.</p>
-                 <p>If you're on mobile you can open the app directly: <a href="${appResetUrl}">Open in app</a></p>`
+                 <p> <a href="${appResetUrl}">Open in app</a></p>`
         };
         try {
           await sgMail.send(msg);
