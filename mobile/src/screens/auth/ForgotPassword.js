@@ -37,23 +37,15 @@ const ForgotPassword = ({ navigation }) => {
     setLoading(true);
     setError(null);
     try {
-      // API returns a message on success; many backends intentionally respond
-      // with a generic success even if email is not known to avoid enumeration.
-      const res = await authAPI.forgotPassword(email.trim().toLowerCase());
+      // Use OTP-based reset: backend will send a 6-digit code and short expiry
+      await authAPI.forgotPasswordOtp({ email: email.trim().toLowerCase() });
       setLoading(false);
-      Alert.alert(
-        'Email Sent',
-        res?.message || 'If an account with that email exists, a reset link has been sent.',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('Login')
-          }
-        ]
-      );
+      Alert.alert('Email Sent', 'If an account exists, a 6-digit reset code has been sent to that email. Please check your inbox.', [
+        { text: 'OK', onPress: () => navigation.navigate('ResetPassword', { email: email.trim().toLowerCase() }) }
+      ]);
     } catch (err) {
       setLoading(false);
-      const msg = err?.toString() || 'Failed to send reset email';
+      const msg = err?.toString() || 'Failed to send reset code';
       setError(msg);
       Alert.alert('Error', msg);
     }

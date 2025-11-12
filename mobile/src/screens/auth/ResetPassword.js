@@ -73,6 +73,18 @@ const ResetPassword = ({ navigation, route }) => {
     if (!validate()) return;
     setLoading(true);
     try {
+      // If this screen was opened after requesting an OTP, route.params.email will be present
+      if (route?.params?.email) {
+        // OTP-based reset flow
+        const res = await authAPI.resetPasswordWithOtp({ email: route.params.email, otp: token.trim(), password });
+        setLoading(false);
+        Alert.alert('Success', res?.message || 'Password reset successful', [
+          { text: 'OK', onPress: () => navigation.navigate('Login') }
+        ]);
+        return;
+      }
+
+      // Fallback: token-based reset (link)
       const res = await authAPI.resetPassword({ token: token.trim(), password });
       setLoading(false);
       Alert.alert('Success', res?.message || 'Password reset successful', [

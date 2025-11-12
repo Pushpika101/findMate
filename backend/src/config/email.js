@@ -81,6 +81,27 @@ if (process.env.SENDGRID_API_KEY) {
       }
     };
 
+      // Send numeric OTP for password reset (short expiry)
+      sendPasswordResetOtpEmail = async (email, name, otp) => {
+        const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+        const appResetUrl = `${appScheme}reset-password?otp=${otp}&email=${encodeURIComponent(email)}`;
+        const msg = {
+          to: email,
+          from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
+          subject: 'Your findMate password reset code',
+          html: `<p>Hi ${name},</p>
+                 <p>Your password reset code is <strong>${otp}</strong>. It expires in 5 minutes.</p>
+                 <p>If you're on mobile you can open the app directly: <a href="${appResetUrl}">Open in app</a></p>`
+        };
+        try {
+          await sgMail.send(msg);
+          return true;
+        } catch (err) {
+          console.error('SendGrid sendPasswordResetOtpEmail error:', err?.response?.body || err.message || err);
+          throw err;
+        }
+      };
+
     sendNotificationEmail = async (email, subject, message) => {
       const msg = {
         to: email,
@@ -169,6 +190,21 @@ if (!sendVerificationEmail && process.env.SMTP_HOST) {
       return true;
     };
 
+    // Send numeric OTP for password reset (short expiry)
+    sendPasswordResetOtpEmail = async (email, name, otp) => {
+      const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+      const appResetUrl = `${appScheme}reset-password?otp=${otp}&email=${encodeURIComponent(email)}`;
+      const mailOptions = {
+        from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
+        to: email,
+        subject: 'Your findMate password reset code',
+        html: `<p>Hi ${name},</p><p>Your password reset code is <strong>${otp}</strong>. It expires in 5 minutes.</p>
+               <p>If you're on mobile you can open the app directly: <a href="${appResetUrl}">Open in app</a></p>`
+      };
+      await transporter.sendMail(mailOptions);
+      return true;
+    };
+
     sendNotificationEmail = async (email, subject, message) => {
       const mailOptions = {
         from: process.env.EMAIL_FROM || 'no-reply@findmate.local',
@@ -217,6 +253,14 @@ if (!sendVerificationEmail) {
     return true;
   };
 
+  // Mock password reset OTP email
+  sendPasswordResetOtpEmail = async (email, name, otp) => {
+    const appScheme = process.env.MOBILE_APP_SCHEME || 'findmate://';
+    const appResetUrl = `${appScheme}reset-password?otp=${otp}&email=${encodeURIComponent(email)}`;
+    console.log(`\n📧 PASSWORD RESET OTP EMAIL (Mock)\nTo: ${email}\nName: ${name}\nOTP: ${otp}\nOpen in app: ${appResetUrl}\n`);
+    return true;
+  };
+
   sendNotificationEmail = async (email, subject, message) => {
     console.log(`\n📧 Notification (Mock)\nTo: ${email}\nSubject: ${subject}\nMessage: ${message}\n`);
     return true;
@@ -227,5 +271,6 @@ module.exports = {
   sendVerificationEmail,
   sendVerificationOtpEmail,
   sendPasswordResetEmail,
+  sendPasswordResetOtpEmail,
   sendNotificationEmail
 };

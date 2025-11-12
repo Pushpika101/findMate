@@ -46,6 +46,10 @@ router.post('/resend-verification', resendVerification);
 // New OTP endpoints
 router.post('/send-otp', sendOtp);
 router.post('/verify-otp', verifyOtp);
+// Password reset using short OTP flow
+router.post('/forgot-password-otp', require('../controllers/authController').forgotPasswordOtp);
+router.post('/verify-reset-otp', require('../controllers/authController').verifyResetOtp);
+router.post('/reset-password-otp', require('../controllers/authController').resetPasswordWithOtp);
 
 // @route   POST /api/auth/login
 // @desc    Login user

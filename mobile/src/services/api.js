@@ -56,7 +56,12 @@ export const authAPI = {
   sendOtp: (data) => api.post('/auth/send-otp', data),
   verifyOtp: (data) => api.post('/auth/verify-otp', data),
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+  // OTP-based forgot password (sends 6-digit code to email)
+  forgotPasswordOtp: (data) => api.post('/auth/forgot-password-otp', data),
+  // verify/reset using otp
+  verifyResetOtp: (data) => api.post('/auth/verify-reset-otp', data),
   resetPassword: (data) => api.post('/auth/reset-password', data),
+  resetPasswordWithOtp: (data) => api.post('/auth/reset-password-otp', data),
   getMe: () => api.get('/auth/me')
 };
 

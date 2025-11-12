@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { query } = require('../config/database');
-const { sendVerificationEmail, sendPasswordResetEmail, sendVerificationOtpEmail } = require('../config/email');
+const { sendVerificationEmail, sendPasswordResetEmail, sendVerificationOtpEmail, sendPasswordResetOtpEmail } = require('../config/email');
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -445,6 +445,121 @@ exports.resetPassword = async (req, res) => {
       success: false,
       message: 'Error resetting password'
     });
+  }
+};
+
+// @desc    Forgot password (send numeric OTP)
+// @route   POST /api/auth/forgot-password-otp
+// @access  Public
+exports.forgotPasswordOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Please provide email' });
+
+    const result = await query('SELECT id, name FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
+      // respond generically
+      return res.json({ success: true, message: 'If an account exists, a reset code has been sent.' });
+    }
+
+    const user = result.rows[0];
+
+    // ensure reset otp columns exist (idempotent)
+    try {
+      await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_otp_hash VARCHAR(255)`);
+      await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_otp_expires TIMESTAMP`);
+      await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_otp_attempts INTEGER DEFAULT 0`);
+      await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_otp_locked_until TIMESTAMP`);
+    } catch (e) {
+      // ignore - some DBs may not support IF NOT EXISTS but most do
+    }
+
+    // Generate 6-digit OTP
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+    const otpHash = await bcrypt.hash(otp, await bcrypt.genSalt(10));
+
+    await query('UPDATE users SET reset_otp_hash=$1, reset_otp_expires=$2, reset_otp_attempts=0 WHERE email=$3', [otpHash, otpExpires, email]);
+
+    try {
+      await sendPasswordResetOtpEmail(email, user.name || '', otp);
+    } catch (e) {
+      console.warn('Failed to send reset OTP email:', e.message || e);
+    }
+
+    return res.json({ success: true, message: 'If an account exists, a reset code has been sent.' });
+  } catch (error) {
+    console.error('forgotPasswordOtp error:', error);
+    res.status(500).json({ success: false, message: 'Error sending reset code' });
+  }
+};
+
+// @desc    Verify reset OTP
+// @route   POST /api/auth/verify-reset-otp
+// @access  Public
+exports.verifyResetOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ success: false, message: 'Please provide email and code' });
+
+    const result = await query('SELECT reset_otp_hash, reset_otp_expires, reset_otp_attempts, reset_otp_locked_until FROM users WHERE email=$1', [email]);
+    if (result.rows.length === 0) return res.status(400).json({ success: false, message: 'Invalid email or code' });
+
+    const user = result.rows[0];
+    if (!user.reset_otp_hash) return res.status(400).json({ success: false, message: 'No active reset code. Please request a new one.' });
+
+    if (user.reset_otp_locked_until && new Date(user.reset_otp_locked_until) > new Date()) {
+      return res.status(429).json({ success: false, message: 'Too many attempts. Try again later.' });
+    }
+
+    if (!user.reset_otp_expires || new Date(user.reset_otp_expires) < new Date()) {
+      return res.status(400).json({ success: false, message: 'Reset code expired. Please request a new one.' });
+    }
+
+    const ok = await bcrypt.compare(String(otp), user.reset_otp_hash);
+    if (!ok) {
+      const attempts = (user.reset_otp_attempts || 0) + 1;
+      const lockUntil = attempts >= 5 ? new Date(Date.now() + 30 * 60 * 1000) : null;
+      await query('UPDATE users SET reset_otp_attempts=$1, reset_otp_locked_until=$2 WHERE email=$3', [attempts, lockUntil, email]);
+      return res.status(400).json({ success: false, message: 'Invalid reset code' });
+    }
+
+    return res.json({ success: true, message: 'Code valid' });
+  } catch (error) {
+    console.error('verifyResetOtp error:', error);
+    res.status(500).json({ success: false, message: 'Error verifying code' });
+  }
+};
+
+// @desc    Reset password using OTP
+// @route   POST /api/auth/reset-password-otp
+// @access  Public
+exports.resetPasswordWithOtp = async (req, res) => {
+  try {
+    const { email, otp, password } = req.body;
+    if (!email || !otp || !password) return res.status(400).json({ success: false, message: 'Please provide email, code and new password' });
+
+    const result = await query('SELECT id, reset_otp_hash, reset_otp_expires FROM users WHERE email=$1', [email]);
+    if (result.rows.length === 0) return res.status(400).json({ success: false, message: 'Invalid email or code' });
+
+    const user = result.rows[0];
+    if (!user.reset_otp_hash) return res.status(400).json({ success: false, message: 'No active reset code. Please request a new one.' });
+    if (!user.reset_otp_expires || new Date(user.reset_otp_expires) < new Date()) return res.status(400).json({ success: false, message: 'Reset code expired. Please request a new one.' });
+
+    const ok = await bcrypt.compare(String(otp), user.reset_otp_hash);
+    if (!ok) return res.status(400).json({ success: false, message: 'Invalid reset code' });
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Update password and clear reset otp
+    await query('UPDATE users SET password=$1, reset_otp_hash=NULL, reset_otp_expires=NULL, reset_otp_attempts=0, reset_otp_locked_until=NULL WHERE id=$2', [hashedPassword, user.id]);
+
+    return res.json({ success: true, message: 'Password reset successful' });
+  } catch (error) {
+    console.error('resetPasswordWithOtp error:', error);
+    res.status(500).json({ success: false, message: 'Error resetting password' });
   }
 };
 
