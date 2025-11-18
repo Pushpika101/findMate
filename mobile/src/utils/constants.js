@@ -104,6 +104,10 @@ export const STORAGE_KEYS = {
   THEME: '@lost_found_theme'
 };
 
+// Debug storage keys (last push token and last notification payload)
+STORAGE_KEYS.LAST_PUSH_TOKEN = '@lost_found_last_push_token';
+STORAGE_KEYS.LAST_NOTIFICATION_PAYLOAD = '@lost_found_last_notification_payload';
+
 // Image Config
 export const IMAGE_CONFIG = {
   MAX_SIZE: 5 * 1024 * 1024, // 5MB
