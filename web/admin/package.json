@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "cp ../../mobile/assets/images/new_icon.png public/favicon.png || true",
+    "prebuild": "cp ../../mobile/assets/images/new_icon.png public/favicon.png || true",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

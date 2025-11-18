@@ -44,22 +44,33 @@ export default function Login(){
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '80px auto', padding: 20 }}>
-      <h2>Admin Login</h2>
-      <form onSubmit={submit}>
-        <div style={{ marginBottom: 12 }}>
-          <label>Email</label>
-          <input autoComplete="username" value={email} onChange={(e)=>setEmail(e.target.value)} style={{ width: '100%', padding: 8 }} />
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-brand">
+          <div className="brand-dot" />
+          <div>
+            <div className="brand-name">findMate Admin</div>
+            <div className="page-sub">Manage users, items & matches</div>
+          </div>
         </div>
-        <div style={{ marginBottom: 12 }}>
-          <label>Password</label>
-          <input type="password" autoComplete="current-password" value={password} onChange={(e)=>setPassword(e.target.value)} style={{ width: '100%', padding: 8 }} />
-        </div>
-        {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
-        <div>
-          <button type="submit" disabled={loading}>{loading ? 'Signing in...' : 'Sign In'}</button>
-        </div>
-      </form>
+
+        <form onSubmit={submit} className="login-form">
+          <label className="label">Email</label>
+          <input autoComplete="username" value={email} onChange={(e)=>setEmail(e.target.value)} className="input" />
+
+          <label className="label">Password</label>
+          <input type="password" autoComplete="current-password" value={password} onChange={(e)=>setPassword(e.target.value)} className="input" />
+
+          {error && <div className="form-error">{error}</div>}
+
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+            <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? 'Signing in...' : 'Sign In'}</button>
+            <button type="button" className="btn btn-outline" onClick={()=>{ setEmail(''); setPassword('') }}>Clear</button>
+          </div>
+        </form>
+
+        <div className="login-foot">Need help? Contact the maintainer.</div>
+      </div>
     </div>
   )
 }

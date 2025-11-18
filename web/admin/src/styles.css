@@ -21,6 +21,51 @@
 .sidebar a:hover{ color:var(--accent) }
 .main{ flex:1; padding:28px; max-width:1200px; margin:0 auto }
 
+/* content area wraps header + main so main can scroll independently */
+.content-area{ flex:1; display:flex; flex-direction:column; min-height:100vh }
+
+/* Topbar */
+.topbar{ display:flex; justify-content:space-between; align-items:center; padding:14px 24px; background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-bottom:1px solid rgba(12,18,28,0.04) }
+.topbar .brand{ display:inline-flex; align-items:center; gap:10px; text-decoration:none }
+.topbar .brand .brand-name{ color:var(--text); font-weight:700 }
+.topbar-left{ display:flex; align-items:center; gap:12px }
+.hamburger{ background:transparent; border:none; font-size:18px; display:none }
+.topbar-right{ display:flex; align-items:center; gap:12px }
+
+.logo{ width:40px; height:40px }
+.brand-name{ color:var(--text); font-weight:700; margin-left:6px }
+
+/* Sidebar tweaks */
+.sidebar-header{ margin-bottom:18px }
+.sidebar-sub{ color:rgba(255,255,255,0.6); font-size:13px }
+.nav-list{ list-style:none; padding:0; margin:0 }
+.nav-list li{ margin:6px 0 }
+.nav-list li a{ color:rgba(192,199,205,0.9); text-decoration:none; display:block; padding:8px 10px; border-radius:8px }
+.nav-list li.active a, .nav-list li a:hover{ background:rgba(255,255,255,0.04); color:var(--accent) }
+.sidebar-footer{ margin-top:28px }
+
+/* Login page */
+.login-page{ display:flex; align-items:center; justify-content:center; min-height:calc(100vh - 60px); padding:40px }
+.login-card{ width:420px; background:var(--card); padding:28px; border-radius:14px; box-shadow: 0 20px 40px rgba(12,18,28,0.08); border:1px solid rgba(12,18,28,0.04) }
+.login-brand{ display:flex; align-items:center; gap:14px; margin-bottom:18px }
+.login-brand .brand-name{ font-size:20px; color:var(--accent-dark) }
+.login-form{ display:flex; flex-direction:column }
+.label{ font-weight:700; margin-bottom:6px; color:var(--muted) }
+.input{ padding:10px 12px; border-radius:10px; border:1px solid rgba(15,23,42,0.06); margin-bottom:12px }
+.form-error{ color:#c53030; background:#fff5f5; padding:8px 10px; border-radius:8px; margin-bottom:8px }
+.login-foot{ margin-top:12px; color:var(--muted); font-size:13px }
+
+/* small screens */
+@media (max-width:1000px){
+	.hamburger{ display:inline-block }
+}
+
+@media (max-width:800px){
+	.sidebar{ display:none }
+	.main{ padding:16px }
+	.login-card{ width:100%; max-width:420px }
+}
+
 /* Header */
 .page-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px }
 .page-title{ font-size:22px; margin:0 }
@@ -46,6 +91,11 @@
 .btn-primary{ background:var(--accent); color:#fff }
 .btn-outline{ background:transparent; border:1px solid rgba(15,23,42,0.06); color:var(--text) }
 .btn-danger{ background:#ef4444; color:#fff }
+
+/* compact icon button used in tables for small actions */
+.icon-btn{ display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border-radius:8px; border:none; background:transparent; cursor:pointer; font-size:16px }
+.icon-btn:hover{ background:rgba(15,23,42,0.04) }
+.icon-btn[title]{ position:relative }
 
 /* table tweaks */
 .table{ width:100%; border-collapse:collapse; background:transparent }

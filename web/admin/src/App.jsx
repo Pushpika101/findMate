@@ -5,6 +5,8 @@ import Users from './pages/Users'
 import Items from './pages/Items'
 import Login from './pages/Login'
 import { Navigate } from 'react-router-dom'
+import Header from './components/Header'
+import Sidebar from './components/Sidebar'
 
 export default function App(){
   const Protected = ({ children }) => {
@@ -20,28 +22,20 @@ export default function App(){
   }
   return (
     <div className="app">
-      <aside className="sidebar">
-        <h2>findMate Admin</h2>
-        <nav>
-          <ul>
-            <li><Link to="/">Dashboard</Link></li>
-            <li><Link to="/users">Users</Link></li>
-            <li><Link to="/items">Items</Link></li>
-          </ul>
-        </nav>
-        <div style={{ marginTop: 20 }}>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-      </aside>
+      <Sidebar onLogout={handleLogout} />
 
-      <main className="main">
-        <Routes>
-          <Route path="/login" element={<Login/>} />
-          <Route path="/" element={<Protected><Dashboard/></Protected>} />
-          <Route path="/users" element={<Protected><Users/></Protected>} />
-          <Route path="/items" element={<Protected><Items/></Protected>} />
-        </Routes>
-      </main>
+      <div className="content-area">
+        <Header onLogout={handleLogout} />
+
+        <main className="main">
+          <Routes>
+            <Route path="/login" element={<Login/>} />
+            <Route path="/" element={<Protected><Dashboard/></Protected>} />
+            <Route path="/users" element={<Protected><Users/></Protected>} />
+            <Route path="/items" element={<Protected><Items/></Protected>} />
+          </Routes>
+        </main>
+      </div>
     </div>
   )
 }
