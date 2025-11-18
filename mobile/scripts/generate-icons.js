@@ -20,6 +20,7 @@ const sharp = require('sharp');
 const projectRoot = path.resolve(__dirname, '..');
 const imagesDir = path.join(projectRoot, 'assets', 'images');
 const sourceSvg = path.join(imagesDir, 'new_icon.svg');
+const sourcePng = path.join(imagesDir, 'new_icon.png');
 
 async function ensureSource() {
   if (!fs.existsSync(sourceSvg)) {
@@ -30,15 +31,30 @@ async function ensureSource() {
 
 async function generate() {
   await ensureSource();
-
   const outIcon = path.join(imagesDir, 'icon.png');
   const outAndroidFg = path.join(imagesDir, 'android-icon-foreground.png');
+  const outFavicon = path.join(imagesDir, 'favicon.png');
+
+  const src = fs.existsSync(sourcePng) ? sourcePng : sourceSvg;
 
   console.log('Generating 1024x1024 icon ->', outIcon);
-  await sharp(sourceSvg).resize(1024, 1024).png().toFile(outIcon);
+  await sharp(src).resize(1024, 1024, { fit: 'cover' }).png().toFile(outIcon);
 
   console.log('Generating Android adaptive foreground 432x432 ->', outAndroidFg);
-  await sharp(sourceSvg).resize(432, 432).png().toFile(outAndroidFg);
+  // For adaptive foreground, produce a PNG with transparent padding if original is square.
+  await sharp(src).resize(432, 432, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toFile(outAndroidFg);
+
+  // Generate a 192x192 favicon/web icon
+  console.log('Generating web favicon 192x192 ->', outFavicon);
+  await sharp(src).resize(192, 192, { fit: 'cover' }).png().toFile(outFavicon);
+
+  // Optionally generate smaller Android launcher icons (mdpi/hdpi/xhdpi)
+  const sizes = [512, 384, 192, 144, 96, 72, 48];
+  for (const s of sizes) {
+    const out = path.join(imagesDir, `icon-${s}.png`);
+    console.log(`Generating ${s}x${s} ->`, out);
+    await sharp(src).resize(s, s, { fit: 'cover' }).png().toFile(out);
+  }
 
   console.log('Done. Check the generated files in', imagesDir);
 }
