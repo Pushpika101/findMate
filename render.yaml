@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: findmate-backend
+    env: node
+    branch: main
+    plan: free
+    buildCommand: cd backend && npm ci
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Add other environment variables in the Render dashboard, do NOT commit secrets here.
+      # Example keys you will want to set via the Render UI:
+      # - DATABASE_URL (Postgres connection string)
+      # - JWT_SECRET
+      # - SENDGRID_API_KEY
+      # - CLOUDINARY_URL
+      # - CLIENT_URL_WEB
+      # - CLIENT_URL_MOBILE
+      # - SENTRY_DSN (optional)
