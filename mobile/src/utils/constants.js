@@ -1,8 +1,8 @@
 import Constants from 'expo-constants';
 
 // API Configuration
-export const API_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:5001/api';
-export const SOCKET_URL = Constants.expoConfig?.extra?.socketUrl || 'http://localhost:5001';
+export const API_URL = Constants.expoConfig?.extra?.apiUrl || 'http://172.20.10.3:5001/api';
+export const SOCKET_URL = Constants.expoConfig?.extra?.socketUrl || 'http://172.20.10.3:5001';
 
 // Item Categories
 export const ITEM_CATEGORIES = [

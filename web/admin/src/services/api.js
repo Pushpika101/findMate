@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5001/api'
+// In dev, set VITE_API_BASE in web/admin/.env or your dev environment. Fallback to the LAN IP.
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://172.20.10.3:5001/api'
 
 const instance = axios.create({ baseURL: API_BASE })
 

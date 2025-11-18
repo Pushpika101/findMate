@@ -32,8 +32,8 @@
     },
     "plugins": [],
     "extra": {
-      "apiUrl": "http://192.168.1.111:5001/api",
-      "socketUrl": "http://192.168.1.111:5001",
+      "apiUrl": "http://172.20.10.3:5001/api",
+      "socketUrl": "http://172.20.10.3:5001",
         "projectId": "2121301c-332d-40aa-b9bf-43abe8cb9f3e",
       "eas": {
         "projectId": "2121301c-332d-40aa-b9bf-43abe8cb9f3e"
