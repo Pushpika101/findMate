@@ -63,7 +63,8 @@ const ChatListScreen = ({ navigation }) => {
         // recompute total unread across chats and emit so main navigator updates badge
         try {
           const totalUnread = next.reduce((acc, it) => acc + (Number(it.unread_count) || 0), 0);
-          DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread);
+          // defer emit to avoid triggering state updates during render
+          setTimeout(() => DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread), 0);
         } catch (e) {
           // ignore emit errors
         }
@@ -185,7 +186,8 @@ const ChatListScreen = ({ navigation }) => {
       // recompute total unread across chats and emit event so MainTabNavigator updates badge
       try {
         const totalUnread = next.reduce((acc, it) => acc + (Number(it.unread_count) || 0), 0);
-        DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread);
+        // defer emit to avoid triggering state updates during render
+        setTimeout(() => DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread), 0);
       } catch (e) {
         // ignore
       }
@@ -222,7 +224,8 @@ const ChatListScreen = ({ navigation }) => {
         // compute total unread across chats and emit so main navigator updates badge
         try {
           const totalUnread = (response.data.chats || []).reduce((acc, it) => acc + (Number(it.unread_count) || 0), 0);
-          DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread);
+          // defer emit to avoid synchronous cross-component updates
+          setTimeout(() => DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread), 0);
         } catch (e) {}
       }
     } catch (error) {
@@ -302,7 +305,7 @@ const ChatListScreen = ({ navigation }) => {
         // After marking as read, fetch fresh unread count and emit to main navigator so its badge updates immediately
         const res = await chatAPI.getUnreadCount?.();
         if (res && res.success) {
-          DeviceEventEmitter.emit('chatBadgeUpdated', res.data.unreadCount || 0);
+          setTimeout(() => DeviceEventEmitter.emit('chatBadgeUpdated', res.data.unreadCount || 0), 0);
         }
       } catch (err) {
         console.warn('Failed to mark chat as read', err);
@@ -334,7 +337,7 @@ const ChatListScreen = ({ navigation }) => {
           const next = prev.filter((c) => c.id !== id);
           try {
             const totalUnread = next.reduce((acc, it) => acc + (Number(it.unread_count) || 0), 0);
-            DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread);
+            setTimeout(() => DeviceEventEmitter.emit('chatBadgeUpdated', totalUnread), 0);
           } catch (e) {}
           return next;
         });

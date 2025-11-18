@@ -80,7 +80,8 @@ const ChatScreen = ({ route, navigation }) => {
     emptyIcon: { fontSize: 64, marginBottom: 16 },
     emptyText: { fontSize: 18, fontWeight: '600', color: c.textPrimary, marginBottom: 8 },
     emptySubtext: { fontSize: 14, color: c.textSecondary },
-    inputContainer: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: c.background, borderTopWidth: 1, borderTopColor: c.border, gap: 12 },
+  // inputContainer: on Android we need extra bottom padding to sit above the system navigation bar
+  inputContainer: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 16, paddingVertical: 12, paddingBottom: Platform.OS === 'android' ? 44 : 12, backgroundColor: c.background, borderTopWidth: 1, borderTopColor: c.border, gap: 12 },
     input: { flex: 1, minHeight: 40, maxHeight: 100, paddingHorizontal: 16, paddingVertical: 10, backgroundColor: c.gray100, borderRadius: 20, fontSize: 15, color: c.textInverse },
     sendButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
     sendButtonDisabled: { opacity: 0.5 },
@@ -332,8 +333,9 @@ const ChatScreen = ({ route, navigation }) => {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      // On Android provide an offset so the KeyboardAvoidingView lifts content above the navigation bar/header
+      keyboardVerticalOffset={Platform.OS === 'android' ? 0 : 0}
     >
       {/* Header */}
       <View style={styles.header}>
@@ -368,7 +370,11 @@ const ChatScreen = ({ route, navigation }) => {
         data={messages}
         renderItem={renderMessage}
         keyExtractor={(item, index) => `${item.id}-${index}`}
-        contentContainerStyle={styles.messagesList}
+        contentContainerStyle={[
+          styles.messagesList,
+          // ensure there's enough bottom spacing on Android so the input bar isn't covered
+          { paddingBottom: Platform.OS === 'android' ? 180 : 16 }
+        ]}
         onContentSizeChange={scrollToBottom}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={

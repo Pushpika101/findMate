@@ -34,21 +34,23 @@ const ChatsScreen = () => {
 
 // Static Add Button (no animation)
 const AnimatedAddButton = ({ onPress, isFocused }) => {
-    const { colors } = useTheme();
-return (
+  const { colors } = useTheme();
+  // On Android, raise the Add button a little more because the tab bar is taller
+  const addButtonTop = Platform.OS === 'android' ? -28 : -24;
+  return (
     <TouchableOpacity
       style={{
         width: 70,
         height: 70,
         borderRadius: 28,
-              backgroundColor: colors.primary,
+        backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
         left: '50%',
         marginLeft: -35, // half width to center
-        top: -24,
-              shadowColor: colors.primary,
+        top: addButtonTop,
+        shadowColor: colors.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -57,7 +59,7 @@ return (
       }}
       onPress={onPress}
       activeOpacity={0.9}
-      >
+    >
       <View>
         <Text style={{ fontSize: 32, color: colors.black, fontWeight: '300', marginTop: -4 }}>+</Text>
       </View>
@@ -304,8 +306,10 @@ const MainTabNavigator = () => {
                   </View>
                 )}
               </View>
-              {/* label - hide for focused since bubble shows it */}
-              <Text style={{ fontSize: 11, fontWeight: '600', color: focused ? 'transparent' : colors.textSecondary, marginTop: 6 }}>{options.title ?? route.name}</Text>
+              {/* label - render only when not focused since bubble shows the active label */}
+              {!focused && (
+                <Text style={{ fontSize: 11, fontWeight: '600', color: colors.textSecondary, marginTop: 6 }}>{options.title ?? route.name}</Text>
+              )}
             </TouchableOpacity>
           );
         })}
@@ -352,8 +356,9 @@ export default MainTabNavigator;
 const styles = StyleSheet.create({
   tabBarContainer: {
     flexDirection: 'row',
-    height: 80,
-    paddingBottom: 8,
+    // on Android we want a taller tab bar to avoid collision with the system navigation buttons
+    height: Platform.OS === 'android' ? 110 : 80,
+    paddingBottom: Platform.OS === 'android' ? 33 : 8,
     paddingTop: 4,
     borderTopWidth: 4,
     borderTopLeftRadius: 25,
@@ -372,10 +377,13 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    // extra bottom padding on Android so icons sit above the navigation bar
+    paddingBottom: Platform.OS === 'android' ? 8 : 0,
   },
   bubble: {
     position: 'absolute',
-    bottom: 12,
+    // lift bubble slightly on android because tabBarContainer has larger paddingBottom there
+    bottom: Platform.OS === 'android' ? 42 : 12,
     height: 56,
     borderRadius: 25,
     alignItems: 'center',
